@@ -1,0 +1,9 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# pnpm 11 replaced onlyBuiltDependencies / ignoredBuiltDependencies
+# with allowBuilds. Both ship prebuilt binaries, so neither needs to build.
+allowBuilds:
+  sharp: false
+  unrs-resolver: false
