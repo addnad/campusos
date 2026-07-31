@@ -12,6 +12,8 @@
   --color-ground: #FFF6E6;
   --color-sunken: #F6E5C2;
   --color-card: #FFFFFF;
+  /* Warm off-white for pills on saturated grounds. */
+  --color-cream: #FFF1CE;
 
   /* ---- ink ----------------------------------------------------------- */
   --color-ink: #1B1206;
@@ -43,6 +45,7 @@
   --color-ground: #100B04;
   --color-sunken: #1B1309;
   --color-card: #241A0B;
+  --color-cream: #FFF1CE;
 
   --color-ink: #FFF6E6;
   --color-muted: #BEAC8E;
