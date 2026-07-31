@@ -1,1 +1,72 @@
 @import "tailwindcss";
+
+/* Class-based dark mode, so a toggle is possible later. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme static {
+  /* ---- type ---------------------------------------------------------- */
+  --font-display: "Bagel Fat One", cursive;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+
+  /* ---- ground -------------------------------------------------------- */
+  --color-ground: #FFF6E6;
+  --color-sunken: #F6E5C2;
+  --color-card: #FFFFFF;
+
+  /* ---- ink ----------------------------------------------------------- */
+  --color-ink: #1B1206;
+  --color-muted: #6A5A3F;
+
+  /* Non-text only. Both fail WCAG AA on ground. Borders and fills. */
+  --color-fill: #A8946F;
+  --color-rule: #EBDBB8;
+
+  /* ---- course colours: 10 hues, spread 19-323 ------------------------ */
+  --color-ember: #FF5A0F;
+  --color-volt: #BFF223;
+  --color-fern: #4CE22F;
+  --color-mint: #00E05E;
+  --color-teal: #00E0C4;
+  --color-aqua: #0095F0;
+  --color-indigo: #3C56FF;
+  --color-grape: #7A2BFF;
+  --color-orchid: #E228FF;
+  --color-hibiscus: #FF2DB0;
+
+  /* ---- state --------------------------------------------------------- */
+  --color-alarm: #FF2438;
+  --color-overdue: #1B1206;
+  --color-done: #A8946F;
+}
+
+.dark {
+  --color-ground: #100B04;
+  --color-sunken: #1B1309;
+  --color-card: #241A0B;
+
+  --color-ink: #FFF6E6;
+  --color-muted: #BEAC8E;
+
+  --color-fill: #7A6A4E;
+  --color-rule: #33260F;
+
+  --color-ember: #FF7C3D;
+  --color-volt: #CBF74E;
+  --color-fern: #74EC5C;
+  --color-mint: #2AEE7C;
+  --color-teal: #2AEED4;
+  --color-aqua: #35B2FF;
+  --color-indigo: #7285FF;
+  --color-grape: #9C63FF;
+  --color-orchid: #EC63FF;
+  --color-hibiscus: #FF63C4;
+
+  --color-alarm: #FF5A67;
+  --color-overdue: #3A0E14;
+  --color-done: #7A6A4E;
+}
+
+body {
+  background-color: var(--color-ground);
+  color: var(--color-ink);
+}
