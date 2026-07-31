@@ -36,7 +36,7 @@ export function ConfirmForm({ initial, programmeId, institutionId, level, semest
 
       <div className="overflow-hidden rounded-3xl bg-cream">
         {courses.map((c, i) => (
-          <div key={`${c.code}-${i}`} className="flex items-center gap-3 border-b border-ink/10 px-5 py-4 last:border-0">
+          <div key={`${c.code}-${i}`} className="rise flex items-center gap-3 border-b border-ink/10 px-5 py-4 last:border-0" style={{ animationDelay: `${i * 60}ms` }}>
             <span className="h-3 w-3 shrink-0 rounded-full" style={{ background: `var(--color-${TOKENS[i % TOKENS.length]})` }} />
             <span className="font-bold text-ink">{c.code}</span>
             <span className="truncate text-sm text-ink/70">{c.title}</span>
@@ -62,7 +62,7 @@ export function ConfirmForm({ initial, programmeId, institutionId, level, semest
 
       {state?.error && <p className="mt-4 font-bold text-ink">{state.error}</p>}
 
-      <div className="mt-8 space-y-3">
+      <div className="rise mt-8 space-y-3" style={{ animationDelay: `${courses.length * 60 + 120}ms` }}>
         <button type="submit" disabled={pending || courses.length === 0} className="w-full rounded-full bg-cream px-8 py-5 text-lg font-bold text-ink transition-opacity disabled:opacity-40">
           {pending ? "Setting up..." : "Looks right"}
         </button>
@@ -71,7 +71,7 @@ export function ConfirmForm({ initial, programmeId, institutionId, level, semest
         )}
       </div>
 
-      {courses.length > 0 && <p className="mt-4 text-center font-mono text-sm text-ink/60">{courses.length} courses &middot; {totalUnits} units</p>}
+      {courses.length > 0 && <p className="rise mt-4 text-center font-mono text-sm text-ink/60" style={{ animationDelay: `${courses.length * 60 + 180}ms` }}>{courses.length} courses &middot; {totalUnits} units</p>}
     </form>
   );
 }

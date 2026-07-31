@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Wordmark } from "@/components/ui/wordmark";
+import { WordmarkAnimated } from "@/components/ui/wordmark-animated";
 
 export default function Landing() {
   return (
@@ -12,20 +13,20 @@ export default function Landing() {
         </header>
 
         <section className="mt-16 sm:mt-24">
-          <Wordmark />
-          <h1 className="mt-10 max-w-3xl font-display text-4xl leading-[1.05] text-ink sm:text-5xl md:text-6xl">
+          <WordmarkAnimated />
+          <h1 className="snap mt-10 max-w-3xl font-display text-4xl leading-[1.05] text-ink sm:text-5xl md:text-6xl" style={{ "--from": "translateY(16px)", animationDelay: "620ms" } as React.CSSProperties}>
             The academic home for students.
           </h1>
         </section>
 
-        <section className="mt-10 max-w-2xl border-t-2 border-ink/15 pt-8">
+        <section className="snap mt-10 max-w-2xl border-t-2 border-ink/15 pt-8" style={{ "--from": "translateY(16px)", animationDelay: "760ms" } as React.CSSProperties}>
           <p className="text-xl leading-relaxed text-ink">
             Your courses, your timetable, your deadlines and the people taking
             them with you. All in your school{"\u2019"}s own curriculum.
           </p>
         </section>
 
-        <section className="mt-16 flex flex-wrap items-center gap-4">
+        <section className="snap mt-16 flex flex-wrap items-center gap-4" style={{ "--from": "translateY(16px)", animationDelay: "880ms" } as React.CSSProperties}>
           <Button href="/signup">Sign up</Button>
           <Button href="/login" variant="secondary">
             Log in

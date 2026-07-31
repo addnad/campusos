@@ -32,45 +32,50 @@ export async function completeOnboarding(_prev: unknown, formData: FormData) {
   }
   if (courses.length === 0) return { error: "Add at least one course." };
 
-  const profile = await prisma.studentProfile.create({
-    data: { userId: session.user.id, programmeId, level, semester },
-  });
+  // One transaction: a failure part-way through would otherwise leave a
+  // profile with only some of its courses, which reads as data loss to
+  // the student and is invisible to us.
+  await prisma.$transaction(async (tx) => {
+    const profile = await tx.studentProfile.create({
+      data: { userId: session.user.id, programmeId, level, semester },
+    });
 
-  for (const [i, c] of courses.entries()) {
-    let courseId = c.courseId;
+    for (const [i, c] of courses.entries()) {
+      let courseId = c.courseId;
 
-    // Student-supplied course: create it, or reuse if someone already added it.
-    if (!courseId) {
-      const existing = await prisma.course.upsert({
-        where: {
-          institutionId_normalisedCode: {
+      // Student-supplied course: create it, or reuse if someone already added it.
+      if (!courseId) {
+        const existing = await tx.course.upsert({
+          where: {
+            institutionId_normalisedCode: {
+              institutionId,
+              normalisedCode: norm(c.code),
+            },
+          },
+          update: {},
+          create: {
             institutionId,
             normalisedCode: norm(c.code),
+            displayCode: c.code.trim(),
+            title: c.title.trim(),
+            confidence: Confidence.STUDENT_SUPPLIED,
           },
-        },
-        update: {},
-        create: {
-          institutionId,
-          normalisedCode: norm(c.code),
-          displayCode: c.code.trim(),
-          title: c.title.trim(),
-          confidence: Confidence.STUDENT_SUPPLIED,
+        });
+        courseId = existing.id;
+      }
+
+      await tx.enrolment.create({
+        data: {
+          profileId: profile.id,
+          courseId,
+          level,
+          semester,
+          units: c.units,
+          colourToken: TOKENS[i % TOKENS.length],
         },
       });
-      courseId = existing.id;
     }
-
-    await prisma.enrolment.create({
-      data: {
-        profileId: profile.id,
-        courseId,
-        level,
-        semester,
-        units: c.units,
-        colourToken: TOKENS[i % TOKENS.length],
-      },
-    });
-  }
+  });
 
   redirect("/today");
 }

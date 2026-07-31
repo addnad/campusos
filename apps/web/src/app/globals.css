@@ -73,3 +73,41 @@ body {
   background-color: var(--color-ground);
   color: var(--color-ink);
 }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.rise {
+  opacity: 0;
+  animation: rise 260ms cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+
+/* Staggered entrances can trigger motion sickness. Honour the setting:
+   everything lands immediately, at full opacity, no movement. */
+@media (prefers-reduced-motion: reduce) {
+  .rise {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+/* Chaos resolving into order: each letterform starts scattered via
+   --from and snaps into place. The motion is the product's argument. */
+@keyframes snap {
+  from { opacity: 0; transform: var(--from); }
+  to   { opacity: 1; transform: none; }
+}
+
+.snap {
+  opacity: 0;
+  animation: snap 520ms cubic-bezier(0.16, 0.9, 0.24, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snap {
+    opacity: 1;
+    animation: none;
+  }
+}
