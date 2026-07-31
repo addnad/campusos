@@ -1,61 +1,43 @@
-"use client";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Wordmark } from "@/components/ui/wordmark";
 
-import { useState } from "react";
-
-const COURSES = [
-  ["ember", "ACC223"],
-  ["volt", "ACC211"],
-  ["fern", "ACC215"],
-  ["mint", "ACC217"],
-  ["teal", "BAM216"],
-  ["aqua", "STA221"],
-  ["indigo", "GNS201"],
-  ["grape", "ACC219"],
-  ["orchid", "BAM224"],
-  ["hibiscus", "ACC225"],
-] as const;
-
-export default function Home() {
-  const [dark, setDark] = useState(false);
-
-  function toggle() {
-    setDark((d) => {
-      document.documentElement.classList.toggle("dark", !d);
-      return !d;
-    });
-  }
-
+export default function Landing() {
   return (
-    <main className="min-h-screen bg-ground p-8">
-      <div className="mx-auto max-w-2xl">
-        <button
-          onClick={toggle}
-          className="mb-8 rounded-full border-2 border-ink px-4 py-2 text-sm font-bold text-ink"
-        >
-          {dark ? "Light" : "Dark"} mode
-        </button>
+    <main className="min-h-screen bg-ember">
+      <div className="mx-auto max-w-5xl px-6 py-8 sm:px-10">
+        <header className="flex items-center justify-between">
+          <Wordmark size="small" />
+          <Link href="/login" className="text-sm font-bold text-ink underline underline-offset-4 hover:opacity-70">Already a student here? Log in</Link>
+        </header>
 
-        <h1 className="font-display text-5xl text-ink">CampusOS</h1>
-        <p className="mt-2 text-ink">The academic home for students.</p>
-        <p className="mt-1 text-muted">Muted text on ground.</p>
+        <section className="mt-16 sm:mt-24">
+          <Wordmark />
+          <h1 className="mt-10 max-w-3xl font-display text-4xl leading-[1.05] text-ink sm:text-5xl md:text-6xl">
+            The academic home for students.
+          </h1>
+        </section>
 
-        <hr className="my-8 border-rule" />
+        <section className="mt-10 max-w-2xl border-t-2 border-ink/15 pt-8">
+          <p className="text-xl leading-relaxed text-ink">
+            Your courses, your timetable, your deadlines and the people taking
+            them with you. All in your school{"\u2019"}s own curriculum.
+          </p>
+        </section>
 
-        <div className="space-y-2">
-          {COURSES.map(([token, code]) => (
-            <div
-              key={code}
-              className="flex items-center gap-3 rounded-lg bg-card p-3"
-            >
-              <span
-                className="h-8 w-1.5 rounded-full"
-                style={{ background: `var(--color-${token})` }}
-              />
-              <span className="font-bold text-ink">{code}</span>
-              <span className="ml-auto text-sm text-muted">{token}</span>
-            </div>
-          ))}
-        </div>
+        <section className="mt-16 flex flex-wrap items-center gap-4">
+          <Button href="/signup">Sign up</Button>
+          <Button href="/login" variant="secondary">
+            Log in
+          </Button>
+        </section>
+
+        <footer className="mt-20 flex flex-wrap items-center gap-4 border-t-2 border-ink/15 pt-6">
+          <Wordmark size="small" />
+          <span className="text-sm text-ink/70">
+            For Nigerian polytechnics and universities.
+          </span>
+        </footer>
       </div>
     </main>
   );
