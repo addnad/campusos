@@ -1,10 +1,11 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { signIn, auth } from "@/auth";
 import { Wordmark } from "@/components/ui/wordmark";
 
 export default async function SignUp() {
   const session = await auth();
-  if (session?.user) redirect(session.user.handle ? "/today" : "/handle");
+  if (session?.user) redirect("/today");
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-ember px-6">
@@ -23,7 +24,7 @@ export default async function SignUp() {
           className="mt-10"
           action={async () => {
             "use server";
-            await signIn("google", { redirectTo: "/handle" });
+            await signIn("google", { redirectTo: "/today" });
           }}
         >
           <button
@@ -34,8 +35,8 @@ export default async function SignUp() {
           </button>
         </form>
 
-        <p className="mt-6 text-sm text-ink/60">
-          Email sign up is coming next.
+        <p className="mt-8 text-sm text-ink/70">
+          Already have an account? <Link href="/login" className="font-bold text-ink underline underline-offset-4">Log in</Link>
         </p>
       </div>
     </main>
