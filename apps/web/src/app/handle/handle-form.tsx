@@ -20,7 +20,13 @@ export function HandleForm({ suggestions }: { suggestions: string[] }) {
     const t = setTimeout(async () => {
       try {
         const res = await fetch(`/api/handle/check?h=${encodeURIComponent(value)}`);
-        setStatus(await res.json());
+        if (res.status === 401) {
+          // Session gone. Do not render this as "taken".
+          window.location.href = "/signup";
+          return;
+        }
+        const data = await res.json();
+        setStatus(typeof data?.available === "boolean" ? data : null);
       } catch {
         setStatus(null);
       } finally {

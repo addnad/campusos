@@ -20,7 +20,7 @@ export function SchoolPicker({ institutions }: { institutions: Inst[] }) {
 
       <div className="mt-4 space-y-2">
         {shown.map((i) => (
-          <button key={i.id} type="button" onClick={() => router.push(`/onboarding/declare?institution=${i.id}`)} className="flex w-full items-center gap-3 rounded-full bg-cream px-5 py-4 text-left transition-transform active:scale-[0.99]">
+          <button key={i.id} type="button" onClick={() => router.push(`/onboarding/campus?institution=${i.id}`)} className="flex w-full items-center gap-3 rounded-full bg-cream px-5 py-4 text-left transition-transform active:scale-[0.99]">
             <span className="font-bold text-ink">{i.shortName}</span>
             <span className="truncate text-sm text-ink/60">{i.name}</span>
             {i.state && <span className="ml-auto shrink-0 font-mono text-xs text-ink/50">{i.state}</span>}

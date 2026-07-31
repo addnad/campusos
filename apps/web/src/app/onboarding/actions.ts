@@ -20,9 +20,10 @@ export async function completeOnboarding(_prev: unknown, formData: FormData) {
   const level = String(formData.get("level") ?? "");
   const semester = Number(formData.get("semester") ?? 0);
   const institutionId = String(formData.get("institutionId") ?? "");
+  const campusId = String(formData.get("campusId") ?? "");
   const payload = String(formData.get("courses") ?? "[]");
 
-  if (!programmeId || !level || !semester) return { error: "Missing details." };
+  if (!programmeId || !level || !semester || !campusId) return { error: "Missing details." };
 
   let courses: { courseId?: string; code: string; title: string; units: number }[];
   try {
@@ -47,14 +48,15 @@ export async function completeOnboarding(_prev: unknown, formData: FormData) {
       if (!courseId) {
         const existing = await tx.course.upsert({
           where: {
-            institutionId_normalisedCode: {
-              institutionId,
+            campusId_normalisedCode: {
+              campusId,
               normalisedCode: norm(c.code),
             },
           },
           update: {},
           create: {
             institutionId,
+            campusId,
             normalisedCode: norm(c.code),
             displayCode: c.code.trim(),
             title: c.title.trim(),

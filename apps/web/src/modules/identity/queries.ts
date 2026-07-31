@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/prisma";
+
+export { ladderFor } from "./ladder";
 import type { InstitutionKind } from "@/generated/prisma/client";
 
 export async function institutionsByKind(kind: InstitutionKind) {
@@ -9,34 +11,20 @@ export async function institutionsByKind(kind: InstitutionKind) {
   });
 }
 
-export async function programmesFor(institutionId: string) {
-  return prisma.programme.findMany({
+export async function campusesFor(institutionId: string) {
+  return prisma.campus.findMany({
     where: { institutionId },
-    select: { id: true, name: true, award: true },
-    orderBy: [{ award: "asc" }, { name: "asc" }],
+    select: { id: true, name: true },
+    orderBy: [{ isPrimary: "desc" }, { name: "asc" }],
   });
 }
 
-/// Levels a programme has curricula for, plus the standard ladder for
-/// its award so a student can pick a level we have nothing for yet.
-export async function levelsFor(programmeId: string) {
-  const programme = await prisma.programme.findUnique({
-    where: { id: programmeId },
-    select: { award: true },
+export async function programmesFor(campusId: string) {
+  return prisma.programme.findMany({
+    where: { campusId },
+    select: { id: true, name: true, award: true, studyMode: true, years: true },
+    orderBy: [{ award: "asc" }, { studyMode: "asc" }, { name: "asc" }],
   });
-  if (!programme) return [];
-
-  const standard: Record<string, string[]> = {
-    ND: ["ND I", "ND II"],
-    HND: ["HND I", "HND II"],
-    NCE: ["NCE I", "NCE II", "NCE III"],
-  };
-
-  return (
-    standard[programme.award] ?? [
-      "100 Level", "200 Level", "300 Level", "400 Level", "500 Level",
-    ]
-  );
 }
 
 /// The prefill. Only VERIFIED entries, never excluded ones.

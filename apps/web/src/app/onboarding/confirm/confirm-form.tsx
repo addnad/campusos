@@ -7,7 +7,7 @@ type Course = { courseId?: string; code: string; title: string; units: number };
 
 const TOKENS = ["ember", "volt", "fern", "mint", "teal", "aqua", "indigo", "grape", "orchid", "hibiscus"];
 
-export function ConfirmForm({ initial, programmeId, institutionId, level, semester }: { initial: Course[]; programmeId: string; institutionId: string; level: string; semester: number }) {
+export function ConfirmForm({ initial, programmeId, institutionId, campusId, level, semester }: { initial: Course[]; programmeId: string; institutionId: string; campusId: string; level: string; semester: number }) {
   const [state, action, pending] = useActionState(completeOnboarding, null);
   const [courses, setCourses] = useState<Course[]>(initial);
   const [editing, setEditing] = useState(initial.length === 0);
@@ -30,6 +30,7 @@ export function ConfirmForm({ initial, programmeId, institutionId, level, semest
     <form action={action} className="mt-6">
       <input type="hidden" name="programmeId" value={programmeId} />
       <input type="hidden" name="institutionId" value={institutionId} />
+      <input type="hidden" name="campusId" value={campusId} />
       <input type="hidden" name="level" value={level} />
       <input type="hidden" name="semester" value={semester} />
       <input type="hidden" name="courses" value={JSON.stringify(courses)} />

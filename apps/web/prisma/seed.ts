@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient, InstitutionKind, Confidence } from "../src/generated/prisma/client";
+import { PrismaClient, InstitutionKind, Confidence, StudyMode } from "../src/generated/prisma/client";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
@@ -117,6 +117,7 @@ const LASU_CS = [
 
 async function seedCurriculum(
   institutionId: string,
+  campusId: string,
   programmeId: string,
   blocks: { level: string; semester: number; courses: any[][] }[],
 ) {
@@ -137,10 +138,10 @@ async function seedCurriculum(
       const excluded = row.length > 4 ? (row[4] as boolean) : false;
 
       const course = await prisma.course.upsert({
-        where: { institutionId_normalisedCode: { institutionId, normalisedCode: norm(code) } },
+        where: { campusId_normalisedCode: { campusId, normalisedCode: norm(code) } },
         update: { title, confidence: Confidence.VERIFIED },
         create: {
-          institutionId, normalisedCode: norm(code), displayCode: code,
+          institutionId, campusId, normalisedCode: norm(code), displayCode: code,
           title, confidence: Confidence.VERIFIED,
         },
       });
@@ -157,6 +158,41 @@ async function seedCurriculum(
   }
 }
 
+
+/// YABATECH part-time, from the college's 2025/2026 admission notice.
+/// Weekday/evening and weekend carry different programme lists and both
+/// run six semesters. Programme names only: the course lists are not
+/// published there, so students supply them.
+const YABA_PT_WEEKDAY = [
+  "Building Technology", "Civil Engineering", "Computer Science",
+  "Computer Engineering", "Electrical Engineering",
+  "Estate Management & Valuation", "General Art",
+  "Fashion Design & Clothing Technology", "Food Technology",
+  "Hospitality Management", "Mechanical Engineering",
+  "Metallurgical Engineering", "Industrial Maintenance Engineering",
+  "Science Laboratory Technology", "Statistics", "Mass Communication",
+];
+
+/// Epe only, per the same notice.
+const EPE_PT_WEEKDAY = ["Agricultural Technology"];
+
+/// Weekend programmes. All five run at both campuses except Banking &
+/// Finance, which the notice marks ND only.
+const PT_WEEKEND = [
+  "Accountancy", "Banking & Finance", "Business Administration",
+  "Marketing", "Office Technology & Management",
+];
+
+async function seedProgrammes(institutionId: string, campusId: string, names: string[], award: string, mode: StudyMode, years: number) {
+  for (const name of names) {
+    await prisma.programme.upsert({
+      where: { campusId_name_award_studyMode: { campusId, name, award, studyMode: mode } },
+      update: { years },
+      create: { institutionId, campusId, name, award, studyMode: mode, years },
+    });
+  }
+}
+
 async function main() {
   const byShortName: Record<string, string> = {};
   for (const inst of INSTITUTIONS) {
@@ -167,22 +203,55 @@ async function main() {
   }
   console.log(`institutions: ${INSTITUTIONS.length}`);
 
-  const yabatech = byShortName["YABATECH"];
-  const ndAcc = await prisma.programme.upsert({
-    where: { institutionId_name_award: { institutionId: yabatech, name: "Accountancy", award: "ND" } },
-    update: {},
-    create: { institutionId: yabatech, name: "Accountancy", award: "ND" },
+  // Every institution has at least one campus. Where there is only one it
+  // is auto-selected in onboarding and never shown.
+  const campusOf: Record<string, string> = {};
+  for (const inst of INSTITUTIONS) {
+    const c = await prisma.campus.upsert({
+      where: { institutionId_name: { institutionId: byShortName[inst.shortName], name: "Main Campus" } },
+      update: {},
+      create: { institutionId: byShortName[inst.shortName], name: "Main Campus", isPrimary: true },
+    });
+    campusOf[inst.shortName] = c.id;
+  }
+
+  // YABATECH runs programmes at Yaba and Epe.
+  const yabatechId = byShortName["YABATECH"];
+  const yaba = await prisma.campus.upsert({
+    where: { institutionId_name: { institutionId: yabatechId, name: "Yaba" } },
+    update: { isPrimary: true },
+    create: { institutionId: yabatechId, name: "Yaba", isPrimary: true },
   });
-  await seedCurriculum(yabatech, ndAcc.id, ND_ACCOUNTANCY);
+  const epe = await prisma.campus.upsert({
+    where: { institutionId_name: { institutionId: yabatechId, name: "Epe" } },
+    update: {},
+    create: { institutionId: yabatechId, name: "Epe" },
+  });
+  await prisma.campus.deleteMany({ where: { institutionId: yabatechId, name: "Main Campus" } });
+  campusOf["YABATECH"] = yaba.id;
+
+  const ndAcc = await prisma.programme.upsert({
+    where: { campusId_name_award_studyMode: { campusId: yaba.id, name: "Accountancy", award: "ND", studyMode: StudyMode.FULL_TIME } },
+    update: { years: 2 },
+    create: { institutionId: yabatechId, campusId: yaba.id, name: "Accountancy", award: "ND", studyMode: StudyMode.FULL_TIME, years: 2 },
+  });
+  await seedCurriculum(yabatechId, yaba.id, ndAcc.id, ND_ACCOUNTANCY);
+
+  // Part-time: six semesters, so three years on the ladder.
+  await seedProgrammes(yabatechId, yaba.id, YABA_PT_WEEKDAY, "ND", StudyMode.PART_TIME_WEEKDAY, 3);
+  await seedProgrammes(yabatechId, epe.id, EPE_PT_WEEKDAY, "ND", StudyMode.PART_TIME_WEEKDAY, 3);
+  await seedProgrammes(yabatechId, yaba.id, PT_WEEKEND, "ND", StudyMode.PART_TIME_WEEKEND, 3);
+  await seedProgrammes(yabatechId, epe.id, PT_WEEKEND, "ND", StudyMode.PART_TIME_WEEKEND, 3);
+  console.log("YABATECH part-time: weekday and weekend, Yaba and Epe");
   console.log("YABATECH ND Accountancy: 4 semesters");
 
   const lasu = byShortName["LASU"];
   const bscCs = await prisma.programme.upsert({
-    where: { institutionId_name_award: { institutionId: lasu, name: "Computer Science", award: "BSc" } },
-    update: {},
-    create: { institutionId: lasu, name: "Computer Science", award: "BSc" },
+    where: { campusId_name_award_studyMode: { campusId: campusOf["LASU"], name: "Computer Science", award: "BSc", studyMode: StudyMode.FULL_TIME } },
+    update: { years: 4 },
+    create: { institutionId: lasu, campusId: campusOf["LASU"], name: "Computer Science", award: "BSc", studyMode: StudyMode.FULL_TIME, years: 4 },
   });
-  await seedCurriculum(lasu, bscCs.id, LASU_CS);
+  await seedCurriculum(lasu, campusOf["LASU"], bscCs.id, LASU_CS);
   console.log("LASU BSc Computer Science: 100 and 200 level");
 
   const courses = await prisma.course.count();

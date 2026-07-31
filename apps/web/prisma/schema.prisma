@@ -17,6 +17,17 @@ enum Confidence {
 
 /// University, polytechnic, or college of education. Students pick the
 /// type before the school, so the list they see is never mixed.
+/// Part-time is a distinct offering, not a student attribute: it runs
+/// longer, times differently, and sequences courses differently. It
+/// belongs to the programme so the prefill is never ambiguous.
+enum StudyMode {
+  FULL_TIME
+  PART_TIME_WEEKDAY
+  PART_TIME_WEEKEND
+  SANDWICH
+  DISTANCE
+}
+
 enum InstitutionKind {
   UNIVERSITY
   POLYTECHNIC
@@ -31,6 +42,7 @@ model Institution {
   shortName  String          @unique
   kind       InstitutionKind
   state      String?
+  campuses   Campus[]
   programmes Programme[]
   courses    Course[]
   createdAt  DateTime        @default(now())
@@ -39,19 +51,44 @@ model Institution {
   @@index([kind])
 }
 
+/// A physical site. Campus is a hard boundary, not a filter: a student
+/// picks one and never sees anything outside it. Different lecturers,
+/// halls, timetables and communities. Single-campus institutions get one
+/// row that is auto-selected and never shown.
+model Campus {
+  id            String      @id @default(cuid())
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  institutionId String
+  name          String
+  isPrimary     Boolean     @default(false)
+  programmes    Programme[]
+  courses       Course[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([institutionId, name])
+}
+
 /// Programme, not department (ADR-001). Seeded by CampusOS.
 model Programme {
   id            String       @id @default(cuid())
   institution   Institution  @relation(fields: [institutionId], references: [id], onDelete: Cascade)
   institutionId String
+  campus        Campus       @relation(fields: [campusId], references: [id], onDelete: Cascade)
+  campusId      String
   name          String
   award         String
+  studyMode     StudyMode    @default(FULL_TIME)
+  /// How many years the ladder runs. Full-time ND is 2; part-time ND is
+  /// 3 (six semesters). Degrees are 4, or 5 where the programme is.
+  years         Int          @default(2)
   curricula     Curriculum[]
   profiles      StudentProfile[]
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
-  @@unique([institutionId, name, award])
+  @@unique([campusId, name, award, studyMode])
+  @@index([institutionId])
 }
 
 /// The course list for one programme, level and semester.
@@ -88,6 +125,8 @@ model Course {
   id             String            @id @default(cuid())
   institution    Institution       @relation(fields: [institutionId], references: [id], onDelete: Cascade)
   institutionId  String
+  campus         Campus            @relation(fields: [campusId], references: [id], onDelete: Cascade)
+  campusId       String
   /// Uppercased, non-alphanumerics stripped. "acc-223" and "ACC 223" both -> "ACC223"
   normalisedCode String
   /// What a student actually typed, for display.
@@ -105,7 +144,8 @@ model Course {
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 
-  @@unique([institutionId, normalisedCode])
+  @@unique([campusId, normalisedCode])
+  @@index([institutionId])
   @@index([subjectId])
 }
 
