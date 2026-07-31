@@ -7,3 +7,7 @@ packages:
 allowBuilds:
   sharp: false
   unrs-resolver: false
+  # Prisma's postinstall generates the client. This one must run.
+  "@prisma/client": true
+  prisma: true
+  "@prisma/engines": true

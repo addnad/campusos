@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// A university or polytechnic.
+model Institution {
+  id         String      @id @default(cuid())
+  name       String
+  shortName  String      @unique
+  kind       String
+  programmes Programme[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+/// A course of study. Programme, not department (ADR-001).
+model Programme {
+  id            String       @id @default(cuid())
+  institution   Institution  @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  institutionId String
+  name          String
+  award         String
+  curricula     Curriculum[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@unique([institutionId, name, award])
+}
+
+/// One level+semester of a programme, for an intake year.
+/// Versioned by intake so a 2023 cohort keeps its own course list.
+model Curriculum {
+  id          String             @id @default(cuid())
+  programme   Programme          @relation(fields: [programmeId], references: [id], onDelete: Cascade)
+  programmeId String
+  level       String
+  semester    Int
+  intakeYear  Int
+  courses     CurriculumCourse[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@unique([programmeId, level, semester, intakeYear])
+}
+
+/// The general academic concept, shared across institutions (ADR-002).
+model Subject {
+  id      String             @id @default(cuid())
+  name    String             @unique
+  courses CurriculumCourse[]
+}
+
+/// One institution's implementation of a Subject (ADR-002).
+model CurriculumCourse {
+  id           String     @id @default(cuid())
+  curriculum   Curriculum @relation(fields: [curriculumId], references: [id], onDelete: Cascade)
+  curriculumId String
+  subject      Subject    @relation(fields: [subjectId], references: [id])
+  subjectId    String
+  code         String
+  title        String
+  units        Int
+  lecturer     String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([curriculumId, code])
+  @@index([subjectId])
+}
