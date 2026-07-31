@@ -7,18 +7,39 @@ datasource db {
   provider = "postgresql"
 }
 
-/// A university or polytechnic.
-model Institution {
-  id         String      @id @default(cuid())
-  name       String
-  shortName  String      @unique
-  kind       String
-  programmes Programme[]
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+/// How confident we are that a piece of curriculum data is correct.
+/// Only VERIFIED is prefilled to new students.
+enum Confidence {
+  STUDENT_SUPPLIED
+  CORROBORATED
+  VERIFIED
 }
 
-/// A course of study. Programme, not department (ADR-001).
+/// University, polytechnic, or college of education. Students pick the
+/// type before the school, so the list they see is never mixed.
+enum InstitutionKind {
+  UNIVERSITY
+  POLYTECHNIC
+  COLLEGE_OF_EDUCATION
+  OTHER
+}
+
+/// Seeded and maintained by CampusOS. Finite, public, changes yearly.
+model Institution {
+  id         String          @id @default(cuid())
+  name       String
+  shortName  String          @unique
+  kind       InstitutionKind
+  state      String?
+  programmes Programme[]
+  courses    Course[]
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  @@index([kind])
+}
+
+/// Programme, not department (ADR-001). Seeded by CampusOS.
 model Programme {
   id            String       @id @default(cuid())
   institution   Institution  @relation(fields: [institutionId], references: [id], onDelete: Cascade)
@@ -26,22 +47,26 @@ model Programme {
   name          String
   award         String
   curricula     Curriculum[]
+  profiles      StudentProfile[]
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
   @@unique([institutionId, name, award])
 }
 
-/// One level+semester of a programme, for an intake year.
-/// Versioned by intake so a 2023 cohort keeps its own course list.
+/// The course list for one programme, level and semester.
+/// Mostly student-built. Semester is 1 or 2 nationwide.
 model Curriculum {
   id          String             @id @default(cuid())
   programme   Programme          @relation(fields: [programmeId], references: [id], onDelete: Cascade)
   programmeId String
   level       String
   semester    Int
-  intakeYear  Int
-  courses     CurriculumCourse[]
+  /// 0 means current / unversioned. A real intake year (2023) versions
+  /// the curriculum so a cohort keeps its own course list. Not nullable:
+  /// null in a compound unique never matches, so the constraint would not hold.
+  intakeYear  Int                @default(0)
+  entries     CurriculumEntry[]
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
 
@@ -49,26 +74,108 @@ model Curriculum {
 }
 
 /// The general academic concept, shared across institutions (ADR-002).
+/// Entrepreneurship is BAM 126 at a polytechnic and ENT 202 at LASU.
 model Subject {
-  id      String             @id @default(cuid())
-  name    String             @unique
-  courses CurriculumCourse[]
+  id      String   @id @default(cuid())
+  name    String   @unique
+  courses Course[]
 }
 
-/// One institution's implementation of a Subject (ADR-002).
-model CurriculumCourse {
+/// One institution's course. Identity is institution + normalisedCode:
+/// CSC 201 at LASU and CSC 201 at UNILAG are unrelated.
+/// Not scoped to programme, so GNS 201 is one course across all of them.
+model Course {
+  id             String            @id @default(cuid())
+  institution    Institution       @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  institutionId  String
+  /// Uppercased, non-alphanumerics stripped. "acc-223" and "ACC 223" both -> "ACC223"
+  normalisedCode String
+  /// What a student actually typed, for display.
+  displayCode    String
+  title          String
+  subject        Subject?          @relation(fields: [subjectId], references: [id])
+  subjectId      String?
+  confidence     Confidence        @default(STUDENT_SUPPLIED)
+  /// Set when a correction merges this course into another.
+  mergedInto     Course?           @relation("CourseMerge", fields: [mergedIntoId], references: [id])
+  mergedIntoId   String?
+  mergedFrom     Course[]          @relation("CourseMerge")
+  entries        CurriculumEntry[]
+  enrolments     Enrolment[]
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@unique([institutionId, normalisedCode])
+  @@index([subjectId])
+}
+
+/// A course's place in one curriculum: its units and whether it is
+/// compulsory. Units live here because the same course can carry
+/// different weight in different programmes.
+model CurriculumEntry {
   id           String     @id @default(cuid())
   curriculum   Curriculum @relation(fields: [curriculumId], references: [id], onDelete: Cascade)
   curriculumId String
-  subject      Subject    @relation(fields: [subjectId], references: [id])
-  subjectId    String
-  code         String
-  title        String
+  course       Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId     String
   units        Int
-  lecturer     String?
+  compulsory   Boolean    @default(true)
+  /// LASU lists courses in a programme's table that its own students
+  /// must not take. Excluded entries are never prefilled.
+  excluded     Boolean    @default(false)
+  confidence   Confidence @default(STUDENT_SUPPLIED)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
-  @@unique([curriculumId, code])
-  @@index([subjectId])
+  @@unique([curriculumId, courseId])
+}
+
+model User {
+  id        String           @id @default(cuid())
+  email     String           @unique
+  name      String?
+  profiles  StudentProfile[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+/// One active profile per user in the MVP. The schema allows many so
+/// transfers and ND -> HND are possible later without a migration.
+model StudentProfile {
+  id           String      @id @default(cuid())
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  programme    Programme   @relation(fields: [programmeId], references: [id])
+  programmeId  String
+  level        String
+  semester     Int
+  /// Optional. Sensitive: never exposed in URLs or to other students.
+  matricNumber String?
+  isActive     Boolean     @default(true)
+  enrolments   Enrolment[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([userId])
+}
+
+/// What this student is actually carrying. The curriculum is a menu;
+/// this is the truth. Carryovers, electives and drops live here.
+/// Every screen in the app reads from this, never from Curriculum.
+model Enrolment {
+  id         String         @id @default(cuid())
+  profile    StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId  String
+  course     Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId   String
+  level      String
+  semester   Int
+  units      Int
+  /// Stable per student per semester, assigned at enrolment.
+  colourToken String
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@unique([profileId, courseId, level, semester])
+  @@index([courseId])
 }
