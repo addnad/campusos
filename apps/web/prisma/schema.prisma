@@ -131,12 +131,79 @@ model CurriculumEntry {
 }
 
 model User {
-  id        String           @id @default(cuid())
-  email     String           @unique
-  name      String?
-  profiles  StudentProfile[]
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
+  id            String           @id @default(cuid())
+  email         String           @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  passwordHash  String?
+
+  /// Public handle as chosen, for display. Unique on handleLower.
+  handle        String?
+  /// Lowercased handle. Uniqueness is checked here so Tunde and tunde
+  /// cannot both exist: same-looking handles are an impersonation vector.
+  handleLower   String?          @unique
+  /// Gates the once-a-year change.
+  handleSetAt   DateTime?
+
+  accounts      Account[]
+  sessions      Session[]
+  profiles      StudentProfile[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+/// OAuth accounts linked to a user. Shape is dictated by @auth/prisma-adapter.
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+/// A handle that is not available even though no active user holds it.
+/// Covers the 3-month grace after deletion, and old handles after a rename,
+/// so nobody can immediately claim a name someone was known by.
+model HandleReservation {
+  id          String   @id @default(cuid())
+  handleLower String   @unique
+  /// The user who held it, if the account still exists.
+  formerUserId String?
+  releasedAt  DateTime @default(now())
+  /// Available again after this. releasedAt + 3 months.
+  expiresAt   DateTime
+
+  @@index([expiresAt])
 }
 
 /// One active profile per user in the MVP. The schema allows many so
