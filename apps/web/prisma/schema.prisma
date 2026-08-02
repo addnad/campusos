@@ -7,6 +7,18 @@ datasource db {
   provider = "postgresql"
 }
 
+/// Whether a student is currently taking a course. Communities pool
+/// every student who ever enrolled, so a fresher can reach someone who
+/// passed the course last year — that continuity is the point, and it is
+/// what a semester WhatsApp group cannot do. Deadlines, notifications
+/// and counts read ACTIVE only, so past students are not pinged about a
+/// deadline that is not theirs.
+enum EnrolmentStatus {
+  ACTIVE
+  COMPLETED
+  DROPPED
+}
+
 /// How confident we are that a piece of curriculum data is correct.
 /// Only VERIFIED is prefilled to new students.
 enum Confidence {
@@ -77,8 +89,16 @@ model Programme {
   campus        Campus       @relation(fields: [campusId], references: [id], onDelete: Cascade)
   campusId      String
   name          String
+  /// Uppercased, non-alphanumerics stripped, for duplicate detection.
+  /// "Computer Science" and "computer sciences" are not the same string
+  /// but are the same programme, so near-matches are surfaced to the
+  /// student before a new one is created.
+  normalisedName String      @default("")
   award         String
   studyMode     StudyMode    @default(FULL_TIME)
+  /// Student-declared programmes are shown but marked, so a typo does
+  /// not sit next to sourced data looking equally authoritative.
+  confidence    Confidence   @default(VERIFIED)
   /// How many years the ladder runs. Full-time ND is 2; part-time ND is
   /// 3 (six semesters). Degrees are 4, or 5 where the programme is.
   years         Int          @default(2)
@@ -278,6 +298,7 @@ model Enrolment {
   level      String
   semester   Int
   units      Int
+  status     EnrolmentStatus @default(ACTIVE)
   /// Stable per student per semester, assigned at enrolment.
   colourToken String
   createdAt  DateTime       @default(now())
@@ -285,4 +306,5 @@ model Enrolment {
 
   @@unique([profileId, courseId, level, semester])
   @@index([courseId])
+  @@index([courseId, status])
 }

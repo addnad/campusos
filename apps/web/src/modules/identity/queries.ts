@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
 export { ladderFor } from "./ladder";
+export { normaliseName, looksLike } from "./normalise";
 import type { InstitutionKind } from "@/generated/prisma/client";
 
 export async function institutionsByKind(kind: InstitutionKind) {
@@ -52,4 +53,13 @@ export async function prefillFor(
     units: e.units,
     compulsory: e.compulsory,
   }));
+}
+
+/// Every programme at a campus, for duplicate detection when a student
+/// declares one we do not have.
+export async function programmeNamesFor(campusId: string) {
+  return prisma.programme.findMany({
+    where: { campusId },
+    select: { id: true, name: true, award: true, studyMode: true },
+  });
 }

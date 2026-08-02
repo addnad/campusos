@@ -6,6 +6,7 @@ const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
 const norm = (code: string) => code.toUpperCase().replace(/[^A-Z0-9]/g, "");
+const normName = (n: string) => n.toUpperCase().replace(/[^A-Z0-9]/g, "");
 
 const INSTITUTIONS = [
   { shortName: "UNILAG", name: "University of Lagos", kind: InstitutionKind.UNIVERSITY, state: "Lagos" },
@@ -187,8 +188,8 @@ async function seedProgrammes(institutionId: string, campusId: string, names: st
   for (const name of names) {
     await prisma.programme.upsert({
       where: { campusId_name_award_studyMode: { campusId, name, award, studyMode: mode } },
-      update: { years },
-      create: { institutionId, campusId, name, award, studyMode: mode, years },
+      update: { years, normalisedName: normName(name) },
+      create: { institutionId, campusId, name, normalisedName: normName(name), award, studyMode: mode, years },
     });
   }
 }
@@ -293,13 +294,104 @@ const YABA_HND_PT_WEEKEND = [
   "Office Technology & Management", "Banking and Finance",
 ];
 
+
+/// UNILAG full-time undergraduate programmes, from the Admissions Office
+/// programmes page (admissions.unilag.edu.ng). Awards and durations are
+/// assigned by discipline convention, not stated on that page.
+const UNILAG: [string, string, number][] = [
+  // Arts
+  ["Creative Arts", "BA", 4], ["English", "BA", 4], ["French", "BA", 4],
+  ["Russian", "BA", 4], ["History & Strategic Studies", "BA", 4],
+  ["Linguistics, Igbo/Yoruba", "BA", 4], ["Chinese", "BA", 4],
+  ["Philosophy", "BA", 4], ["Christian Religious Studies", "BA", 4],
+  ["Islamic Religious Studies", "BA", 4],
+  // Basic Medical Sciences
+  ["Pharmacology", "BSc", 4], ["Physiology", "BSc", 4],
+  ["Medical Laboratory Science", "BSc", 5],
+  // Clinical Sciences
+  ["Medicine and Surgery", "MBBS", 6], ["Nursing", "BNSc", 5],
+  ["Physiotherapy", "BSc", 5], ["Radiography", "BSc", 5],
+  ["Dentistry", "BDS", 6],
+  // Education
+  ["Adult Education", "BEd", 4], ["Education Economics", "BEd", 4],
+  ["Business Education", "BEd", 4], ["Education Islamic Religious Studies", "BEd", 4],
+  ["Education Igbo", "BEd", 4], ["Education English", "BEd", 4],
+  ["Early Childhood Education", "BEd", 4], ["Education Yoruba", "BEd", 4],
+  ["Education French", "BEd", 4], ["Education History", "BEd", 4],
+  ["Education Christian Religious Studies", "BEd", 4],
+  ["Education Geography", "BEd", 4], ["Educational Administration", "BEd", 4],
+  ["Educational Foundations", "BEd", 4], ["Health Education", "BEd", 4],
+  ["Human Kinetics Education", "BEd", 4], ["Education Biology", "BEd", 4],
+  ["Education Chemistry", "BEd", 4], ["Education Home Economics", "BEd", 4],
+  ["Integrated Science Education", "BEd", 4], ["Education Mathematics", "BEd", 4],
+  ["Education Physics", "BEd", 4], ["Technology Education", "BEd", 4],
+  // Engineering
+  ["Biomedical Engineering", "BEng", 5], ["Chemical & Petroleum Engineering", "BEng", 5],
+  ["Civil & Environmental Engineering", "BEng", 5], ["Computer Engineering", "BEng", 5],
+  ["Electrical & Electronics Engineering", "BEng", 5], ["Mechanical Engineering", "BEng", 5],
+  ["Metallurgical & Material Engineering", "BEng", 5],
+  ["Surveying & Geoinformatics Engineering", "BEng", 5], ["Systems Engineering", "BEng", 5],
+  // Environmental Sciences
+  ["Architecture", "BSc", 5], ["Building", "BSc", 5], ["Estate Management", "BSc", 5],
+  ["Quantity Surveying", "BSc", 5], ["Urban & Regional Planning", "BSc", 5],
+  // Law
+  ["Law", "LLB", 5],
+  // Management Sciences
+  ["Accounting", "BSc", 4], ["Actuarial Science", "BSc", 4], ["Insurance", "BSc", 4],
+  ["Business Administration", "BSc", 4], ["Finance", "BSc", 4],
+  ["Industrial Relations & Personnel Management", "BSc", 4],
+  // Pharmacy
+  ["Pharmacy", "PharmD", 6],
+  // Science
+  ["Botany", "BSc", 4], ["Cell Biology & Genetics", "BSc", 4], ["Chemistry", "BSc", 4],
+  ["Computer Science", "BSc", 4], ["Geology", "BSc", 4], ["Geophysics", "BSc", 4],
+  ["Marine Biology", "BSc", 4], ["Fisheries", "BSc", 4], ["Mathematics", "BSc", 4],
+  ["Industrial Mathematics", "BSc", 4], ["Statistics", "BSc", 4],
+  ["Microbiology", "BSc", 4], ["Physics", "BSc", 4], ["Zoology", "BSc", 4],
+  // Social Sciences
+  ["Economics", "BSc", 4], ["Geography", "BSc", 4], ["Mass Communication", "BSc", 4],
+  ["Political Science", "BSc", 4], ["Psychology", "BSc", 4], ["Social Work", "BSc", 4],
+  ["Sociology", "BSc", 4],
+];
+
+
+/// NUC CCMAS core for BSc Computer Science, 100 level. Sourced from the
+/// University of Ibadan's published CCMAS course list; the national core
+/// is NUC-mandated so it holds across Nigerian universities. UI's own
+/// addition (UI-COS 103) is deliberately excluded — it is not a UNILAG
+/// course and would create a community nobody belongs to.
+///
+/// The source lists 100 level as one block, not split by semester.
+/// Split here by the odd/even code convention Nigerian universities use.
+/// Inferred, not stated: a wrong semester is visible and correctable on
+/// the confirm screen.
+const CCMAS_CS_100: { level: string; semester: number; courses: any[][] }[] = [
+  { level: "100 Level", semester: 1, courses: [
+    ["GST 111", "Communication in English", 2, true, false],
+    ["COS 101", "Introduction to Computing Sciences", 3, true, false],
+    ["MTH 101", "Elementary Mathematics I (Algebra and Trigonometry)", 2, true, false],
+    ["MTH 103", "Elementary Mathematics III (Vectors, Geometry and Dynamics)", 2, false, false],
+    ["STA 111", "Descriptive Statistics", 3, true, false],
+    ["PHY 101", "General Physics I (Mechanics)", 2, true, false],
+    ["PHY 107", "General Practical Physics I", 1, true, false],
+  ]},
+  { level: "100 Level", semester: 2, courses: [
+    ["GST 112", "Nigerian Peoples and Culture", 2, true, false],
+    ["COS 102", "Problem Solving", 3, true, false],
+    ["MTH 102", "Elementary Mathematics II (Calculus)", 2, true, false],
+    ["STA 122", "Statistical Computing I", 3, false, false],
+    ["PHY 102", "General Physics II (Electricity and Magnetism)", 2, true, false],
+    ["PHY 108", "General Practical Physics II", 1, true, false],
+  ]},
+];
+
 async function seedProgrammeList(institutionId: string, campusId: string, rows: [string, string, StudyMode][]) {
   for (const [name, award, mode] of rows) {
     const years = mode === StudyMode.FULL_TIME ? 2 : 3;
     await prisma.programme.upsert({
       where: { campusId_name_award_studyMode: { campusId, name, award, studyMode: mode } },
-      update: { years },
-      create: { institutionId, campusId, name, award, studyMode: mode, years },
+      update: { years, normalisedName: normName(name) },
+      create: { institutionId, campusId, name, normalisedName: normName(name), award, studyMode: mode, years },
     });
   }
 }
@@ -343,8 +435,8 @@ async function main() {
 
   const ndAcc = await prisma.programme.upsert({
     where: { campusId_name_award_studyMode: { campusId: yaba.id, name: "Accountancy", award: "ND", studyMode: StudyMode.FULL_TIME } },
-    update: { years: 2 },
-    create: { institutionId: yabatechId, campusId: yaba.id, name: "Accountancy", award: "ND", studyMode: StudyMode.FULL_TIME, years: 2 },
+    update: { years: 2, normalisedName: normName("Accountancy") },
+    create: { institutionId: yabatechId, campusId: yaba.id, name: "Accountancy", normalisedName: normName("Accountancy"), award: "ND", studyMode: StudyMode.FULL_TIME, years: 2 },
   });
   await seedCurriculum(yabatechId, yaba.id, ndAcc.id, ND_ACCOUNTANCY);
 
@@ -365,10 +457,29 @@ async function main() {
   const lasu = byShortName["LASU"];
   const bscCs = await prisma.programme.upsert({
     where: { campusId_name_award_studyMode: { campusId: campusOf["LASU"], name: "Computer Science", award: "BSc", studyMode: StudyMode.FULL_TIME } },
-    update: { years: 4 },
-    create: { institutionId: lasu, campusId: campusOf["LASU"], name: "Computer Science", award: "BSc", studyMode: StudyMode.FULL_TIME, years: 4 },
+    update: { years: 4, normalisedName: normName("Computer Science") },
+    create: { institutionId: lasu, campusId: campusOf["LASU"], name: "Computer Science", normalisedName: normName("Computer Science"), award: "BSc", studyMode: StudyMode.FULL_TIME, years: 4 },
   });
   await seedCurriculum(lasu, campusOf["LASU"], bscCs.id, LASU_CS);
+
+  const unilag = byShortName["UNILAG"];
+  for (const [name, award, years] of UNILAG) {
+    await prisma.programme.upsert({
+      where: { campusId_name_award_studyMode: { campusId: campusOf["UNILAG"], name, award, studyMode: StudyMode.FULL_TIME } },
+      update: { years, normalisedName: normName(name) },
+      create: { institutionId: unilag, campusId: campusOf["UNILAG"], name, normalisedName: normName(name), award, studyMode: StudyMode.FULL_TIME, years },
+    });
+  }
+  console.log(`UNILAG: ${UNILAG.length} full-time programmes`);
+
+  const unilagCs = await prisma.programme.findFirst({
+    where: { campusId: campusOf["UNILAG"], name: "Computer Science", award: "BSc", studyMode: StudyMode.FULL_TIME },
+    select: { id: true },
+  });
+  if (unilagCs) {
+    await seedCurriculum(unilag, campusOf["UNILAG"], unilagCs.id, CCMAS_CS_100);
+    console.log("UNILAG BSc Computer Science: 100 level (CCMAS core)");
+  }
   console.log("LASU BSc Computer Science: 100 and 200 level");
 
   const courses = await prisma.course.count();

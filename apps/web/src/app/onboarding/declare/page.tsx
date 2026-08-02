@@ -31,7 +31,7 @@ export default async function Declare({ searchParams }: { searchParams: Promise<
         <span>{school.name}{multi ? ` \u00b7 ${site.name}` : ""}</span>
         <Link href={`/onboarding?kind=${school.kind}`} className="text-sm font-bold uppercase tracking-wide text-ink underline underline-offset-4">Change</Link>
       </p>
-      <DeclareForm programmes={programmes} institutionId={institution} campusId={campus} />
+      <DeclareForm programmes={programmes} institutionId={institution} campusId={campus} kind={school.kind as never} />
     </OnboardingShell>
   );
 }
