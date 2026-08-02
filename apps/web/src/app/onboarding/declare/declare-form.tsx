@@ -18,6 +18,7 @@ const MODE_LABEL: Record<Mode, string> = {
 export function DeclareForm({ programmes, institutionId, campusId }: { programmes: Programme[]; institutionId: string; campusId: string }) {
   const router = useRouter();
   const [mode, setMode] = useState<Mode | null>(null);
+  const [award, setAward] = useState<string | null>(null);
   const [programme, setProgramme] = useState<Programme | null>(null);
   const [level, setLevel] = useState<string | null>(null);
   const [semester, setSemester] = useState<1 | 2 | null>(null);
@@ -28,15 +29,25 @@ export function DeclareForm({ programmes, institutionId, campusId }: { programme
   const effectiveMode = modes.length === 1 ? modes[0] : mode;
 
   const inMode = effectiveMode ? programmes.filter((p) => p.studyMode === effectiveMode) : [];
+
+  // Award is its own step: 81 programmes truncated to six showed only HND,
+  // so ND looked absent entirely.
+  // Ladder order, not alphabetical: students do ND before HND.
+  const AWARD_ORDER = ["ND", "HND", "NCE", "BSc", "BEng", "PGD"];
+  const awards = [...new Set(inMode.map((p) => p.award))].sort(
+    (a, b) => (AWARD_ORDER.indexOf(a) + 1 || 99) - (AWARD_ORDER.indexOf(b) + 1 || 99),
+  );
+  const effectiveAward = awards.length === 1 ? awards[0] : award;
+  const inAward = effectiveAward ? inMode.filter((p) => p.award === effectiveAward) : [];
   const term = q.trim().toLowerCase();
-  const shown = searching && term ? inMode.filter((p) => p.name.toLowerCase().includes(term)) : inMode.slice(0, 6);
+  const shown = searching && term ? inAward.filter((p) => p.name.toLowerCase().includes(term)) : inAward.slice(0, 6);
 
   // The ladder is a property of the programme: full-time ND runs two
   // years, part-time ND runs three.
   const levels = programme ? ladderFor(programme.award, programme.years) : [];
 
   function pickMode(m: Mode) {
-    setMode(m); setProgramme(null); setLevel(null); setSemester(null); setSearching(false); setQ("");
+    setMode(m); setAward(null); setProgramme(null); setLevel(null); setSemester(null); setSearching(false); setQ("");
   }
   function pickProgramme(p: Programme) {
     setProgramme(p); setLevel(null); setSemester(null);
@@ -69,9 +80,20 @@ export function DeclareForm({ programmes, institutionId, campusId }: { programme
         </>
       )}
 
-      {effectiveMode && (
+      {effectiveMode && awards.length > 1 && (
         <>
-          <p className={`${label} ${modes.length > 1 ? "mt-8" : ""}`}>Programme</p>
+          <p className={`${label} ${modes.length > 1 ? "mt-8" : ""}`}>Award</p>
+          <div className="mt-2 flex gap-2">
+            {awards.map((a) => (
+              <button key={a} type="button" onClick={() => { setAward(a); setProgramme(null); setLevel(null); setSemester(null); setSearching(false); setQ(""); }} className={`flex-1 rounded-full px-4 py-4 font-bold transition-transform active:scale-[0.99] ${effectiveAward === a ? on : off}`}>{a}</button>
+            ))}
+          </div>
+        </>
+      )}
+
+      {effectiveMode && effectiveAward && (
+        <>
+          <p className={`${label} ${modes.length > 1 || awards.length > 1 ? "mt-8" : ""}`}>Programme</p>
           <div className="mt-2 space-y-2">
             {shown.map((p) => (
               <button key={p.id} type="button" onClick={() => pickProgramme(p)} className={`${pill} ${programme?.id === p.id ? on : off}`}>
@@ -79,11 +101,11 @@ export function DeclareForm({ programmes, institutionId, campusId }: { programme
                 {programme?.id === p.id && <span className="ml-auto text-lg">&#10003;</span>}
               </button>
             ))}
-            {inMode.length === 0 && <p className="rounded-2xl bg-ink/10 px-5 py-4 text-ink/80">No programmes here yet.</p>}
+            {inAward.length === 0 && <p className="rounded-2xl bg-ink/10 px-5 py-4 text-ink/80">No programmes here yet.</p>}
           </div>
 
-          {inMode.length > 6 && !searching && (
-            <button type="button" onClick={() => setSearching(true)} className="mt-2 w-full rounded-full border-2 border-dashed border-ink/40 px-6 py-4 text-left text-ink/70">Search all {inMode.length} programmes</button>
+          {inAward.length > 6 && !searching && (
+            <button type="button" onClick={() => setSearching(true)} className="mt-2 w-full rounded-full border-2 border-dashed border-ink/40 px-6 py-4 text-left text-ink/70">Search all {inAward.length} programmes</button>
           )}
           {searching && (
             <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search programmes" className="mt-2 w-full rounded-full border-2 border-ink/30 bg-transparent px-6 py-4 text-ink outline-none placeholder:text-ink/40 focus:border-ink" />

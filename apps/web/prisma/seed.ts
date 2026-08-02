@@ -193,6 +193,117 @@ async function seedProgrammes(institutionId: string, campusId: string, names: st
   }
 }
 
+
+/// YABATECH full-time and part-time programmes, from the college's own
+/// school sites. Names only: NBTE curricula are seeded separately.
+/// [name, award, mode]
+
+/// School of Technology — sot.yabatech.edu.ng lists all 23 explicitly.
+const YABA_TECHNOLOGY: [string, string, StudyMode][] = [
+  ["Agricultural Technology", "ND", StudyMode.FULL_TIME],
+  ["Agricultural Technology", "ND", StudyMode.PART_TIME_WEEKDAY],
+  ["Agricultural Extension and Management", "HND", StudyMode.FULL_TIME],
+  ["Animal Production Technology", "HND", StudyMode.FULL_TIME],
+  ["Crop Production Technology", "HND", StudyMode.FULL_TIME],
+  ["Computer Science", "ND", StudyMode.FULL_TIME],
+  ["Computer Science", "ND", StudyMode.PART_TIME_WEEKDAY],
+  ["Computer Science", "HND", StudyMode.FULL_TIME],
+  ["Computer Science", "HND", StudyMode.PART_TIME_WEEKDAY],
+  ["Food Technology", "ND", StudyMode.FULL_TIME],
+  ["Food Technology", "ND", StudyMode.PART_TIME_WEEKDAY],
+  ["Food Technology", "HND", StudyMode.FULL_TIME],
+  ["Food Technology", "HND", StudyMode.PART_TIME_WEEKDAY],
+  ["Nutrition and Dietetics", "ND", StudyMode.FULL_TIME],
+  ["Hospitality Management", "ND", StudyMode.FULL_TIME],
+  ["Hospitality Management", "ND", StudyMode.PART_TIME_WEEKDAY],
+  ["Hospitality Management", "HND", StudyMode.FULL_TIME],
+  ["Hospitality Management", "HND", StudyMode.PART_TIME_WEEKDAY],
+  ["Leisure and Tourism Management", "ND", StudyMode.FULL_TIME],
+  ["Tourism Management", "HND", StudyMode.FULL_TIME],
+  ["Polymer Technology", "ND", StudyMode.FULL_TIME],
+  ["Textile Technology", "ND", StudyMode.FULL_TIME],
+  ["Textile Technology", "HND", StudyMode.FULL_TIME],
+];
+
+/// School of Engineering — soe.yabatech.edu.ng publishes a FT/PT x ND/HND
+/// matrix per department.
+const YABA_ENGINEERING: [string, string, StudyMode][] = [
+  ["Agricultural and Bio-Environmental Engineering", "ND", StudyMode.FULL_TIME],
+  ["Chemical Engineering", "ND", StudyMode.FULL_TIME],
+  ["Civil Engineering", "ND", StudyMode.FULL_TIME],
+  ["Civil Engineering", "HND", StudyMode.FULL_TIME],
+  ["Civil Engineering", "ND", StudyMode.PART_TIME_WEEKDAY],
+  ["Civil Engineering", "HND", StudyMode.PART_TIME_WEEKDAY],
+  ["Computer Engineering", "ND", StudyMode.FULL_TIME],
+  ["Computer Engineering", "HND", StudyMode.FULL_TIME],
+  ["Computer Engineering", "ND", StudyMode.PART_TIME_WEEKDAY],
+  ["Computer Engineering", "HND", StudyMode.PART_TIME_WEEKDAY],
+  ["Electrical/Electronics Engineering", "ND", StudyMode.FULL_TIME],
+  ["Electrical/Electronics Engineering", "HND", StudyMode.FULL_TIME],
+  ["Electrical/Electronics Engineering", "ND", StudyMode.PART_TIME_WEEKDAY],
+  ["Electrical/Electronics Engineering", "HND", StudyMode.PART_TIME_WEEKDAY],
+  ["Industrial Maintenance Engineering", "ND", StudyMode.FULL_TIME],
+  ["Industrial Maintenance Engineering", "HND", StudyMode.FULL_TIME],
+  ["Industrial Maintenance Engineering", "ND", StudyMode.PART_TIME_WEEKDAY],
+  ["Industrial Maintenance Engineering", "HND", StudyMode.PART_TIME_WEEKDAY],
+  ["Marine Engineering", "ND", StudyMode.FULL_TIME],
+  ["Marine Engineering", "HND", StudyMode.FULL_TIME],
+  ["Mechanical Engineering", "ND", StudyMode.FULL_TIME],
+  ["Mechanical Engineering", "HND", StudyMode.FULL_TIME],
+  ["Mechanical Engineering", "ND", StudyMode.PART_TIME_WEEKDAY],
+  ["Mechanical Engineering", "HND", StudyMode.PART_TIME_WEEKDAY],
+  ["Mechatronics Engineering", "ND", StudyMode.FULL_TIME],
+  ["Metallurgical Engineering", "ND", StudyMode.FULL_TIME],
+  ["Metallurgical Engineering", "HND", StudyMode.FULL_TIME],
+  ["Metallurgical Engineering", "ND", StudyMode.PART_TIME_WEEKDAY],
+  ["Metallurgical Engineering", "HND", StudyMode.PART_TIME_WEEKDAY],
+  ["Mineral and Petroleum Resources Engineering", "ND", StudyMode.FULL_TIME],
+  ["Welding and Fabrication Engineering", "ND", StudyMode.FULL_TIME],
+];
+
+/// School of Management and Business Studies — smbs.yabatech.edu.ng.
+/// Full-time; the weekend part-time variants are seeded separately from
+/// the part-time admission notice.
+const YABA_MANAGEMENT: [string, string, StudyMode][] = [
+  ["Accountancy", "HND", StudyMode.FULL_TIME],
+  ["Business Administration and Management", "ND", StudyMode.FULL_TIME],
+  ["Business Administration and Management", "HND", StudyMode.FULL_TIME],
+  ["Office Technology and Management", "ND", StudyMode.FULL_TIME],
+  ["Office Technology and Management", "HND", StudyMode.FULL_TIME],
+  ["Banking and Finance", "ND", StudyMode.FULL_TIME],
+  ["Marketing", "HND", StudyMode.FULL_TIME],
+];
+
+
+/// YABATECH HND part-time, from the college's 2025/2026 HND part-time
+/// admission notice. Six semesters, so a three-year ladder.
+const YABA_HND_PT_WEEKDAY = [
+  "Civil Engineering", "Computer Engineering", "Electrical Engineering",
+  "Industrial Maintenance Engineering", "Mechanical Engineering",
+  "Building Technology", "Estate Management & Valuation",
+  "Journalism and Media Studies", "Networking and Cloud Computing",
+  "Software and Web Development", "Food Technology",
+  "Hospitality Management", "Statistics", "Environmental Biology",
+  "Microbiology", "Biochemistry",
+];
+
+/// Weekend HND, both campuses per the same notice.
+const YABA_HND_PT_WEEKEND = [
+  "Accountancy", "Business Administration", "Marketing",
+  "Office Technology & Management", "Banking and Finance",
+];
+
+async function seedProgrammeList(institutionId: string, campusId: string, rows: [string, string, StudyMode][]) {
+  for (const [name, award, mode] of rows) {
+    const years = mode === StudyMode.FULL_TIME ? 2 : 3;
+    await prisma.programme.upsert({
+      where: { campusId_name_award_studyMode: { campusId, name, award, studyMode: mode } },
+      update: { years },
+      create: { institutionId, campusId, name, award, studyMode: mode, years },
+    });
+  }
+}
+
 async function main() {
   const byShortName: Record<string, string> = {};
   for (const inst of INSTITUTIONS) {
@@ -242,7 +353,13 @@ async function main() {
   await seedProgrammes(yabatechId, epe.id, EPE_PT_WEEKDAY, "ND", StudyMode.PART_TIME_WEEKDAY, 3);
   await seedProgrammes(yabatechId, yaba.id, PT_WEEKEND, "ND", StudyMode.PART_TIME_WEEKEND, 3);
   await seedProgrammes(yabatechId, epe.id, PT_WEEKEND, "ND", StudyMode.PART_TIME_WEEKEND, 3);
-  console.log("YABATECH part-time: weekday and weekend, Yaba and Epe");
+  await seedProgrammeList(yabatechId, yaba.id, YABA_TECHNOLOGY);
+  await seedProgrammeList(yabatechId, yaba.id, YABA_ENGINEERING);
+  await seedProgrammeList(yabatechId, yaba.id, YABA_MANAGEMENT);
+  await seedProgrammes(yabatechId, yaba.id, YABA_HND_PT_WEEKDAY, "HND", StudyMode.PART_TIME_WEEKDAY, 3);
+  await seedProgrammes(yabatechId, yaba.id, YABA_HND_PT_WEEKEND, "HND", StudyMode.PART_TIME_WEEKEND, 3);
+  await seedProgrammes(yabatechId, epe.id, YABA_HND_PT_WEEKEND, "HND", StudyMode.PART_TIME_WEEKEND, 3);
+  console.log("YABATECH: technology, engineering, management, ND and HND part-time");
   console.log("YABATECH ND Accountancy: 4 semesters");
 
   const lasu = byShortName["LASU"];
