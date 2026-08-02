@@ -82,12 +82,6 @@ export default async function Today() {
           </ul>
         </section>
 
-        <section className="mt-10 rounded-2xl border-2 border-dashed border-ink/20 p-5">
-          <p className="font-mono text-xs uppercase tracking-widest text-muted">Coming next</p>
-          <p className="mt-2 text-ink/70">
-            Your timetable and deadlines appear here once you add them. Tap a course to get started.
-          </p>
-        </section>
       </div>
 
       <BottomNav active="/today" />

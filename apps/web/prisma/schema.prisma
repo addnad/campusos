@@ -161,6 +161,8 @@ model Course {
   mergedFrom     Course[]          @relation("CourseMerge")
   entries        CurriculumEntry[]
   enrolments     Enrolment[]
+  sessions       ClassSession[]
+  assessments    Assessment[]
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 
@@ -280,6 +282,7 @@ model StudentProfile {
   matricNumber String?
   isActive     Boolean     @default(true)
   enrolments   Enrolment[]
+  tasks        Task[]
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
@@ -307,4 +310,83 @@ model Enrolment {
   @@unique([profileId, courseId, level, semester])
   @@index([courseId])
   @@index([courseId, status])
+}
+
+/// What a student has done about a shared assignment. Automatic means it
+/// appears on every coursemate's timeline; DISMISSED removes it from
+/// theirs, and enough dismissals are a signal it should not be there.
+enum TaskState {
+  PENDING
+  DONE
+  DISMISSED
+}
+
+enum AssessmentKind {
+  ASSIGNMENT
+  TEST
+  EXAM
+  PRESENTATION
+  PROJECT
+}
+
+/// A recurring class. Recurring rather than per-instance so a student
+/// enters "Monday 10:00, LT4" once instead of fifteen times. Cancelled
+/// and moved classes need an exceptions table; not yet.
+model ClassSession {
+  id         String     @id @default(cuid())
+  course     Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId   String
+  /// 1 = Monday .. 7 = Sunday, matching ISO weekday numbering.
+  weekday    Int
+  /// Minutes from midnight. Comparable and sortable without timezone
+  /// arithmetic, which a wall-clock timetable does not need.
+  startsAt   Int
+  endsAt     Int
+  venue      String?
+  lecturer   String?
+  confidence Confidence @default(STUDENT_SUPPLIED)
+  addedBy    String?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([courseId, weekday])
+}
+
+/// Assignments, tests and exams. Shared by default: one student adds it
+/// and everyone taking the course sees it, the same corroboration model
+/// as course codes. A private one is visible only to whoever added it.
+model Assessment {
+  id          String         @id @default(cuid())
+  course      Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId    String
+  kind        AssessmentKind @default(ASSIGNMENT)
+  title       String
+  details     String?
+  dueAt       DateTime
+  venue       String?
+  /// Private assessments never reach a coursemate's timeline.
+  isPrivate   Boolean        @default(false)
+  addedBy     String?
+  confidence  Confidence     @default(STUDENT_SUPPLIED)
+  tasks       Task[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([courseId, dueAt])
+}
+
+/// One student's state on one assessment. Absent means untouched, which
+/// still shows as pending — a row is only written when they act.
+model Task {
+  id           String         @id @default(cuid())
+  profile      StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId    String
+  assessment   Assessment     @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  assessmentId String
+  state        TaskState      @default(PENDING)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@unique([profileId, assessmentId])
+  @@index([profileId, state])
 }
