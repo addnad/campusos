@@ -49,7 +49,7 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
         <section className="mt-8">
           <div className="flex items-baseline justify-between">
             <h2 className="font-display text-lg uppercase text-ink">Class times</h2>
-            <span className="font-mono text-xs uppercase tracking-widest text-muted">{course.sessions.length} a week</span>
+            <span className="font-mono text-xs uppercase tracking-widest text-muted">{course.sessions.length === 0 ? "None yet" : course.sessions.length === 1 ? "Once a week" : `${course.sessions.length} a week`}</span>
           </div>
 
           <ul className="mt-3 space-y-2">

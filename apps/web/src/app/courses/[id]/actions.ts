@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { parseClock } from "@/modules/academics/course";
+import { formatVenue, formatPerson, formatTitle } from "@/modules/academics/format";
 import { AssessmentKind, TaskState, EnrolmentStatus } from "@/generated/prisma/client";
 
 /// Only a student enrolled in the course may add to it. Everything here
@@ -31,8 +32,8 @@ export async function addClassSession(_prev: unknown, formData: FormData) {
   const weekday = Number(formData.get("weekday"));
   const startsAt = parseClock(String(formData.get("startsAt") ?? ""));
   const endsAt = parseClock(String(formData.get("endsAt") ?? ""));
-  const venue = String(formData.get("venue") ?? "").trim() || null;
-  const lecturer = String(formData.get("lecturer") ?? "").trim() || null;
+  const venue = formatVenue(String(formData.get("venue") ?? ""));
+  const lecturer = formatPerson(String(formData.get("lecturer") ?? ""));
 
   if (!weekday || weekday < 1 || weekday > 7) return { error: "Pick a day." };
   if (startsAt === null || endsAt === null) return { error: "Times look like 10:00." };
@@ -50,7 +51,7 @@ export async function addAssessment(_prev: unknown, formData: FormData) {
   const profile = await guard(courseId);
   if (!profile) return { error: "You are not taking this course." };
 
-  const title = String(formData.get("title") ?? "").trim();
+  const title = formatTitle(String(formData.get("title") ?? ""));
   const kind = String(formData.get("kind") ?? "ASSIGNMENT") as AssessmentKind;
   const date = String(formData.get("date") ?? "");
   const time = String(formData.get("time") ?? "23:59");
