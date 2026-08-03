@@ -283,6 +283,8 @@ model StudentProfile {
   isActive     Boolean     @default(true)
   enrolments   Enrolment[]
   tasks        Task[]
+  sessions     ClassSession[]
+  assessments  Assessment[]
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
@@ -333,9 +335,15 @@ enum AssessmentKind {
 /// enters "Monday 10:00, LT4" once instead of fifteen times. Cancelled
 /// and moved classes need an exceptions table; not yet.
 model ClassSession {
-  id         String     @id @default(cuid())
-  course     Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  id         String         @id @default(cuid())
+  course     Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId   String
+  /// Owned by the student who entered it. A coursemate's entry reaches
+  /// them as a suggestion they can accept, never as a fact imposed on
+  /// their timeline — lecturers split groups, and a timetable that is
+  /// right for one student can be wrong for another.
+  profile    StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId  String
   /// 1 = Monday .. 7 = Sunday, matching ISO weekday numbering.
   weekday    Int
   /// Minutes from midnight. Comparable and sortable without timezone
@@ -344,12 +352,12 @@ model ClassSession {
   endsAt     Int
   venue      String?
   lecturer   String?
-  confidence Confidence @default(STUDENT_SUPPLIED)
-  addedBy    String?
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  confidence Confidence     @default(STUDENT_SUPPLIED)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
 
   @@index([courseId, weekday])
+  @@index([profileId])
 }
 
 /// Assignments, tests and exams. Shared by default: one student adds it
@@ -359,20 +367,23 @@ model Assessment {
   id          String         @id @default(cuid())
   course      Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId    String
+  /// Owned by whoever entered it; coursemates see it as a suggestion.
+  profile     StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId   String
   kind        AssessmentKind @default(ASSIGNMENT)
   title       String
   details     String?
   dueAt       DateTime
   venue       String?
-  /// Private assessments never reach a coursemate's timeline.
+  /// Private assessments are never offered to coursemates at all.
   isPrivate   Boolean        @default(false)
-  addedBy     String?
   confidence  Confidence     @default(STUDENT_SUPPLIED)
   tasks       Task[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 
   @@index([courseId, dueAt])
+  @@index([profileId])
 }
 
 /// One student's state on one assessment. Absent means untouched, which

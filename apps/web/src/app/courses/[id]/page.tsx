@@ -4,6 +4,8 @@ import { auth } from "@/auth";
 import { courseFor, clock, dayName } from "@/modules/academics/course";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { AddClass, AddAssessment } from "./add-forms";
+import { Suggestions } from "./suggestions";
+import { suggestionsFor } from "@/modules/academics/suggestions";
 import { Remove } from "./remove";
 
 function due(d: Date) {
@@ -24,6 +26,7 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
   if (!data) notFound();
 
   const { enrolment, course, assessments, profile } = data;
+  const suggested = await suggestionsFor(profile.id, [course.id]);
   const colour = `var(--color-${enrolment.colourToken})`;
   const open = assessments.filter((a) => a.state === "PENDING" && a.dueAt.getTime() > Date.now() - 86400000).length;
 
@@ -108,6 +111,8 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
 
           <AddAssessment courseId={course.id} />
         </section>
+
+        <Suggestions courseId={course.id} classes={suggested.classes} assessments={suggested.assessments} />
       </div>
 
       <BottomNav active="/courses" />

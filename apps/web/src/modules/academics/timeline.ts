@@ -31,10 +31,10 @@ export async function timelineFor(userId: string, now = new Date()) {
     include: {
       course: {
         include: {
-          sessions: true,
+          sessions: { where: { profileId: profile.id } },
           assessments: {
             where: {
-              OR: [{ isPrivate: false }, { addedBy: profile.id }],
+              profileId: profile.id,
               dueAt: { gte: new Date(now.getTime() - 86400000 * 2) },
             },
             include: { tasks: { where: { profileId: profile.id } } },

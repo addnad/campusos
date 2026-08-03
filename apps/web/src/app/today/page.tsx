@@ -7,6 +7,8 @@ import { BottomNav } from "@/components/layout/bottom-nav";
 import { TimelineRow } from "./timeline";
 import { NextStack } from "./next-stack";
 import { RefreshOnReturn } from "@/components/refresh-on-return";
+import { suggestionsFor } from "@/modules/academics/suggestions";
+import { SuggestionDrawer } from "./suggestion-drawer";
 
 /// The line a student would use to describe their day.
 function headline(classesLeft: number, dueToday: number, overdue: number) {
@@ -42,7 +44,20 @@ export default async function Today() {
 
   const now = new Date();
   const t = await timelineFor(session.user.id, now);
+  const suggested = await suggestionsFor(profile.id);
   const { programme, enrolments } = profile;
+  const suggestions = suggested.classes.length + suggested.assessments.length;
+
+  // Group by course so the drawer reads as "COS 101: these two things".
+  const suggestionGroups = [...new Set([
+    ...suggested.classes.map((c) => c.courseId),
+    ...suggested.assessments.map((a) => a.courseId),
+  ])].map((courseId) => ({
+    courseId,
+    code: enrolments.find((e) => e.courseId === courseId)?.course.displayCode ?? "",
+    classes: suggested.classes.filter((c) => c.courseId === courseId),
+    assessments: suggested.assessments.filter((a) => a.courseId === courseId),
+  }));
   const initials = (session.user.handle ?? "").slice(0, 2).toUpperCase();
   const multiCampus = programme.campus.name !== "Main Campus";
   const lines = headline(t?.classesLeft ?? 0, t?.dueToday ?? 0, t?.overdue ?? 0);
@@ -111,6 +126,8 @@ export default async function Today() {
             </div>
           </section>
         )}
+
+        <SuggestionDrawer groups={suggestionGroups} total={suggestions} />
 
       </div>
 

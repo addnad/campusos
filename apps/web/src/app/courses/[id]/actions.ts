@@ -40,7 +40,7 @@ export async function addClassSession(_prev: unknown, formData: FormData) {
   if (endsAt <= startsAt) return { error: "It has to end after it starts." };
 
   await prisma.classSession.create({
-    data: { courseId, weekday, startsAt, endsAt, venue, lecturer, addedBy: profile.id },
+    data: { courseId, profileId: profile.id, weekday, startsAt, endsAt, venue, lecturer },
   });
   revalidatePath(`/courses/${courseId}`);
   return { ok: true };
@@ -63,7 +63,7 @@ export async function addAssessment(_prev: unknown, formData: FormData) {
   if (Number.isNaN(dueAt.getTime())) return { error: "Pick a due date." };
 
   await prisma.assessment.create({
-    data: { courseId, kind, title, dueAt, isPrivate, addedBy: profile.id },
+    data: { courseId, profileId: profile.id, kind, title, dueAt, isPrivate },
   });
   revalidatePath(`/courses/${courseId}`);
   revalidatePath("/today");
@@ -84,26 +84,65 @@ export async function setTaskState(assessmentId: string, courseId: string, state
   return { ok: true };
 }
 
-/// Class times are shared, so removing one removes it for everyone
-/// taking the course — the same trust as adding one.
+/// Removes your own copy only. A coursemate keeps theirs.
 export async function removeClassSession(sessionId: string, courseId: string) {
   const profile = await guard(courseId);
   if (!profile) return { error: "You are not taking this course." };
 
-  await prisma.classSession.delete({ where: { id: sessionId } });
+  // Scoped: you can only remove your own row, never a coursemate\u2019s.
+  await prisma.classSession.deleteMany({ where: { id: sessionId, profileId: profile.id } });
   revalidatePath(`/courses/${courseId}`);
   revalidatePath("/today");
   return { ok: true };
 }
 
-/// Removing a shared assessment removes it for everyone. Dismissing is
-/// the per-student action; this is for something that should not be
-/// there at all.
+/// Removes your own copy only.
 export async function removeAssessment(assessmentId: string, courseId: string) {
   const profile = await guard(courseId);
   if (!profile) return { error: "You are not taking this course." };
 
-  await prisma.assessment.delete({ where: { id: assessmentId } });
+  await prisma.assessment.deleteMany({ where: { id: assessmentId, profileId: profile.id } });
+  revalidatePath(`/courses/${courseId}`);
+  revalidatePath("/today");
+  return { ok: true };
+}
+
+/// Accepting copies a coursemate's entry into your own timetable. Your
+/// row from then on: editable, deletable, and unaffected by what they do
+/// with theirs.
+export async function acceptClassSuggestion(courseId: string, formData: FormData) {
+  const profile = await guard(courseId);
+  if (!profile) return { error: "You are not taking this course." };
+
+  await prisma.classSession.create({
+    data: {
+      courseId,
+      profileId: profile.id,
+      weekday: Number(formData.get("weekday")),
+      startsAt: Number(formData.get("startsAt")),
+      endsAt: Number(formData.get("endsAt")),
+      venue: (String(formData.get("venue") ?? "") || null),
+      lecturer: (String(formData.get("lecturer") ?? "") || null),
+    },
+  });
+  revalidatePath(`/courses/${courseId}`);
+  revalidatePath("/today");
+  return { ok: true };
+}
+
+export async function acceptAssessmentSuggestion(courseId: string, formData: FormData) {
+  const profile = await guard(courseId);
+  if (!profile) return { error: "You are not taking this course." };
+
+  await prisma.assessment.create({
+    data: {
+      courseId,
+      profileId: profile.id,
+      kind: String(formData.get("kind")) as AssessmentKind,
+      title: String(formData.get("title") ?? ""),
+      dueAt: new Date(String(formData.get("dueAt") ?? "")),
+    },
+  });
   revalidatePath(`/courses/${courseId}`);
   revalidatePath("/today");
   return { ok: true };
