@@ -147,3 +147,20 @@ export async function acceptAssessmentSuggestion(courseId: string, formData: For
   revalidatePath("/today");
   return { ok: true };
 }
+
+/// Dismissals are stored by suggestion key, not row id: the suggestion
+/// is a computed group, and a coursemate adding an identical entry
+/// tomorrow must not bring it back.
+export async function dismissSuggestion(courseId: string, key: string) {
+  const profile = await guard(courseId);
+  if (!profile) return { error: "You are not taking this course." };
+
+  await prisma.dismissedSuggestion.upsert({
+    where: { profileId_key: { profileId: profile.id, key } },
+    update: {},
+    create: { profileId: profile.id, key },
+  });
+  revalidatePath(`/courses/${courseId}`);
+  revalidatePath("/today");
+  return { ok: true };
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition, useState } from "react";
-import { acceptClassSuggestion, acceptAssessmentSuggestion } from "./actions";
+import { acceptClassSuggestion, acceptAssessmentSuggestion, dismissSuggestion } from "./actions";
 import type { ClassSuggestion, AssessmentSuggestion } from "@/modules/academics/suggestions";
 import { clock, dayName } from "@/modules/academics/format-time";
 
@@ -50,7 +50,7 @@ export function Suggestions({ courseId, classes, assessments, heading = true }: 
               if (c.lecturer) fd.set("lecturer", c.lecturer);
               await acceptClassSuggestion(courseId, fd);
             })} className="shrink-0 rounded-full bg-ink px-4 py-2 text-sm font-bold text-ground disabled:opacity-40">Add</button>
-            <button type="button" onClick={() => setHidden((h) => [...h, c.key])} aria-label="Not mine" className="shrink-0 px-1 text-xl leading-none text-muted hover:text-ink">&times;</button>
+            <button type="button" onClick={() => { setHidden((h) => [...h, c.key]); start(() => dismissSuggestion(courseId, c.key).then(() => undefined)); }} aria-label="Not mine" className="shrink-0 px-1 text-xl leading-none text-muted hover:text-ink">&times;</button>
           </div>
         ))}
 
@@ -70,7 +70,7 @@ export function Suggestions({ courseId, classes, assessments, heading = true }: 
               fd.set("dueAt", a.dueAt.toISOString());
               await acceptAssessmentSuggestion(courseId, fd);
             })} className="shrink-0 rounded-full bg-ink px-4 py-2 text-sm font-bold text-ground disabled:opacity-40">Add</button>
-            <button type="button" onClick={() => setHidden((h) => [...h, a.key])} aria-label="Not mine" className="shrink-0 px-1 text-xl leading-none text-muted hover:text-ink">&times;</button>
+            <button type="button" onClick={() => { setHidden((h) => [...h, a.key]); start(() => dismissSuggestion(courseId, a.key).then(() => undefined)); }} aria-label="Not mine" className="shrink-0 px-1 text-xl leading-none text-muted hover:text-ink">&times;</button>
           </div>
         ))}
       </div>

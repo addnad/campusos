@@ -285,6 +285,7 @@ model StudentProfile {
   tasks        Task[]
   sessions     ClassSession[]
   assessments  Assessment[]
+  dismissed    DismissedSuggestion[]
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
@@ -400,4 +401,23 @@ model Task {
 
   @@unique([profileId, assessmentId])
   @@index([profileId, state])
+}
+
+/// A suggestion the student has waved away. Stored by shape, not by row:
+/// a suggestion is a computed group of coursemates' entries, so there is
+/// no id to point at, and a coursemate adding an identical entry
+/// tomorrow must not resurrect it.
+///
+/// The key is built the same way the suggestion group is:
+/// class      -> "class:<courseId>:<weekday>:<10-minute bucket>"
+/// assessment -> "due:<courseId>:<due date>:<kind>"
+model DismissedSuggestion {
+  id        String         @id @default(cuid())
+  profile   StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId String
+  key       String
+  createdAt DateTime       @default(now())
+
+  @@unique([profileId, key])
+  @@index([profileId])
 }

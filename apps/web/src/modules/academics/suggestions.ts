@@ -36,17 +36,39 @@ export async function suggestionsFor(profileId: string, courseIds?: string[]) {
       status: EnrolmentStatus.ACTIVE,
       ...(courseIds ? { courseId: { in: courseIds } } : {}),
     },
-    select: { courseId: true },
+    select: { courseId: true, level: true, semester: true },
   });
   const ids = enrolments.map((e) => e.courseId);
   if (ids.length === 0) return { classes: [], assessments: [] };
 
+  // Only people taking it alongside you. A student repeating COS 101
+  // from two years ago has a timetable that is wrong for this year's
+  // fresher, and offering it would be worse than offering nothing.
+  const alongside = enrolments.map((e) => ({
+    courseId: e.courseId, level: e.level, semester: e.semester,
+  }));
+  const peers = await prisma.enrolment.findMany({
+    where: {
+      status: EnrolmentStatus.ACTIVE,
+      profileId: { not: profileId },
+      OR: alongside,
+    },
+    select: { profileId: true },
+  });
+  const peerIds = [...new Set(peers.map((p) => p.profileId))];
+  if (peerIds.length === 0) return { classes: [], assessments: [] };
+
+  const dismissed = new Set(
+    (await prisma.dismissedSuggestion.findMany({ where: { profileId }, select: { key: true } }))
+      .map((d) => d.key),
+  );
+
   const [mine, theirs, myAssessments, theirAssessments] = await Promise.all([
     prisma.classSession.findMany({ where: { profileId, courseId: { in: ids } } }),
-    prisma.classSession.findMany({ where: { courseId: { in: ids }, profileId: { not: profileId } } }),
+    prisma.classSession.findMany({ where: { courseId: { in: ids }, profileId: { in: peerIds } } }),
     prisma.assessment.findMany({ where: { profileId, courseId: { in: ids } } }),
     prisma.assessment.findMany({
-      where: { courseId: { in: ids }, profileId: { not: profileId }, isPrivate: false, dueAt: { gte: new Date() } },
+      where: { courseId: { in: ids }, profileId: { in: peerIds }, isPrivate: false, dueAt: { gte: new Date() } },
     }),
   ]);
 
@@ -60,7 +82,8 @@ export async function suggestionsFor(profileId: string, courseIds?: string[]) {
     );
     if (haveIt) continue;
 
-    const key = `${s.courseId}-${s.weekday}-${Math.round(s.startsAt / SAME_CLASS_MINUTES)}`;
+    const key = `class:${s.courseId}:${s.weekday}:${Math.round(s.startsAt / SAME_CLASS_MINUTES)}`;
+    if (dismissed.has(key)) continue;
     const existing = classGroups.get(key);
     if (existing) existing.count += 1;
     else classGroups.set(key, {
@@ -78,7 +101,8 @@ export async function suggestionsFor(profileId: string, courseIds?: string[]) {
     );
     if (haveIt) continue;
 
-    const key = `${a.courseId}-${day}-${a.kind}`;
+    const key = `due:${a.courseId}:${day}:${a.kind}`;
+    if (dismissed.has(key)) continue;
     const existing = assessmentGroups.get(key);
     if (existing) existing.count += 1;
     else assessmentGroups.set(key, {
