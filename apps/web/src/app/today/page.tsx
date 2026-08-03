@@ -2,13 +2,25 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { semesterFor } from "@/modules/academics/queries";
+import { timelineFor } from "@/modules/academics/timeline";
 import { BottomNav } from "@/components/layout/bottom-nav";
-import { modeLabel, type Kind } from "@/modules/identity/awards";
+import { TimelineRow } from "./timeline";
+import { NextStack } from "./next-stack";
+import { RefreshOnReturn } from "@/components/refresh-on-return";
 
-function today() {
-  const d = new Date();
-  return d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" }).toUpperCase();
+/// The line a student would use to describe their day.
+function headline(classesLeft: number, dueToday: number, overdue: number) {
+  const parts: string[] = [];
+  if (overdue > 0) parts.push(`${overdue} late`);
+  if (classesLeft > 0) parts.push(`${classesLeft} ${classesLeft === 1 ? "class" : "classes"} left`);
+  if (dueToday > 0) parts.push(`${dueToday} due tonight`);
+  if (parts.length === 0) return ["Nothing left today"];
+  return parts;
 }
+
+/// Never cached: this screen is about now, and a render from before
+/// midnight would show yesterday's classes as today's.
+export const dynamic = "force-dynamic";
 
 export default async function Today() {
   const session = await auth();
@@ -16,7 +28,6 @@ export default async function Today() {
   if (!session.user.handle) redirect("/handle");
 
   const profile = await semesterFor(session.user.id);
-
   if (!profile) {
     return (
       <main className="min-h-screen bg-ground px-6 py-12">
@@ -29,11 +40,23 @@ export default async function Today() {
     );
   }
 
+  const now = new Date();
+  const t = await timelineFor(session.user.id, now);
   const { programme, enrolments } = profile;
-  const units = enrolments.reduce((n, e) => n + e.units, 0);
   const initials = (session.user.handle ?? "").slice(0, 2).toUpperCase();
   const multiCampus = programme.campus.name !== "Main Campus";
-  const mode = modeLabel(programme.institution.kind as Kind, programme.studyMode);
+  const lines = headline(t?.classesLeft ?? 0, t?.dueToday ?? 0, t?.overdue ?? 0);
+  const nothingSetUp = enrolments.length > 0 && (t?.spine.length ?? 0) === 0 && !t?.next;
+
+  // What is next, ahead of now. The stack shows up to three; the list
+  // below starts after them so nothing appears twice on one screen.
+  const ahead = [...(t?.spine ?? []), ...(t?.upcoming ?? [])]
+    .filter((i) => i.at > now)
+    .sort((a, b) => a.at.getTime() - b.at.getTime());
+  const stack = ahead.length > 0 ? ahead.slice(0, 3) : t?.next ? [t.next] : [];
+  const stackIds = new Set(stack.map((i) => `${i.type}-${i.id}`));
+  const rest = ahead.filter((i) => !stackIds.has(`${i.type}-${i.id}`));
+  const earlier = (t?.spine ?? []).filter((i) => i.at <= now);
 
   return (
     <main className="min-h-screen bg-ground px-6 pb-24 pt-8">
@@ -43,47 +66,55 @@ export default async function Today() {
             <p className="truncate font-mono text-xs uppercase tracking-widest text-muted">
               {programme.institution.name}{multiCampus ? ` \u00b7 ${programme.campus.name}` : ""}
             </p>
-            <p className="mt-1 truncate font-bold text-ink">
-              @{session.user.handle} &middot; {profile.level} {programme.name}
-            </p>
+            <p className="mt-1 truncate font-bold text-ink">{profile.level} {programme.name}</p>
           </div>
           <Link href="/me" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ink font-display text-sm text-ground">{initials}</Link>
         </header>
 
         <p className="mt-8 font-mono text-xs uppercase tracking-widest text-muted">
-          {today()} &middot; {profile.semester === 1 ? "First" : "Second"} Semester
+          {now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" }).toUpperCase()}
+          {" \u00b7 "}
+          {profile.semester === 1 ? "First" : "Second"} Semester
         </p>
 
         <h1 className="mt-2 font-display text-4xl uppercase leading-[0.95] text-ink sm:text-5xl">
-          {enrolments.length} {enrolments.length === 1 ? "course" : "courses"}
-          <br />
-          {units} units
+          {lines.map((l) => <span key={l} className="block">{l}</span>)}
         </h1>
 
-        <section className="mt-10">
-          <div className="flex items-baseline justify-between">
-            <h2 className="font-display text-xl uppercase text-ink">Your courses</h2>
-            <span className="font-mono text-xs uppercase tracking-widest text-muted">{mode}</span>
-          </div>
+        <NextStack items={stack} nowIso={now.toISOString()} />
 
-          <ul className="mt-3 space-y-2">
-            {enrolments.map((e) => (
-              <li key={e.id}>
-                <Link href={`/courses/${e.courseId}`} className="flex items-center gap-4 rounded-2xl bg-card p-4 transition-transform active:scale-[0.99]">
-                  <span className="h-10 w-1.5 shrink-0 rounded-full" style={{ background: `var(--color-${e.colourToken})` }} />
-                  <span className="min-w-0">
-                    <span className="block font-bold text-ink">{e.course.displayCode}</span>
-                    <span className="block truncate text-sm text-muted">{e.course.title}</span>
-                  </span>
-                  <span className="ml-auto shrink-0 font-mono text-sm text-muted">{e.units}u</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
+        {nothingSetUp && (
+          <section className="mt-6 rounded-3xl border-2 border-dashed border-ink/20 p-6">
+            <p className="font-display text-xl uppercase text-ink">Add your timetable</p>
+            <p className="mt-2 text-muted">
+              Open a course and add when it meets. Your classes and deadlines
+              then land here in order.
+            </p>
+            <Link href="/courses" className="mt-4 inline-flex rounded-full bg-ink px-6 py-3 font-bold text-ground">Go to my courses</Link>
+          </section>
+        )}
+
+        {rest.length > 0 && (
+          <section className="mt-10">
+            <h2 className="font-display text-lg uppercase text-ink">After that</h2>
+            <div className="mt-3 space-y-2">
+              {rest.map((item) => <TimelineRow key={`${item.type}-${item.id}`} item={item} nowIso={now.toISOString()} />)}
+            </div>
+          </section>
+        )}
+
+        {earlier.length > 0 && (
+          <section className="mt-10">
+            <h2 className="font-display text-lg uppercase text-muted">Earlier today</h2>
+            <div className="mt-3 space-y-2 opacity-60">
+              {earlier.map((item) => <TimelineRow key={`${item.type}-${item.id}`} item={item} nowIso={now.toISOString()} />)}
+            </div>
+          </section>
+        )}
 
       </div>
 
+      <RefreshOnReturn />
       <BottomNav active="/today" />
     </main>
   );

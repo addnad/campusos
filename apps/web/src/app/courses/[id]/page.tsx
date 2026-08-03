@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { courseFor, clock, dayName } from "@/modules/academics/course";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { AddClass, AddAssessment } from "./add-forms";
+import { Remove } from "./remove";
 
 function due(d: Date) {
   const days = Math.ceil((d.getTime() - Date.now()) / 86400000);
@@ -54,7 +55,7 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
 
           <ul className="mt-3 space-y-2">
             {course.sessions.map((s) => (
-              <li key={s.id} className="flex items-center gap-4 rounded-2xl bg-card p-4">
+              <li key={s.id} className="flex items-center gap-4 rounded-2xl bg-card p-4"><span className="contents">
                 <span className="w-12 shrink-0 font-mono text-sm font-bold uppercase text-ink">{dayName(s.weekday)}</span>
                 <span className="min-w-0">
                   <span className="block font-bold text-ink">{clock(s.startsAt)} &ndash; {clock(s.endsAt)}</span>
@@ -62,6 +63,7 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
                     <span className="block truncate text-sm text-muted">{[s.venue, s.lecturer].filter(Boolean).join(" \u00b7 ")}</span>
                   )}
                 </span>
+                </span><Remove id={s.id} courseId={course.id} kind="session" label={`${dayName(s.weekday)} class`} />
               </li>
             ))}
           </ul>
@@ -94,6 +96,7 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
                   <span className={`ml-auto shrink-0 rounded-full px-3 py-1 font-mono text-xs uppercase ${a.state === "DONE" ? "bg-sunken text-muted" : d.tone}`}>
                     {a.state === "DONE" ? "Done" : d.text}
                   </span>
+                  <Remove id={a.id} courseId={course.id} kind="assessment" label={a.title} />
                 </li>
               );
             })}

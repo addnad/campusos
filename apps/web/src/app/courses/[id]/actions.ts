@@ -83,3 +83,28 @@ export async function setTaskState(assessmentId: string, courseId: string, state
   revalidatePath("/today");
   return { ok: true };
 }
+
+/// Class times are shared, so removing one removes it for everyone
+/// taking the course — the same trust as adding one.
+export async function removeClassSession(sessionId: string, courseId: string) {
+  const profile = await guard(courseId);
+  if (!profile) return { error: "You are not taking this course." };
+
+  await prisma.classSession.delete({ where: { id: sessionId } });
+  revalidatePath(`/courses/${courseId}`);
+  revalidatePath("/today");
+  return { ok: true };
+}
+
+/// Removing a shared assessment removes it for everyone. Dismissing is
+/// the per-student action; this is for something that should not be
+/// there at all.
+export async function removeAssessment(assessmentId: string, courseId: string) {
+  const profile = await guard(courseId);
+  if (!profile) return { error: "You are not taking this course." };
+
+  await prisma.assessment.delete({ where: { id: assessmentId } });
+  revalidatePath(`/courses/${courseId}`);
+  revalidatePath("/today");
+  return { ok: true };
+}

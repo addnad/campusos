@@ -28,8 +28,14 @@ export function AddClass({ courseId }: { courseId: string }) {
         ))}
       </div>
       <div className="mt-3 flex gap-2">
-        <input name="startsAt" placeholder="10:00" className={field} />
-        <input name="endsAt" placeholder="11:50" className={field} />
+        <label className="flex-1">
+          <span className="mb-1 block font-mono text-xs uppercase tracking-widest text-muted">Starts</span>
+          <input name="startsAt" type="time" defaultValue="08:00" step={300} className={field} />
+        </label>
+        <label className="flex-1">
+          <span className="mb-1 block font-mono text-xs uppercase tracking-widest text-muted">Ends</span>
+          <input name="endsAt" type="time" defaultValue="10:00" step={300} className={field} />
+        </label>
       </div>
       <input name="venue" placeholder="Venue, e.g. LT 4" className={`${field} mt-2`} />
       <input name="lecturer" placeholder="Lecturer (optional)" className={`${field} mt-2`} />
