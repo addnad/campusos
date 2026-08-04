@@ -17,11 +17,12 @@ const ICONS: Record<string, React.ReactNode> = {
       <path d="M12 7v13" />
     </>
   ),
-  notes: (
+  community: (
     <>
-      <path d="M5 4h9l5 5v11H5z" />
-      <path d="M14 4v5h5" />
-      <path d="M9 13h6" />
+      <circle cx="9" cy="9" r="3.1" />
+      <path d="M3.6 19c1.1-2.9 3-4.2 5.4-4.2s4.3 1.3 5.4 4.2" />
+      <path d="M15.5 6.2a3.1 3.1 0 0 1 0 5.9" />
+      <path d="M17 14.9c1.7.5 3 1.8 3.8 4.1" />
     </>
   ),
   me: (
@@ -35,7 +36,7 @@ const ICONS: Record<string, React.ReactNode> = {
 const TABS = [
   { href: "/today", key: "today", label: "Today" },
   { href: "/courses", key: "courses", label: "Courses" },
-  { href: "/notes", key: "notes", label: "Notes" },
+  { href: "/community", key: "community", label: "Rooms" },
   { href: "/me", key: "me", label: "Me" },
 ];
 

@@ -163,6 +163,7 @@ model Course {
   enrolments     Enrolment[]
   sessions       ClassSession[]
   assessments    Assessment[]
+  communities    Community[]
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 
@@ -301,6 +302,10 @@ model StudentProfile {
   sessions     ClassSession[]
   assessments  Assessment[]
   dismissed    DismissedSuggestion[]
+  memberships  CommunityMember[]
+  messages     Message[]
+  reportsMade  Report[]             @relation("ReportsMade")
+  reactions    Reaction[]
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
@@ -440,4 +445,112 @@ model DismissedSuggestion {
 
   @@unique([profileId, key])
   @@index([profileId])
+}
+
+/// A room attached to a shared academic responsibility (ADR-004). Keyed
+/// on the course, which is already campus-scoped — UNILAG's GNS 101 and
+/// UI's are different rooms, and so are Yaba's and Epe's.
+///
+/// Opens when three students are enrolled in the same course, session,
+/// level and semester. Joining is explicit: enrolment makes you eligible,
+/// not a member.
+model Community {
+  id        String            @id @default(cuid())
+  course    Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId  String
+  /// The cohort this room serves. A room for 100 Level first semester is
+  /// not the room for 300 Level, even in the same course.
+  level     String
+  semester  Int
+  members   CommunityMember[]
+  messages  Message[]
+  createdAt DateTime          @default(now())
+
+  @@unique([courseId, level, semester])
+}
+
+enum MemberState {
+  ACTIVE
+  TIMED_OUT
+  REMOVED
+}
+
+/// Membership, and where moderation state lives. A warning or a timeout
+/// is about one person in one room, not about their account.
+model CommunityMember {
+  id          String         @id @default(cuid())
+  community   Community      @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  communityId String
+  profile     StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId   String
+  state       MemberState    @default(ACTIVE)
+  /// Upheld reports against them here. Three means permanent removal.
+  strikes     Int            @default(0)
+  /// Set when timed out; they can post again after it passes.
+  mutedUntil  DateTime?
+  joinedAt    DateTime       @default(now())
+
+  @@unique([communityId, profileId])
+  @@index([profileId])
+}
+
+model Message {
+  id          String           @id @default(cuid())
+  community   Community        @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  communityId String
+  author      StudentProfile   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId    String
+  body        String
+  /// Forty people discussing one assignment is unreadable without this.
+  /// SetNull rather than Cascade: deleting a message should not take the
+  /// replies to it with it.
+  replyTo     Message?         @relation("Replies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replyToId   String?
+  replies     Message[]        @relation("Replies")
+  reactions   Reaction[]
+  /// Soft delete: removing the row would orphan reports made against it.
+  deletedAt   DateTime?
+  reports     Report[]
+  createdAt   DateTime         @default(now())
+
+  @@index([communityId, createdAt])
+  @@index([replyToId])
+}
+
+enum ReportState {
+  OPEN
+  UPHELD
+  DISMISSED
+}
+
+/// Students know what is abusive in Pidgin, Yoruba, Hausa and Igbo far
+/// better than a wordlist does. Reports are the primary mechanism;
+/// automated matching is narrow and secondary.
+model Report {
+  id         String      @id @default(cuid())
+  message    Message     @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  messageId  String
+  reporter   StudentProfile @relation("ReportsMade", fields: [reporterId], references: [id], onDelete: Cascade)
+  reporterId String
+  reason     String?
+  state      ReportState @default(OPEN)
+  createdAt  DateTime    @default(now())
+
+  @@unique([messageId, reporterId])
+  @@index([state])
+}
+
+/// One emoji from one student on one message. Unique per pair, so a tap
+/// toggles rather than stacking.
+model Reaction {
+  id        String         @id @default(cuid())
+  message   Message        @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  messageId String
+  profile   StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId String
+  emoji     String
+  createdAt DateTime       @default(now())
+
+  @@unique([messageId, profileId, emoji])
+  @@index([messageId])
 }
