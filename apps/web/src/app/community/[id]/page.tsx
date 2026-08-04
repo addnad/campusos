@@ -42,6 +42,7 @@ export default async function Room({ params }: { params: Promise<{ id: string }>
         <MessageList
           communityId={community.id}
           me={profile.id}
+          myHandle={session.user.handle}
           mutedUntil={member.mutedUntil ? member.mutedUntil.toISOString() : null}
           initial={messages.map((m) => ({
             id: m.id,

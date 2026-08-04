@@ -19,6 +19,11 @@ const EVERY = 5000;
 /// when the student looks.
 export function useLiveMessages(communityId: string, initial: LiveMessage[]) {
   const [messages, setMessages] = useState(initial);
+  const [online, setOnline] = useState<string[]>([]);
+  const [typing, setTyping] = useState<string[]>([]);
+  /// Set while the student is typing; sent with the next poll rather
+  /// than as its own request.
+  const iAmTyping = useRef(false);
   const latest = useRef(initial.at(-1)?.createdAt ?? null);
   const busy = useRef(false);
 
@@ -26,10 +31,16 @@ export function useLiveMessages(communityId: string, initial: LiveMessage[]) {
     if (busy.current || document.visibilityState !== "visible") return;
     busy.current = true;
     try {
-      const url = `/api/community/${communityId}/messages${latest.current ? `?since=${encodeURIComponent(latest.current)}` : ""}`;
+      const params = new URLSearchParams();
+      if (latest.current) params.set("since", latest.current);
+      if (iAmTyping.current) params.set("typing", "1");
+      const url = `/api/community/${communityId}/messages?${params.toString()}`;
       const res = await fetch(url);
       if (!res.ok) return;
       const data = await res.json();
+      setOnline(data.online ?? []);
+      setTyping(data.typing ?? []);
+
       if (data.reactions?.length) {
         const fresh = new Map<string, { emoji: string; profileId: string }[]>(
           data.reactions.map((r: { id: string; reactions: { emoji: string; profileId: string }[] }) => [r.id, r.reactions]),
@@ -66,5 +77,7 @@ export function useLiveMessages(communityId: string, initial: LiveMessage[]) {
     return () => { clearInterval(t); document.removeEventListener("visibilitychange", onVisible); };
   }, [poll]);
 
-  return { messages, setMessages, refresh: poll };
+  const setTypingFlag = useCallback((on: boolean) => { iAmTyping.current = on; }, []);
+
+  return { messages, setMessages, refresh: poll, online, typing, setTypingFlag };
 }

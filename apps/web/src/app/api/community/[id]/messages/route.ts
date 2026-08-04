@@ -24,6 +24,39 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: "not a member" }, { status: 403 });
   }
 
+  // Heartbeat on every poll. seenAt is @updatedAt, so it refreshes for
+  // free; typingUntil is set a few seconds ahead by the client and
+  // lapses on its own.
+  const typing = req.nextUrl.searchParams.get("typing") === "1";
+  await prisma.presence.upsert({
+    where: { communityId_profileId: { communityId: id, profileId: profile.id } },
+    update: { typingUntil: typing ? new Date(Date.now() + 4000) : null },
+    create: {
+      communityId: id,
+      profileId: profile.id,
+      typingUntil: typing ? new Date(Date.now() + 4000) : null,
+    },
+  });
+
+  const others = await prisma.presence.findMany({
+    where: {
+      communityId: id,
+      profileId: { not: profile.id },
+      seenAt: { gte: new Date(Date.now() - 20000) },
+    },
+    select: {
+      typingUntil: true,
+      profile: { select: { user: { select: { handle: true } } } },
+    },
+  });
+
+  const now = new Date();
+  const online = others.map((o) => o.profile.user.handle).filter(Boolean) as string[];
+  const typingNow = others
+    .filter((o) => o.typingUntil && o.typingUntil > now)
+    .map((o) => o.profile.user.handle)
+    .filter(Boolean) as string[];
+
   const since = req.nextUrl.searchParams.get("since");
   const after = since ? new Date(since) : null;
 
@@ -56,6 +89,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
   return NextResponse.json({
     profileId: profile.id,
+    online,
+    typing: typingNow,
     reactions: recent.map((m) => ({ id: m.id, reactions: m.reactions })),
     messages: messages.map((m) => ({
       id: m.id,

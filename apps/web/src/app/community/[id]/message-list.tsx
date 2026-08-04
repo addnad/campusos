@@ -66,7 +66,7 @@ function Row({ m, me, onHold, onReact, onSwipeReply }: { m: LiveMessage; me: str
       {grouped.size > 0 && (
         <div className="mt-1 flex flex-wrap gap-1">
           {[...grouped.entries()].map(([emoji, g]) => (
-            <button key={emoji} type="button" onClick={() => onReact(m.id, emoji)} className={`rounded-full px-2 py-0.5 text-xs ${g.mine ? "bg-ink text-ground" : "bg-sunken text-ink"}`}>
+            <button key={emoji} type="button" onClick={() => onReact(m.id, emoji)} className={`rounded-full px-2 py-0.5 text-xs ${g.mine ? (mine ? "bg-ground text-ink" : "bg-ink text-ground") : "bg-sunken text-ink"}`}>
               {emoji} {g.count > 1 ? g.count : ""}
             </button>
           ))}
@@ -76,10 +76,10 @@ function Row({ m, me, onHold, onReact, onSwipeReply }: { m: LiveMessage; me: str
   );
 }
 
-export function MessageList({ communityId, me, initial, mutedUntil }: {
-  communityId: string; me: string; initial: LiveMessage[]; mutedUntil: string | null;
+export function MessageList({ communityId, me, myHandle, initial, mutedUntil }: {
+  communityId: string; me: string; myHandle: string | null; initial: LiveMessage[]; mutedUntil: string | null;
 }) {
-  const { messages, setMessages, refresh } = useLiveMessages(communityId, initial);
+  const { messages, setMessages, refresh, online, typing, setTypingFlag } = useLiveMessages(communityId, initial);
   const [, startReact] = useTransition();
 
   /// Applied locally first: polling only fetches messages newer than the
@@ -106,6 +106,13 @@ export function MessageList({ communityId, me, initial, mutedUntil }: {
 
   return (
     <>
+      {online.length > 0 && (
+        <p className="mb-4 flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted">
+          <span className="h-2 w-2 rounded-full bg-mint" />
+          {online.length === 1 ? `@${online[0]} is here` : `${online.length} here now`}
+        </p>
+      )}
+
       <ul className="space-y-4">
         {messages.length === 0 && (
           <p className="py-12 text-center text-muted">
@@ -119,6 +126,12 @@ export function MessageList({ communityId, me, initial, mutedUntil }: {
       </ul>
       <div ref={end} />
 
+      {typing.length > 0 && (
+        <p className="mt-3 text-xs italic text-muted">
+          {typing.length === 1 ? `@${typing[0]} is typing...` : `${typing.length} people are typing...`}
+        </p>
+      )}
+
       <MessageSheet communityId={communityId} target={sheet} onClose={() => setSheet(null)} onReply={setReplyTo} onReact={react} />
 
       <Composer
@@ -126,7 +139,24 @@ export function MessageList({ communityId, me, initial, mutedUntil }: {
         mutedUntil={mutedUntil ? new Date(mutedUntil) : null}
         replyTo={replyTo}
         onClearReply={() => setReplyTo(null)}
-        onSent={refresh}
+        onTyping={setTypingFlag}
+        onSent={(body, replyToId) => {
+          // Shown immediately; the next poll replaces it with the stored
+          // row. Waiting up to five seconds to see your own message is
+          // the difference between a chat feeling live and feeling broken.
+          const pendingId = `pending-${Date.now()}`;
+          const quoted = replyToId ? messages.find((x) => x.id === replyToId) : null;
+          setMessages((prev) => [...prev, {
+            id: pendingId,
+            body,
+            createdAt: new Date().toISOString(),
+            authorId: me,
+            handle: myHandle,
+            reactions: [],
+            replyTo: quoted ? { id: quoted.id, body: quoted.body, handle: quoted.handle } : null,
+          }]);
+          refresh();
+        }}
       />
     </>
   );

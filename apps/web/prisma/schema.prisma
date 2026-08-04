@@ -306,6 +306,7 @@ model StudentProfile {
   messages     Message[]
   reportsMade  Report[]             @relation("ReportsMade")
   reactions    Reaction[]
+  presence     Presence[]
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
@@ -464,6 +465,7 @@ model Community {
   semester  Int
   members   CommunityMember[]
   messages  Message[]
+  presence  Presence[]
   createdAt DateTime          @default(now())
 
   @@unique([courseId, level, semester])
@@ -553,4 +555,24 @@ model Reaction {
 
   @@unique([messageId, profileId, emoji])
   @@index([messageId])
+}
+
+/// Who is in a room right now, and who is typing. Serverless functions
+/// share no memory and polling holds no connection, so presence lives in
+/// the database: each poll writes a heartbeat and reads back the rest.
+/// One row per student per room, updated in place.
+model Presence {
+  id          String    @id @default(cuid())
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  communityId String
+  profile     StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId   String
+  /// Online if this is within the last ~20 seconds.
+  seenAt      DateTime  @updatedAt
+  /// Typing if this is in the future. Set a few seconds ahead on each
+  /// keystroke so it lapses on its own when they stop.
+  typingUntil DateTime?
+
+  @@unique([communityId, profileId])
+  @@index([communityId, seenAt])
 }
