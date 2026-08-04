@@ -9,6 +9,9 @@ import { NextStack } from "./next-stack";
 import { RefreshOnReturn } from "@/components/refresh-on-return";
 import { suggestionsFor } from "@/modules/academics/suggestions";
 import { SuggestionDrawer } from "./suggestion-drawer";
+import { SemesterPrompt } from "./semester-prompt";
+import { semesterPrompt, readyToRoll } from "@/modules/academics/semester";
+import { RollOver } from "./roll-over";
 
 /// The line a student would use to describe their day.
 function headline(classesLeft: number, dueToday: number, overdue: number) {
@@ -45,6 +48,8 @@ export default async function Today() {
   const now = new Date();
   const t = await timelineFor(session.user.id, now);
   const suggested = await suggestionsFor(profile.id);
+  const prompt = semesterPrompt(profile, now);
+  const rolling = readyToRoll(profile.nextSemesterAt, now);
   const { programme, enrolments } = profile;
   const suggestions = suggested.classes.length + suggested.assessments.length;
 
@@ -125,6 +130,21 @@ export default async function Today() {
               {earlier.map((item) => <TimelineRow key={`${item.type}-${item.id}`} item={item} nowIso={now.toISOString()} />)}
             </div>
           </section>
+        )}
+
+        {rolling && profile.nextSemesterAt ? (
+          <RollOver
+            startsAt={profile.nextSemesterAt}
+            currentLevel={profile.level}
+            currentSemester={profile.semester}
+            award={programme.award}
+            years={programme.years}
+            programmeId={programme.id}
+            institutionId={programme.institutionId}
+            campusId={programme.campusId}
+          />
+        ) : (
+          <SemesterPrompt prompt={prompt} />
         )}
 
         <SuggestionDrawer groups={suggestionGroups} total={suggestions} />

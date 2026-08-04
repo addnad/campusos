@@ -281,6 +281,21 @@ model StudentProfile {
   /// Optional. Sensitive: never exposed in URLs or to other students.
   matricNumber String?
   isActive     Boolean     @default(true)
+
+  /// When this semester ends, as the student reported it. A property of
+  /// the campus really — every 100-level student shares it — but stored
+  /// per profile until enough students agree for it to be promoted.
+  /// Always editable: a strike can move it by months.
+  semesterEndsAt   DateTime?
+  /// When the next one starts, if they know.
+  nextSemesterAt   DateTime?
+  /// Last time we asked. The prompt returns weekly until answered, and
+  /// "I do not know" counts as an answer for a while so a student who
+  /// genuinely does not know is not nagged.
+  datePromptedAt   DateTime?
+  /// Set when they say they do not know, so we back off rather than ask
+  /// again next week.
+  dateUnknownAt    DateTime?
   enrolments   Enrolment[]
   tasks        Task[]
   sessions     ClassSession[]
@@ -303,6 +318,11 @@ model Enrolment {
   courseId   String
   level      String
   semester   Int
+  /// "2025/2026". Without this a student repeating a course overwrites
+  /// their first attempt: same profile, same course, same level, same
+  /// semester. History matters — a course passed last year is not the
+  /// same as one being taken now.
+  session    String          @default("")
   units      Int
   status     EnrolmentStatus @default(ACTIVE)
   /// Stable per student per semester, assigned at enrolment.
@@ -310,7 +330,7 @@ model Enrolment {
   createdAt  DateTime       @default(now())
   updatedAt  DateTime       @updatedAt
 
-  @@unique([profileId, courseId, level, semester])
+  @@unique([profileId, courseId, session, semester])
   @@index([courseId])
   @@index([courseId, status])
 }

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { Confidence } from "@/generated/prisma/client";
+import { sessionFor } from "@/modules/academics/session";
 
 const TOKENS = [
   "ember", "volt", "fern", "mint", "teal",
@@ -33,13 +34,41 @@ export async function completeOnboarding(_prev: unknown, formData: FormData) {
   }
   if (courses.length === 0) return { error: "Add at least one course." };
 
+  const rolling = formData.get("rollover") === "1";
+  const session_ = sessionFor();
+
   // One transaction: a failure part-way through would otherwise leave a
   // profile with only some of its courses, which reads as data loss to
   // the student and is invisible to us.
   await prisma.$transaction(async (tx) => {
-    const profile = await tx.studentProfile.create({
-      data: { userId: session.user.id, programmeId, level, semester },
-    });
+    // A rollover moves the profile on; onboarding creates it. Same
+    // screen, same prefill, different write.
+    const existing = rolling
+      ? await tx.studentProfile.findFirst({
+          where: { userId: session.user.id, isActive: true },
+          select: { id: true },
+        })
+      : null;
+
+    if (existing) {
+      await tx.enrolment.updateMany({
+        where: { profileId: existing.id, status: "ACTIVE" },
+        data: { status: "COMPLETED" },
+      });
+    }
+
+    const profile = existing
+      ? await tx.studentProfile.update({
+          where: { id: existing.id },
+          data: {
+            programmeId, level, semester,
+            semesterEndsAt: null, nextSemesterAt: null,
+            datePromptedAt: null, dateUnknownAt: null,
+          },
+        })
+      : await tx.studentProfile.create({
+          data: { userId: session.user.id, programmeId, level, semester },
+        });
 
     for (const [i, c] of courses.entries()) {
       let courseId = c.courseId;
@@ -66,12 +95,28 @@ export async function completeOnboarding(_prev: unknown, formData: FormData) {
         courseId = existing.id;
       }
 
-      await tx.enrolment.create({
-        data: {
+      // Upsert, not create: a rollover re-run would otherwise hit the
+      // unique constraint and fail the whole transaction. A student
+      // repeating a course in a new session gets a second row, so their
+      // first attempt survives.
+      await tx.enrolment.upsert({
+        where: {
+          profileId_courseId_session_semester: {
+            profileId: profile.id, courseId, session: session_, semester,
+          },
+        },
+        update: {
+          status: "ACTIVE",
+          level,
+          units: c.units,
+          colourToken: TOKENS[i % TOKENS.length],
+        },
+        create: {
           profileId: profile.id,
           courseId,
           level,
           semester,
+          session: session_,
           units: c.units,
           colourToken: TOKENS[i % TOKENS.length],
         },
