@@ -1,10 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { EnrolmentStatus } from "@/generated/prisma/client";
 
-/// Three students on the same course, session, level and semester opens
-/// a room. Low enough that a small department reaches it; high enough
-/// that it is not a room of one.
-export const THRESHOLD = 2; // TEMP: back to 3 before shipping
+/// Two students on the same course, session, level and semester opens a
+/// room. A room that never opens is worse than a quiet one, and waiting
+/// on a third who may never arrive is the more likely failure. Raise it
+/// later if rooms of two do not work; existing rooms are unaffected.
+export const THRESHOLD = 2;
 
 /// Rooms are created lazily, when someone looks. No jobs, no queues, and
 /// it self-heals if a count changes.
