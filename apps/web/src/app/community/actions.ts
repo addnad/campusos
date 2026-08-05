@@ -99,7 +99,9 @@ export async function postMessage(communityId: string, formData: FormData) {
   }
 
   const body = String(formData.get("body") ?? "").trim();
-  if (body.length === 0) return { error: "Say something." };
+  const filePath = String(formData.get("filePath") ?? "") || null;
+  // A message can be a file with no words.
+  if (body.length === 0 && !filePath) return { error: "Say something." };
   if (body.length > MAX_LENGTH) return { error: "That is too long." };
 
   const recent = await prisma.message.count({
@@ -109,7 +111,16 @@ export async function postMessage(communityId: string, formData: FormData) {
 
   const replyToId = String(formData.get("replyToId") ?? "") || null;
   await prisma.message.create({
-    data: { communityId, authorId: ctx.profileId, body, replyToId },
+    data: {
+      communityId,
+      authorId: ctx.profileId,
+      body,
+      replyToId,
+      filePath,
+      fileType: filePath ? String(formData.get("fileType") ?? "") || null : null,
+      fileSize: filePath ? Number(formData.get("fileSize")) || null : null,
+      fileName: filePath ? String(formData.get("fileName") ?? "") || null : null,
+    },
   });
   revalidatePath(`/community/${communityId}`);
   return { ok: true };

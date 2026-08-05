@@ -14,7 +14,7 @@ function stamp(iso: string) {
     : d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
 }
 
-function Row({ m, me, onHold, onReact, onSwipeReply }: { m: LiveMessage; me: string; onHold: (t: SheetTarget) => void; onReact: (messageId: string, emoji: string) => void; onSwipeReply: (m: { id: string; body: string }) => void }) {
+function Row({ m, me, onHold, onReact, onSwipeReply, onOpenImage }: { m: LiveMessage; me: string; onHold: (t: SheetTarget) => void; onReact: (messageId: string, emoji: string) => void; onSwipeReply: (m: { id: string; body: string }) => void; onOpenImage: (url: string) => void }) {
   const mine = m.authorId === me;
 
   // A join is not something a person said: no bubble, no author line, no
@@ -83,9 +83,34 @@ function Row({ m, me, onHold, onReact, onSwipeReply }: { m: LiveMessage; me: str
             <span className="line-clamp-2">{m.replyTo.body}</span>
           </div>
         )}
-        <p className="whitespace-pre-wrap break-words">
-          {long && !expanded ? `${m.body.slice(0, LONG).trimEnd()}...` : m.body}
-        </p>
+        {m.file?.url && (
+          m.file.type?.startsWith("image/") ? (
+            <button type="button" onClick={() => onOpenImage(m.file!.url!)} className="mb-2 block w-full overflow-hidden rounded-xl">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={m.file.url} alt={m.file.name ?? "Attachment"} className="max-h-72 w-full object-cover" />
+            </button>
+          ) : (
+            <a href={m.file.url} target="_blank" rel="noreferrer" download={m.file.name ?? undefined} className={`mb-2 flex items-center gap-2 rounded-xl px-3 py-2 ${mine ? "bg-ground/15" : "bg-sunken"}`}>
+              <span className="text-lg">&#128196;</span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-bold">{m.file.name ?? "File"}</span>
+                {m.file.size && (
+                  <span className="block font-mono text-[11px] opacity-70">
+                    {m.file.size < 1024 * 1024
+                      ? `${Math.max(1, Math.round(m.file.size / 1024))} KB`
+                      : `${(m.file.size / 1024 / 1024).toFixed(1)} MB`}
+                  </span>
+                )}
+              </span>
+            </a>
+          )
+        )}
+
+        {m.body && (
+          <p className="whitespace-pre-wrap break-words">
+            {long && !expanded ? `${m.body.slice(0, LONG).trimEnd()}...` : m.body}
+          </p>
+        )}
         {long && (
           <button type="button" onClick={() => setExpanded(!expanded)} className={`mt-1 text-sm font-bold underline underline-offset-2 ${mine ? "text-ground/70" : "text-muted"}`}>
             {expanded ? "Show less" : "Show more"}
@@ -131,6 +156,7 @@ export function MessageList({ communityId, me, myHandle, initial, mutedUntil }: 
   const [sheet, setSheet] = useState<SheetTarget>(null);
   const [replyTo, setReplyTo] = useState<{ id: string; body: string } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [lightbox, setLightbox] = useState<string | null>(null);
   const end = useRef<HTMLDivElement>(null);
 
   // Follow new messages, the way any chat does.
@@ -153,10 +179,18 @@ export function MessageList({ communityId, me, myHandle, initial, mutedUntil }: 
           </p>
         )}
         {messages.map((m) => (
-          <Row key={m.id} m={m} me={me} onHold={setSheet} onReact={react} onSwipeReply={setReplyTo} />
+          <Row key={m.id} m={m} me={me} onHold={setSheet} onReact={react} onSwipeReply={setReplyTo} onOpenImage={setLightbox} />
         ))}
       </ul>
       <div ref={end} />
+
+      {lightbox && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/90 p-4" onClick={() => setLightbox(null)} role="dialog" aria-modal>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={lightbox} alt="" className="max-h-[85vh] max-w-[min(100%,52rem)] rounded-2xl object-contain" />
+          <button type="button" aria-label="Close" className="absolute right-4 top-4 text-3xl text-ground">&times;</button>
+        </div>
+      )}
 
       {toast && (
         <div className="fixed inset-x-0 bottom-24 z-40 flex justify-center px-6">
@@ -178,7 +212,7 @@ export function MessageList({ communityId, me, myHandle, initial, mutedUntil }: 
         replyTo={replyTo}
         onClearReply={() => setReplyTo(null)}
         onTyping={setTypingFlag}
-        onSent={(body, replyToId) => {
+        onSent={(body, replyToId, file) => {
           // Shown immediately; the next poll replaces it with the stored
           // row. Waiting up to five seconds to see your own message is
           // the difference between a chat feeling live and feeling broken.
@@ -191,6 +225,7 @@ export function MessageList({ communityId, me, myHandle, initial, mutedUntil }: 
             authorId: me,
             handle: myHandle,
             reactions: [],
+            file,
             replyTo: quoted ? { id: quoted.id, body: quoted.body, handle: quoted.handle } : null,
           }]);
           refresh();

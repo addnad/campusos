@@ -521,6 +521,14 @@ model Message {
   /// but it is not something a person said: no reactions, no replies, no
   /// reporting.
   isSystem    Boolean          @default(false)
+
+  /// Attachment. The store is private, so this is a pathname rather than
+  /// a URL — a signed link is generated per request for room members
+  /// only, which a public store would not allow.
+  filePath    String?
+  fileType    String?
+  fileSize    Int?
+  fileName    String?
   /// Forty people discussing one assignment is unreadable without this.
   /// SetNull rather than Cascade: deleting a message should not take the
   /// replies to it with it.

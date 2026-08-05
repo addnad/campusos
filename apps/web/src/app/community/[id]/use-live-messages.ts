@@ -7,6 +7,7 @@ export type LiveMessage = {
   body: string;
   deleted?: boolean;
   isSystem?: boolean;
+  file?: { url: string | null; type: string | null; name: string | null; size: number | null } | null;
   createdAt: string;
   authorId: string;
   handle: string | null;

@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { signFor } from "./attachments";
 
 export async function roomFor(profileId: string, communityId: string) {
   const member = await prisma.communityMember.findUnique({
@@ -36,11 +37,20 @@ export async function roomFor(profileId: string, communityId: string) {
     },
   });
 
+  // Signed here, not stored: the store is private, so a link is minted
+  // per request and only for members.
+  const signed = await Promise.all(
+    messages.map(async (m) =>
+      m.filePath && !m.deletedAt ? { id: m.id, url: await signFor(m.filePath) } : null,
+    ),
+  );
+  const urlOf = new Map(signed.filter(Boolean).map((x) => [x!.id, x!.url]));
+
   // Stamped on open. Anything after this is unread next time.
   await prisma.communityMember.update({
     where: { communityId_profileId: { communityId, profileId } },
     data: { lastReadAt: new Date() },
   });
 
-  return { community, member, messages: messages.reverse() };
+  return { community, member, messages: messages.reverse(), urlOf };
 }

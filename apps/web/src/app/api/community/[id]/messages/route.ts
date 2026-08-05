@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { signFor } from "@/modules/collaboration/attachments";
 
 /// Messages after a timestamp. Returning to a backgrounded tab fetches
 /// the whole gap in one request rather than losing it.
@@ -86,6 +87,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     select: { id: true, deletedAt: true, reactions: { select: { emoji: true, profileId: true } } },
   });
 
+  const withUrls = await Promise.all(
+    messages.map(async (m) => ({
+      id: m.id,
+      url: m.filePath && !m.deletedAt ? await signFor(m.filePath) : null,
+    })),
+  );
+  const urlOf = new Map(withUrls.map((x) => [x.id, x.url]));
+
   return NextResponse.json({
     profileId: profile.id,
     online,
@@ -102,6 +111,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       body: m.deletedAt ? "" : m.body,
       deleted: Boolean(m.deletedAt),
       isSystem: m.isSystem,
+      file: m.filePath && !m.deletedAt
+        ? { url: urlOf.get(m.id), type: m.fileType, name: m.fileName, size: m.fileSize }
+        : null,
       createdAt: m.createdAt.toISOString(),
       authorId: m.authorId,
       handle: m.author.user.handle,

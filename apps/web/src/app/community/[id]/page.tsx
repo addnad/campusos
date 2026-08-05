@@ -22,7 +22,7 @@ export default async function Room({ params }: { params: Promise<{ id: string }>
   const data = await roomFor(profile.id, id);
   if (!data) notFound();
 
-  const { community, member, messages } = data;
+  const { community, member, messages, urlOf } = data;
 
   return (
     <main className="min-h-screen bg-ground pb-28">
@@ -49,6 +49,9 @@ export default async function Room({ params }: { params: Promise<{ id: string }>
             body: m.deletedAt ? "" : m.body,
             deleted: Boolean(m.deletedAt),
             isSystem: m.isSystem,
+            file: m.filePath && !m.deletedAt
+              ? { url: urlOf.get(m.id) ?? null, type: m.fileType, name: m.fileName, size: m.fileSize }
+              : null,
             createdAt: m.createdAt.toISOString(),
             authorId: m.authorId,
             handle: m.author.user.handle,
