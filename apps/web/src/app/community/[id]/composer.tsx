@@ -63,6 +63,10 @@ export function Composer({ communityId, mutedUntil, replyTo, onClearReply, onSen
           value={body}
           onChange={(e) => {
             setBody(e.target.value);
+            if (error) setError(null);
+            // Grow with the content up to the max height.
+            e.target.style.height = "auto";
+            e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
             const active = e.target.value.trim().length > 0;
             onTyping?.(active);
             if (idle.current) clearTimeout(idle.current);
@@ -70,12 +74,17 @@ export function Composer({ communityId, mutedUntil, replyTo, onClearReply, onSen
           }}
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
           placeholder="Message your coursemates"
-          className="max-h-32 min-h-11 flex-1 resize-none truncate rounded-2xl bg-card px-4 py-3 text-ink outline-none placeholder:text-muted"
+          className="max-h-40 min-h-11 flex-1 resize-none rounded-2xl bg-card px-4 py-3 text-ink outline-none placeholder:truncate placeholder:text-muted"
         />
         <button type="button" onClick={send} disabled={pending || !body.trim()} aria-label="Send" className="h-11 w-11 shrink-0 rounded-full bg-ink text-lg font-bold text-ground disabled:opacity-30">
           &uarr;
         </button>
       </div>
+      {body.length > 4500 && (
+        <p className="mx-auto mt-2 max-w-2xl font-mono text-xs text-muted">
+          {5000 - body.length} characters left
+        </p>
+      )}
       {error && <p className="mx-auto mt-2 max-w-2xl text-sm font-bold text-alarm">{error}</p>}
     </div>
   );

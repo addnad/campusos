@@ -52,7 +52,9 @@ export async function joinRoom(communityId: string) {
   return { ok: true };
 }
 
-const MAX_LENGTH = 2000;
+/// 2000 was short for how students actually write — one normal update
+/// about a day ran past it.
+const MAX_LENGTH = 5000;
 /// Most early trouble is volume, not vocabulary.
 const MAX_PER_MINUTE = 10;
 

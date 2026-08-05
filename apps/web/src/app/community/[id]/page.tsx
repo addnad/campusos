@@ -46,7 +46,8 @@ export default async function Room({ params }: { params: Promise<{ id: string }>
           mutedUntil={member.mutedUntil ? member.mutedUntil.toISOString() : null}
           initial={messages.map((m) => ({
             id: m.id,
-            body: m.body,
+            body: m.deletedAt ? "" : m.body,
+            deleted: Boolean(m.deletedAt),
             createdAt: m.createdAt.toISOString(),
             authorId: m.authorId,
             handle: m.author.user.handle,

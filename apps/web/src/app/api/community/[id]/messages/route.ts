@@ -63,7 +63,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const messages = await prisma.message.findMany({
     where: {
       communityId: id,
-      deletedAt: null,
       ...(after && !Number.isNaN(after.getTime()) ? { createdAt: { gt: after } } : {}),
     },
     orderBy: { createdAt: "asc" },
@@ -81,10 +80,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   // filter would never carry them. Send the recent set every poll: it is
   // a small payload and it keeps everyone in sync.
   const recent = await prisma.message.findMany({
-    where: { communityId: id, deletedAt: null },
+    where: { communityId: id },
     orderBy: { createdAt: "desc" },
     take: 50,
-    select: { id: true, reactions: { select: { emoji: true, profileId: true } } },
+    select: { id: true, deletedAt: true, reactions: { select: { emoji: true, profileId: true } } },
   });
 
   return NextResponse.json({
@@ -92,9 +91,16 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     online,
     typing: typingNow,
     reactions: recent.map((m) => ({ id: m.id, reactions: m.reactions })),
+    // Deleted messages are soft-deleted, so the timestamp filter never
+    // carries their removal. Send what is still visible.
+    visible: recent.map((m) => m.id),
+    deleted: recent.filter((m) => m.deletedAt).map((m) => m.id),
     messages: messages.map((m) => ({
       id: m.id,
-      body: m.body,
+      // A message vanishing silently makes the thread confusing to read,
+      // especially where someone replied to it. Leave a marker.
+      body: m.deletedAt ? "" : m.body,
+      deleted: Boolean(m.deletedAt),
       createdAt: m.createdAt.toISOString(),
       authorId: m.authorId,
       handle: m.author.user.handle,

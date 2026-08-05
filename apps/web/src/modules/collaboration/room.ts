@@ -17,7 +17,7 @@ export async function roomFor(profileId: string, communityId: string) {
   if (!community) return null;
 
   const messages = await prisma.message.findMany({
-    where: { communityId, deletedAt: null },
+    where: { communityId },
     orderBy: { createdAt: "asc" },
     take: 200,
     include: {

@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export type LiveMessage = {
   id: string;
   body: string;
+  deleted?: boolean;
   createdAt: string;
   authorId: string;
   handle: string | null;
@@ -41,6 +42,21 @@ export function useLiveMessages(communityId: string, initial: LiveMessage[]) {
       setOnline(data.online ?? []);
       setTyping(data.typing ?? []);
 
+      if (data.deleted?.length) {
+        const gone = new Set<string>(data.deleted);
+        setMessages((prev) => prev.map((m) =>
+          gone.has(m.id) && !m.deleted ? { ...m, deleted: true, body: "" } : m,
+        ));
+      }
+
+      if (data.visible) {
+        const alive = new Set<string>(data.visible);
+        setMessages((prev) => {
+          const next = prev.filter((m) => m.id.startsWith("pending-") || alive.has(m.id));
+          return next.length === prev.length ? prev : next;
+        });
+      }
+
       if (data.reactions?.length) {
         const fresh = new Map<string, { emoji: string; profileId: string }[]>(
           data.reactions.map((r: { id: string; reactions: { emoji: string; profileId: string }[] }) => [r.id, r.reactions]),
@@ -60,7 +76,11 @@ export function useLiveMessages(communityId: string, initial: LiveMessage[]) {
           const fresh = data.messages.filter((m: LiveMessage) => !seen.has(m.id));
           if (fresh.length === 0) return prev;
           latest.current = fresh.at(-1).createdAt;
-          return [...prev, ...fresh];
+          // An optimistic row keeps a pending- id, so the real one is
+          // not caught by the id dedupe. Drop it when its match lands.
+          const bodies = new Set(fresh.map((m: LiveMessage) => m.body));
+          const kept = prev.filter((m) => !(m.id.startsWith("pending-") && bodies.has(m.body)));
+          return [...kept, ...fresh];
         });
       }
     } catch {

@@ -16,11 +16,15 @@ function stamp(iso: string) {
 
 function Row({ m, me, onHold, onReact, onSwipeReply }: { m: LiveMessage; me: string; onHold: (t: SheetTarget) => void; onReact: (messageId: string, emoji: string) => void; onSwipeReply: (m: { id: string; body: string }) => void }) {
   const mine = m.authorId === me;
-  const hold = useLongPress(() => onHold({ id: m.id, body: m.body, mine, reported: false }));
+  const hold = useLongPress(() => { if (!m.deleted) onHold({ id: m.id, body: m.body, mine, reported: false }); });
 
   // Swipe right to reply, as every chat app does.
   const startX = useRef(0);
   const [dx, setDx] = useState(0);
+  /// A long message would otherwise push the whole room off screen.
+  const LONG = 320;
+  const [expanded, setExpanded] = useState(false);
+  const long = m.body.length > LONG;
 
   // Group reactions so five thumbs-up read as one chip with a count.
   const grouped = new Map<string, { count: number; mine: boolean }>();
@@ -38,6 +42,11 @@ function Row({ m, me, onHold, onReact, onSwipeReply }: { m: LiveMessage; me: str
         <span className="font-mono text-[10px] uppercase tracking-widest text-muted">{stamp(m.createdAt)}</span>
       </div>
 
+      {m.deleted ? (
+        <p className={`mt-1 max-w-[85%] rounded-2xl px-4 py-3 text-sm italic ${mine ? "bg-ink/10 text-muted" : "bg-card text-muted"}`}>
+          Message deleted
+        </p>
+      ) : (
       <div
         {...hold}
         onTouchStart={(e) => { startX.current = e.touches[0].clientX; hold.onTouchStart(); }}
@@ -60,10 +69,18 @@ function Row({ m, me, onHold, onReact, onSwipeReply }: { m: LiveMessage; me: str
             <span className="line-clamp-2">{m.replyTo.body}</span>
           </div>
         )}
-        <p className="whitespace-pre-wrap break-words">{m.body}</p>
+        <p className="whitespace-pre-wrap break-words">
+          {long && !expanded ? `${m.body.slice(0, LONG).trimEnd()}...` : m.body}
+        </p>
+        {long && (
+          <button type="button" onClick={() => setExpanded(!expanded)} className={`mt-1 text-sm font-bold underline underline-offset-2 ${mine ? "text-ground/70" : "text-muted"}`}>
+            {expanded ? "Show less" : "Show more"}
+          </button>
+        )}
       </div>
+      )}
 
-      {grouped.size > 0 && (
+      {!m.deleted && grouped.size > 0 && (
         <div className="mt-1 flex flex-wrap gap-1">
           {[...grouped.entries()].map(([emoji, g]) => (
             <button key={emoji} type="button" onClick={() => onReact(m.id, emoji)} className={`rounded-full px-2 py-0.5 text-xs ${g.mine ? (mine ? "bg-ground text-ink" : "bg-ink text-ground") : "bg-sunken text-ink"}`}>
