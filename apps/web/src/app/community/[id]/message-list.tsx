@@ -41,6 +41,15 @@ function Row({ m, me, myHandle, onHold, onReact, onSwipeReply, onOpenImage }: { 
   const [expanded, setExpanded] = useState(false);
   const long = m.body.length > LONG;
 
+  /// A message that names you should be findable in a wall of text, but
+  /// a permanent highlight becomes noise once you have seen it.
+  const [flash, setFlash] = useState(Boolean(m.mentionsMe));
+  useEffect(() => {
+    if (!m.mentionsMe) return;
+    const t = setTimeout(() => setFlash(false), 4000);
+    return () => clearTimeout(t);
+  }, [m.mentionsMe]);
+
   // Group reactions so five thumbs-up read as one chip with a count.
   const grouped = new Map<string, { count: number; mine: boolean }>();
   for (const r of m.reactions) {
@@ -76,7 +85,9 @@ function Row({ m, me, myHandle, onHold, onReact, onSwipeReply, onOpenImage }: { 
           setDx(0);
         }}
         style={{ transform: dx ? `translateX(${dx}px)` : undefined, transition: dx ? "none" : "transform 160ms" }}
-        className={`mt-1 max-w-[85%] select-none rounded-2xl px-4 py-3 ${mine ? "bg-ink text-ground" : "bg-card text-ink"}`}
+        className={`mt-1 max-w-[85%] select-none rounded-2xl px-4 py-3 transition-colors duration-700 ${
+          mine ? "bg-ink text-ground" : flash ? "bg-volt text-ink" : "bg-card text-ink"
+        }`}
       >
         {m.replyTo && (
           <div className={`mb-2 border-l-2 pl-2 text-sm ${mine ? "border-ground/40 text-ground/70" : "border-ink/25 text-muted"}`}>
@@ -88,7 +99,7 @@ function Row({ m, me, myHandle, onHold, onReact, onSwipeReply, onOpenImage }: { 
           m.file.type?.startsWith("image/") ? (
             <button type="button" onClick={() => onOpenImage(m.file!.url!)} className="mb-2 block w-full overflow-hidden rounded-xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={m.file.url} alt={m.file.name ?? "Attachment"} className="max-h-72 w-full object-cover" />
+              <img src={m.file.url} alt={m.file.name ?? "Attachment"} className="max-h-80 w-full rounded-xl object-contain" />
             </button>
           ) : (
             <a href={m.file.url} target="_blank" rel="noreferrer" download={m.file.name ?? undefined} className={`mb-2 flex items-center gap-2 rounded-xl px-3 py-2 ${mine ? "bg-ground/15" : "bg-sunken"}`}>

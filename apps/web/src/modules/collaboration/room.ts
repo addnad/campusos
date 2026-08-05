@@ -32,6 +32,7 @@ export async function roomFor(profileId: string, communityId: string) {
       author: { select: { id: true, user: { select: { handle: true } } } },
       reports: { where: { reporterId: profileId }, select: { id: true } },
       reactions: { select: { emoji: true, profileId: true } },
+      mentions: { where: { profileId }, select: { id: true } },
       replyTo: {
         select: {
           id: true, body: true, deletedAt: true,

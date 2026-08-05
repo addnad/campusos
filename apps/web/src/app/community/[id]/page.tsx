@@ -50,6 +50,7 @@ export default async function Room({ params }: { params: Promise<{ id: string }>
             body: m.deletedAt ? "" : m.body,
             deleted: Boolean(m.deletedAt),
             isSystem: m.isSystem,
+            mentionsMe: m.mentions.length > 0,
             file: m.filePath && !m.deletedAt
               ? { url: urlOf.get(m.id) ?? null, type: m.fileType, name: m.fileName, size: m.fileSize }
               : null,

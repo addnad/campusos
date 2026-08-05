@@ -71,6 +71,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     include: {
       author: { select: { id: true, user: { select: { handle: true } } } },
       reactions: { select: { emoji: true, profileId: true } },
+      mentions: { where: { profileId: profile.id }, select: { id: true } },
       replyTo: {
         select: { id: true, body: true, author: { select: { user: { select: { handle: true } } } } },
       },
@@ -111,6 +112,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       body: m.deletedAt ? "" : m.body,
       deleted: Boolean(m.deletedAt),
       isSystem: m.isSystem,
+      mentionsMe: m.mentions.length > 0,
       file: m.filePath && !m.deletedAt
         ? { url: urlOf.get(m.id), type: m.fileType, name: m.fileName, size: m.fileSize }
         : null,

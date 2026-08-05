@@ -34,11 +34,19 @@ export function Composer({ communityId, mutedUntil, replyTo, onClearReply, onSen
     : handles.filter((h) => h.startsWith(mentionQuery)).slice(0, 5);
 
   function pickHandle(h: string) {
-    const at = body.lastIndexOf("@");
+    const caret = box.current?.selectionStart ?? body.length;
+    const upto = body.slice(0, caret);
+    const at = upto.lastIndexOf("@");
     if (at < 0) return;
-    setBody(`${body.slice(0, at)}@${h} `);
+    // Replace only the partial handle: text after the caret survives.
+    const next = `${body.slice(0, at)}@${h} ${body.slice(caret)}`;
+    setBody(next);
     setMentionQuery(null);
-    box.current?.focus();
+    requestAnimationFrame(() => {
+      const pos = at + h.length + 2;
+      box.current?.focus();
+      box.current?.setSelectionRange(pos, pos);
+    });
   }
 
   const muted = mutedUntil && mutedUntil > new Date();
@@ -77,6 +85,9 @@ export function Composer({ communityId, mutedUntil, replyTo, onClearReply, onSen
         // Cleared after onSent, which still needs the preview URL.
         setFile(null);
         setPreview(null);
+        // Every piece of composer state clears here. Adding one and
+        // clearing it in only one path is how this broke three times.
+        setMentionQuery(null);
         box.current?.focus();
       }
     });
@@ -91,10 +102,22 @@ export function Composer({ communityId, mutedUntil, replyTo, onClearReply, onSen
         </div>
       )}
       {suggestions.length > 0 && (
-        <div className="mx-auto mb-2 flex max-w-2xl flex-wrap gap-2">
-          {suggestions.map((h) => (
-            <button key={h} type="button" onClick={() => pickHandle(h)} className="rounded-full bg-card px-4 py-2 text-sm font-bold text-ink">@{h}</button>
-          ))}
+        <div className="mx-auto mb-2 max-w-2xl overflow-hidden rounded-2xl bg-card shadow-lg">
+          <p className="border-b border-ink/10 px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-muted">
+            In this room
+          </p>
+          <ul className="max-h-56 overflow-y-auto">
+            {suggestions.map((h) => (
+              <li key={h}>
+                <button type="button" onClick={() => pickHandle(h)} className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-sunken">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink font-display text-xs text-ground">
+                    {h.slice(0, 2).toUpperCase()}
+                  </span>
+                  <span className="font-bold text-ink">@{h}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 
@@ -167,7 +190,10 @@ export function Composer({ communityId, mutedUntil, replyTo, onClearReply, onSen
             if (idle.current) clearTimeout(idle.current);
             if (active) idle.current = setTimeout(() => onTyping?.(false), 2500);
           }}
-          onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
+          onKeyDown={(e) => {
+            if (e.key === "Escape" && mentionQuery !== null) { setMentionQuery(null); return; }
+            if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
+          }}
           placeholder="Message your coursemates"
           className="max-h-40 min-h-11 flex-1 resize-none rounded-2xl bg-card px-4 py-3 text-ink outline-none placeholder:truncate placeholder:text-muted"
         />
