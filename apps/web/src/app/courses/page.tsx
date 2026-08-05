@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { semesterFor } from "@/modules/academics/queries";
 import { BottomNav } from "@/components/layout/bottom-nav";
+import { unreadTotal } from "@/modules/collaboration/queries";
 
 export default async function Courses() {
   const session = await auth();
@@ -10,6 +11,7 @@ export default async function Courses() {
   if (!session.user.handle) redirect("/handle");
 
   const profile = await semesterFor(session.user.id);
+  const unread = profile ? await unreadTotal(profile.id) : 0;
   if (!profile) redirect("/onboarding");
 
   const { programme, enrolments } = profile;
@@ -46,7 +48,7 @@ export default async function Courses() {
         )}
       </div>
 
-      <BottomNav active="/courses" />
+      <BottomNav active="/courses" unread={unread} />
     </main>
   );
 }

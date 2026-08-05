@@ -40,7 +40,7 @@ const TABS = [
   { href: "/me", key: "me", label: "Me" },
 ];
 
-export function BottomNav({ active }: { active: string }) {
+export function BottomNav({ active, unread = 0 }: { active: string; unread?: number }) {
   return (
     <nav className="fixed inset-x-0 bottom-0 border-t-2 border-ink/10 bg-ground pb-[env(safe-area-inset-bottom)]">
       <div className="mx-auto flex max-w-2xl">
@@ -48,9 +48,14 @@ export function BottomNav({ active }: { active: string }) {
           const on = active === t.href;
           return (
             <Link key={t.href} href={t.href} aria-current={on ? "page" : undefined} className={`flex flex-1 flex-col items-center gap-1 py-3 ${on ? "text-ink" : "text-ink/40"}`}>
+              <span className="relative">
+              {t.key === "community" && unread > 0 && (
+                <span aria-label={`${unread} unread`} className="absolute -right-1 -top-0.5 h-2.5 w-2.5 rounded-full bg-alarm ring-2 ring-ground" />
+              )}
               <svg viewBox="0 0 24 24" aria-hidden className="h-[23px] w-[23px]" fill="none" stroke="currentColor" strokeWidth={2.75} strokeLinecap="round" strokeLinejoin="round">
                 {ICONS[t.key]}
               </svg>
+              </span>
               <span className={`font-mono text-[10px] uppercase tracking-widest ${on ? "font-bold" : ""}`}>{t.label}</span>
             </Link>
           );

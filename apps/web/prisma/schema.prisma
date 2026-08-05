@@ -209,6 +209,16 @@ model User {
   /// Gates the once-a-year change.
   handleSetAt   DateTime?
 
+  /// Set directly in the database. No self-service path to it, and no
+  /// UI that grants it: moderation decisions come from a person, not
+  /// from a threshold.
+  isStaff       Boolean          @default(false)
+
+  /// Set when removals in separate rooms suggest a pattern rather than a
+  /// bad afternoon. Reviewed by a person; nothing automatic bans anyone
+  /// from the whole product.
+  flaggedAt     DateTime?
+
   accounts      Account[]
   sessions      Session[]
   profiles      StudentProfile[]
@@ -490,6 +500,10 @@ model CommunityMember {
   strikes     Int            @default(0)
   /// Set when timed out; they can post again after it passes.
   mutedUntil  DateTime?
+  /// When they last opened the room. Anything after this is unread —
+  /// without it a student has to open every room to find out whether
+  /// anything happened.
+  lastReadAt  DateTime?
   joinedAt    DateTime       @default(now())
 
   @@unique([communityId, profileId])
@@ -503,6 +517,10 @@ model Message {
   author      StudentProfile   @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId    String
   body        String
+  /// A join announcement is a message so it sits in the stream in order,
+  /// but it is not something a person said: no reactions, no replies, no
+  /// reporting.
+  isSystem    Boolean          @default(false)
   /// Forty people discussing one assignment is unreadable without this.
   /// SetNull rather than Cascade: deleting a message should not take the
   /// replies to it with it.
@@ -534,7 +552,10 @@ model Report {
   messageId  String
   reporter   StudentProfile @relation("ReportsMade", fields: [reporterId], references: [id], onDelete: Cascade)
   reporterId String
+  /// A category from REPORT_REASONS, so reports can be counted.
   reason     String?
+  /// Optional detail, for "something else" or added context.
+  note       String?
   state      ReportState @default(OPEN)
   createdAt  DateTime    @default(now())
 

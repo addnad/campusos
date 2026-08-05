@@ -101,6 +101,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       // especially where someone replied to it. Leave a marker.
       body: m.deletedAt ? "" : m.body,
       deleted: Boolean(m.deletedAt),
+      isSystem: m.isSystem,
       createdAt: m.createdAt.toISOString(),
       authorId: m.authorId,
       handle: m.author.user.handle,

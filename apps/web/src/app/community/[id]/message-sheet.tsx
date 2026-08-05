@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { reportMessage, deleteOwnMessage } from "../actions";
+import { REPORT_REASONS } from "@/modules/moderation/reasons";
 
 export const QUICK = ["\u{1F44D}", "\u{1F525}", "\u{1F602}", "\u{1F64F}", "\u{1F62D}", "\u{2757}"];
 
@@ -23,17 +24,20 @@ export type SheetTarget = { id: string; body: string; mine: boolean; reported: b
 /// A press-and-hold sheet rather than an inline menu: on a phone, a row
 /// of tiny controls beside every message is both cluttered and hard to
 /// hit.
-export function MessageSheet({ communityId, target, onClose, onReply, onReact }: {
+export function MessageSheet({ communityId, target, onClose, onReply, onReact, onReported }: {
   communityId: string;
   target: SheetTarget;
   onClose: () => void;
   onReply: (m: { id: string; body: string }) => void;
   onReact: (messageId: string, emoji: string) => void;
+  onReported?: () => void;
 }) {
   const [pending, start] = useTransition();
   const [showAll, setShowAll] = useState(false);
+  const [reporting, setReporting] = useState(false);
+  const [note, setNote] = useState("");
 
-  useEffect(() => { if (!target) setShowAll(false); }, [target]);
+  useEffect(() => { if (!target) { setShowAll(false); setReporting(false); setNote(""); } }, [target]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) { if (e.key === "Escape") onClose(); }
@@ -87,8 +91,22 @@ export function MessageSheet({ communityId, target, onClose, onReply, onReact }:
           </button>
         ) : target.reported ? (
           <p className="px-3 py-2.5 font-mono text-[11px] uppercase tracking-widest text-muted">Already reported</p>
+        ) : reporting ? (
+          <div className="px-1 pb-1">
+            <p className="px-2 pb-2 font-mono text-[11px] uppercase tracking-widest text-muted">Why are you reporting this?</p>
+            {REPORT_REASONS.map((r) => (
+              <button key={r.key} type="button" disabled={pending} onClick={() => start(async () => {
+                await reportMessage(communityId, target.id, r.key, note);
+                onClose();
+                onReported?.();
+              })} className={row}>
+                {r.label}
+              </button>
+            ))}
+            <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Anything to add? (optional)" className="mt-1 w-full rounded-xl bg-card px-3 py-2.5 text-sm text-ink outline-none placeholder:text-muted" />
+          </div>
         ) : (
-          <button type="button" disabled={pending} onClick={() => start(async () => { await reportMessage(communityId, target.id); onClose(); })} className={`${row} text-alarm`}>
+          <button type="button" onClick={() => setReporting(true)} className={`${row} text-alarm`}>
             Report
           </button>
         )}

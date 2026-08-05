@@ -32,7 +32,7 @@ export default async function Room({ params }: { params: Promise<{ id: string }>
           <div className="min-w-0">
             <p className="truncate font-display text-lg uppercase leading-none text-ink">{community.course.displayCode}</p>
             <p className="truncate font-mono text-[11px] uppercase tracking-widest text-muted">
-              {community.level} &middot; {community._count.members} in
+              {community.level} &middot; {community._count.members} {community._count.members === 1 ? "member" : "members"}
             </p>
           </div>
         </div>
@@ -48,6 +48,7 @@ export default async function Room({ params }: { params: Promise<{ id: string }>
             id: m.id,
             body: m.deletedAt ? "" : m.body,
             deleted: Boolean(m.deletedAt),
+            isSystem: m.isSystem,
             createdAt: m.createdAt.toISOString(),
             authorId: m.authorId,
             handle: m.author.user.handle,

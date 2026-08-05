@@ -44,14 +44,47 @@ export async function roomsFor(profileId: string) {
     });
   }
 
+  // Who has actually posted lately. A room with three members and
+  // nothing said for a week is dead and should look it.
+  const ACTIVE_WINDOW = 86400000 * 2;
+  const talkers = await prisma.message.groupBy({
+    by: ["communityId", "authorId"],
+    where: {
+      deletedAt: null,
+      isSystem: false,
+      createdAt: { gte: new Date(Date.now() - ACTIVE_WINDOW) },
+    },
+  });
+  const talkingOf = new Map<string, number>();
+  for (const t of talkers) {
+    talkingOf.set(t.communityId, (talkingOf.get(t.communityId) ?? 0) + 1);
+  }
+
   const communities = await prisma.community.findMany({
     where: { OR: eligible.map((e) => ({ courseId: e.courseId, level: e.level, semester: e.semester })) },
     include: {
       course: { select: { displayCode: true, title: true } },
-      members: { where: { profileId }, select: { id: true, state: true } },
+      members: { where: { profileId }, select: { id: true, state: true, lastReadAt: true } },
       _count: { select: { members: true, messages: true } },
     },
   });
+
+  // Own messages excluded: posting from a phone should not make a room
+  // look unread on a laptop.
+  const joined = communities.filter((c) => c.members.length > 0);
+  const unreadCounts = await Promise.all(
+    joined.map((c) =>
+      prisma.message.count({
+        where: {
+          communityId: c.id,
+          deletedAt: null,
+          authorId: { not: profileId },
+          ...(c.members[0].lastReadAt ? { createdAt: { gt: c.members[0].lastReadAt } } : {}),
+        },
+      }),
+    ),
+  );
+  const unreadOf = new Map(joined.map((c, i) => [c.id, unreadCounts[i]]));
 
   return communities.map((c) => {
     const enrolment = mine.find((e) => e.courseId === c.courseId);
@@ -65,6 +98,8 @@ export async function roomsFor(profileId: string) {
       members: c._count.members,
       messages: c._count.messages,
       classmates: countOf.get(`${c.courseId}|${c.level}|${c.semester}|${enrolment?.session ?? ""}`) ?? 0,
+      unread: unreadOf.get(c.id) ?? 0,
+      talking: talkingOf.get(c.id) ?? 0,
     };
   });
 }
@@ -98,4 +133,28 @@ export async function pendingFor(profileId: string) {
     }))
     .filter((e) => e.here < THRESHOLD)
     .sort((a, b) => b.here - a.here);
+}
+
+/// For the nav dot. One count rather than a list, so the tab can show a
+/// dot without loading every room.
+export async function unreadTotal(profileId: string) {
+  const memberships = await prisma.communityMember.findMany({
+    where: { profileId, state: { not: "REMOVED" } },
+    select: { communityId: true, lastReadAt: true },
+  });
+  if (memberships.length === 0) return 0;
+
+  const counts = await Promise.all(
+    memberships.map((m) =>
+      prisma.message.count({
+        where: {
+          communityId: m.communityId,
+          deletedAt: null,
+          authorId: { not: profileId },
+          ...(m.lastReadAt ? { createdAt: { gt: m.lastReadAt } } : {}),
+        },
+      }),
+    ),
+  );
+  return counts.reduce((a, b) => a + b, 0);
 }

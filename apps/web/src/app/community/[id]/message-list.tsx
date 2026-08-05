@@ -16,6 +16,20 @@ function stamp(iso: string) {
 
 function Row({ m, me, onHold, onReact, onSwipeReply }: { m: LiveMessage; me: string; onHold: (t: SheetTarget) => void; onReact: (messageId: string, emoji: string) => void; onSwipeReply: (m: { id: string; body: string }) => void }) {
   const mine = m.authorId === me;
+
+  // A join is not something a person said: no bubble, no author line, no
+  // reactions, no reporting.
+  if (m.isSystem) {
+    // "@john joined" reads oddly to john. It still marks where their
+    // history starts, which matters when they only see the last 50.
+    const text = mine ? "You joined" : m.body;
+    return (
+      <li className="flex justify-center py-1">
+        <span className="rounded-full bg-sunken px-3 py-1 text-xs text-muted">{text}</span>
+      </li>
+    );
+  }
+
   const hold = useLongPress(() => { if (!m.deleted) onHold({ id: m.id, body: m.body, mine, reported: false }); });
 
   // Swipe right to reply, as every chat app does.
@@ -116,6 +130,7 @@ export function MessageList({ communityId, me, myHandle, initial, mutedUntil }: 
   }
   const [sheet, setSheet] = useState<SheetTarget>(null);
   const [replyTo, setReplyTo] = useState<{ id: string; body: string } | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
   const end = useRef<HTMLDivElement>(null);
 
   // Follow new messages, the way any chat does.
@@ -143,13 +158,19 @@ export function MessageList({ communityId, me, myHandle, initial, mutedUntil }: 
       </ul>
       <div ref={end} />
 
+      {toast && (
+        <div className="fixed inset-x-0 bottom-24 z-40 flex justify-center px-6">
+          <p className="rounded-full bg-ink px-5 py-3 text-sm font-bold text-ground">{toast}</p>
+        </div>
+      )}
+
       {typing.length > 0 && (
         <p className="mt-3 text-xs italic text-muted">
           {typing.length === 1 ? `@${typing[0]} is typing...` : `${typing.length} people are typing...`}
         </p>
       )}
 
-      <MessageSheet communityId={communityId} target={sheet} onClose={() => setSheet(null)} onReply={setReplyTo} onReact={react} />
+      <MessageSheet communityId={communityId} target={sheet} onClose={() => setSheet(null)} onReply={setReplyTo} onReact={react} onReported={() => { setToast("Thanks — we will take a look."); setTimeout(() => setToast(null), 3500); }} />
 
       <Composer
         communityId={communityId}

@@ -2,7 +2,10 @@ import { redirect } from "next/navigation";
 import { auth, signOut } from "@/auth";
 import { semesterFor } from "@/modules/academics/queries";
 import { BottomNav } from "@/components/layout/bottom-nav";
+import { unreadTotal } from "@/modules/collaboration/queries";
+import Link from "next/link";
 import { modeLabel, type Kind } from "@/modules/identity/awards";
+import { isStaff } from "@/modules/moderation/queries";
 
 export default async function Me() {
   const session = await auth();
@@ -10,7 +13,9 @@ export default async function Me() {
   if (!session.user.handle) redirect("/handle");
 
   const profile = await semesterFor(session.user.id);
+  const unread = profile ? await unreadTotal(profile.id) : 0;
   const initials = session.user.handle.slice(0, 2).toUpperCase();
+  const staff = await isStaff(session.user.id);
 
   return (
     <main className="min-h-screen bg-ground px-6 pb-24 pt-8">
@@ -47,6 +52,12 @@ export default async function Me() {
           </dl>
         )}
 
+        {staff && (
+          <Link href="/moderation" className="mt-10 inline-flex rounded-full border-2 border-alarm px-6 py-3 font-bold text-alarm">
+            Review reports
+          </Link>
+        )}
+
         <form
           className="mt-12"
           action={async () => {
@@ -57,7 +68,7 @@ export default async function Me() {
           <button type="submit" className="rounded-full border-2 border-ink/20 px-6 py-3 font-bold text-ink hover:border-ink">Sign out</button>
         </form>
       </div>
-      <BottomNav active="/me" />
+      <BottomNav active="/me" unread={unread} />
     </main>
   );
 }

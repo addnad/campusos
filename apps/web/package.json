@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate",
-    "db:sync": "prisma generate && prisma migrate dev"
+    "db:sync": "pnpm db:migrate && prisma generate",
+    "db:migrate": "DATABASE_URL=\"$(grep '^DATABASE_URL=' .env | cut -d= -f2- | tr -d '\"' | sed 's/-pooler//')\" prisma migrate dev"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",

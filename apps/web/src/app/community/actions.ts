@@ -42,11 +42,28 @@ export async function joinRoom(communityId: string) {
   // Removal is not undone by rejoining.
   if (existing?.state === "REMOVED") return { error: "You cannot rejoin this room." };
 
-  await prisma.communityMember.upsert({
+  const created = await prisma.communityMember.upsert({
     where: { communityId_profileId: { communityId, profileId: profile.id } },
     update: {},
     create: { communityId, profileId: profile.id },
+    select: { joinedAt: true },
   });
+
+  // Only on a first join, not on a rejoin after a timeout.
+  if (!existing) {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { handle: true },
+    });
+    await prisma.message.create({
+      data: {
+        communityId,
+        authorId: profile.id,
+        body: `@${user?.handle ?? "someone"} joined`,
+        isSystem: true,
+      },
+    });
+  }
 
   revalidatePath("/community");
   return { ok: true };
@@ -100,14 +117,14 @@ export async function postMessage(communityId: string, formData: FormData) {
 
 /// Reporting, not automated matching: students know what is abusive in
 /// Pidgin, Yoruba, Hausa and Igbo far better than a wordlist does.
-export async function reportMessage(communityId: string, messageId: string, reason?: string) {
+export async function reportMessage(communityId: string, messageId: string, reason: string, note?: string) {
   const ctx = await membership(communityId);
   if (!ctx) return { error: "You are not in this room." };
 
   await prisma.report.upsert({
     where: { messageId_reporterId: { messageId, reporterId: ctx.profileId } },
     update: {},
-    create: { messageId, reporterId: ctx.profileId, reason: reason ?? null },
+    create: { messageId, reporterId: ctx.profileId, reason, note: note?.trim() || null },
   });
   revalidatePath(`/community/${communityId}`);
   return { ok: true };

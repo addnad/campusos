@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { roomsFor, pendingFor, THRESHOLD } from "@/modules/collaboration/queries";
 import { BottomNav } from "@/components/layout/bottom-nav";
+import { unreadTotal } from "@/modules/collaboration/queries";
 import { JoinButton } from "./join-button";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +20,8 @@ export default async function CommunityPage() {
   });
   if (!profile) redirect("/onboarding");
 
+  const unread = await unreadTotal(profile.id);
+
   const [rooms, pending] = await Promise.all([
     roomsFor(profile.id),
     pendingFor(profile.id),
@@ -31,7 +34,7 @@ export default async function CommunityPage() {
           {rooms.length === 0 ? "No rooms yet" : rooms.length === 1 ? "1 room" : `${rooms.length} rooms`}
         </h1>
         <p className="mt-3 text-muted">
-          A room opens for a course once {THRESHOLD} of you are here. Everyone
+          A room opens for a course once {THRESHOLD}{" "}of you are here. Everyone
           taking it is in the same room &mdash; no links, no strangers.
         </p>
 
@@ -43,12 +46,21 @@ export default async function CommunityPage() {
                 <span className="min-w-0 flex-1">
                   <span className="block font-bold text-ink">{r.code}</span>
                   <span className="block truncate text-sm text-muted">{r.title}</span>
-                  <span className="font-mono text-[11px] uppercase tracking-widest text-muted">
-                    {r.members} in &middot; {r.messages} {r.messages === 1 ? "message" : "messages"}
-                  </span>
+                  {r.talking > 0 && (
+                    <span className="font-mono text-[11px] uppercase tracking-widest text-muted">
+                      {r.talking} {r.talking === 1 ? "person talking" : "people talking"}
+                    </span>
+                  )}
                 </span>
                 {r.joined ? (
-                  <Link href={`/community/${r.id}`} className="shrink-0 rounded-full border-2 border-ink px-5 py-2 text-sm font-bold text-ink">Open</Link>
+                  <Link href={`/community/${r.id}`} className="flex shrink-0 items-center gap-2 rounded-full border-2 border-ink px-5 py-2 text-sm font-bold text-ink">
+                    {r.unread > 0 && (
+                      <span className="rounded-full bg-alarm px-2 py-0.5 font-mono text-[11px] text-ground">
+                        {r.unread > 99 ? "99+" : r.unread}
+                      </span>
+                    )}
+                    Open
+                  </Link>
                 ) : (
                   <JoinButton communityId={r.id} />
                 )}
@@ -77,7 +89,7 @@ export default async function CommunityPage() {
         )}
       </div>
 
-      <BottomNav active="/community" />
+      <BottomNav active="/community" unread={unread} />
     </main>
   );
 }

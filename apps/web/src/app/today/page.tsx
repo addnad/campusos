@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { semesterFor } from "@/modules/academics/queries";
 import { timelineFor } from "@/modules/academics/timeline";
 import { BottomNav } from "@/components/layout/bottom-nav";
+import { unreadTotal } from "@/modules/collaboration/queries";
 import { TimelineRow } from "./timeline";
 import { NextStack } from "./next-stack";
 import { RefreshOnReturn } from "@/components/refresh-on-return";
@@ -33,6 +34,7 @@ export default async function Today() {
   if (!session.user.handle) redirect("/handle");
 
   const profile = await semesterFor(session.user.id);
+  const unread = profile ? await unreadTotal(profile.id) : 0;
   if (!profile) {
     return (
       <main className="min-h-screen bg-ground px-6 py-12">
@@ -152,7 +154,7 @@ export default async function Today() {
       </div>
 
       <RefreshOnReturn />
-      <BottomNav active="/today" />
+      <BottomNav active="/today" unread={unread} />
     </main>
   );
 }
