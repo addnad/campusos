@@ -163,6 +163,7 @@ model Course {
   enrolments     Enrolment[]
   sessions       ClassSession[]
   assessments    Assessment[]
+  notes          Note[]
   communities    Community[]
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
@@ -318,6 +319,8 @@ model StudentProfile {
   reactions    Reaction[]
   presence     Presence[]
   mentions     Mention[]
+  notes        Note[]
+  hiddenNotes  HiddenNote[]
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
@@ -621,4 +624,48 @@ model Mention {
 
   @@unique([messageId, profileId])
   @@index([profileId, createdAt])
+}
+
+/// Lecture notes, owned by the student who wrote or uploaded them.
+/// Sharing is opt-in: notes are personal work, and someone may not want
+/// theirs read by forty coursemates.
+model Note {
+  id         String         @id @default(cuid())
+  course     Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId   String
+  profile    StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId  String
+  title      String
+  /// Typed notes. A note can be text, a file, or both — a photo of the
+  /// board with a line explaining what it is.
+  body       String?
+  /// Uploaded file, stored the same way message attachments are: a
+  /// pathname into the private blob store, signed per request.
+  filePath   String?
+  fileType   String?
+  fileSize   Int?
+  fileName   String?
+  /// Which class this covers, if the student says.
+  topic      String?
+  isShared   Boolean        @default(false)
+  hiddenBy   HiddenNote[]
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@index([courseId, isShared])
+  @@index([profileId, updatedAt])
+}
+
+/// A shared note a student has waved away. Their own notes are never
+/// dismissed — you cannot hide your own work from yourself.
+model HiddenNote {
+  id        String         @id @default(cuid())
+  note      Note           @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  noteId    String
+  profile   StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId String
+  createdAt DateTime       @default(now())
+
+  @@unique([noteId, profileId])
+  @@index([profileId])
 }

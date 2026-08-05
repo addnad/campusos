@@ -1,10 +1,14 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import { courseFor, clock, dayName } from "@/modules/academics/course";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { AddClass, AddAssessment } from "./add-forms";
 import { Suggestions } from "./suggestions";
+import { NoteList } from "./note-list";
+import { NoteForm } from "./note-form";
+import { notesFor } from "@/modules/learning/notes";
 import { suggestionsFor } from "@/modules/academics/suggestions";
 import { Remove } from "./remove";
 
@@ -16,17 +20,27 @@ function due(d: Date) {
   return { text: `In ${days} days`, tone: "bg-sunken text-ink" };
 }
 
-export default async function CoursePage({ params }: { params: Promise<{ id: string }> }) {
+export default async function CoursePage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ tab?: string }> }) {
   const session = await auth();
   if (!session?.user) redirect("/signup");
   if (!session.user.handle) redirect("/handle");
 
   const { id } = await params;
+  const { tab } = await searchParams;
+  const onNotes = tab === "notes";
   const data = await courseFor(session.user.id, id);
   if (!data) notFound();
 
   const { enrolment, course, assessments, profile } = data;
-  const suggested = await suggestionsFor(profile.id, [course.id]);
+  const suggested = onNotes ? { classes: [], assessments: [] } : await suggestionsFor(profile.id, [course.id]);
+  const notes = onNotes ? await notesFor(profile.id, course.id) : { mine: [], shared: [] };
+
+  // A room is reachable from its course: that is where a student is
+  // when they realise they want to ask.
+  const room = await prisma.community.findFirst({
+    where: { courseId: course.id, level: profile.level, semester: profile.semester },
+    select: { id: true },
+  });
   const colour = `var(--color-${enrolment.colourToken})`;
   const open = assessments.filter((a) => a.state === "PENDING" && a.dueAt.getTime() > Date.now() - 86400000).length;
 
@@ -45,11 +59,22 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
 
       <div className="mx-auto w-full max-w-2xl px-6">
         <nav className="flex gap-6 border-b-2 border-ink/10 pt-6">
-          <span className="border-b-2 border-ink pb-3 font-display text-sm uppercase text-ink">Work</span>
-          <span className="pb-3 font-display text-sm uppercase text-muted">Notes</span>
-          <span className="pb-3 font-display text-sm uppercase text-muted">Community</span>
+          <Link href={`/courses/${course.id}`} className={`pb-3 font-display text-sm uppercase ${onNotes ? "text-muted" : "border-b-2 border-ink text-ink"}`}>Work</Link>
+          <Link href={`/courses/${course.id}?tab=notes`} className={`pb-3 font-display text-sm uppercase ${onNotes ? "border-b-2 border-ink text-ink" : "text-muted"}`}>Notes</Link>
+          {room ? (
+            <Link href={`/community/${room.id}`} className="pb-3 font-display text-sm uppercase text-muted">Community</Link>
+          ) : (
+            <span className="pb-3 font-display text-sm uppercase text-muted/50">Community</span>
+          )}
         </nav>
 
+        {onNotes ? (
+        <section className="mt-8">
+          <NoteList notes={notes} courseId={course.id} />
+          <NoteForm courseId={course.id} courseCode={course.displayCode} />
+        </section>
+        ) : (
+        <>
         <section className="mt-8">
           <div className="flex items-baseline justify-between">
             <h2 className="font-display text-lg uppercase text-ink">Class times</h2>
@@ -113,6 +138,8 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
         </section>
 
         <Suggestions courseId={course.id} classes={suggested.classes} assessments={suggested.assessments} />
+        </>
+        )}
       </div>
 
       <BottomNav active="/courses" />
