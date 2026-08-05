@@ -13,6 +13,10 @@ export async function roomFor(profileId: string, communityId: string) {
     include: {
       course: { select: { displayCode: true, title: true } },
       _count: { select: { members: true } },
+      members: {
+        where: { state: { not: "REMOVED" } },
+        select: { profile: { select: { user: { select: { handle: true } } } } },
+      },
     },
   });
   if (!community) return null;

@@ -317,6 +317,7 @@ model StudentProfile {
   reportsMade  Report[]             @relation("ReportsMade")
   reactions    Reaction[]
   presence     Presence[]
+  mentions     Mention[]
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
@@ -536,6 +537,7 @@ model Message {
   replyToId   String?
   replies     Message[]        @relation("Replies")
   reactions   Reaction[]
+  mentions    Mention[]
   /// Soft delete: removing the row would orphan reports made against it.
   deletedAt   DateTime?
   reports     Report[]
@@ -604,4 +606,19 @@ model Presence {
 
   @@unique([communityId, profileId])
   @@index([communityId, seenAt])
+}
+
+/// Who a message named. Stored rather than re-parsed so unread mentions
+/// can be counted, and resolved only against room members: naming
+/// someone who is not in the room is just text.
+model Mention {
+  id        String         @id @default(cuid())
+  message   Message        @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  messageId String
+  profile   StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId String
+  createdAt DateTime       @default(now())
+
+  @@unique([messageId, profileId])
+  @@index([profileId, createdAt])
 }

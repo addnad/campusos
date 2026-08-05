@@ -4,13 +4,14 @@ import { useRef, useState, useTransition } from "react";
 import { postMessage } from "../actions";
 import { ALLOWED, MAX_BYTES, checkFile } from "@/modules/collaboration/attachments";
 
-export function Composer({ communityId, mutedUntil, replyTo, onClearReply, onSent, onTyping }: {
+export function Composer({ communityId, mutedUntil, replyTo, onClearReply, onSent, onTyping, handles = [] }: {
   communityId: string;
   mutedUntil: Date | null;
   replyTo?: { id: string; body: string } | null;
   onClearReply?: () => void;
   onSent?: (body: string, replyToId: string | null, file: { url: string | null; type: string; name: string; size: number } | null) => void;
   onTyping?: (on: boolean) => void;
+  handles?: string[];
 }) {
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -24,6 +25,21 @@ export function Composer({ communityId, mutedUntil, replyTo, onClearReply, onSen
   const [attaching, setAttaching] = useState(false);
   const [file, setFile] = useState<{ pathname: string; name: string; type: string; size: number } | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  /// Suggest after "@" so a mistyped handle does not silently fail to
+  /// reach anyone.
+  const [mentionQuery, setMentionQuery] = useState<string | null>(null);
+
+  const suggestions = mentionQuery === null
+    ? []
+    : handles.filter((h) => h.startsWith(mentionQuery)).slice(0, 5);
+
+  function pickHandle(h: string) {
+    const at = body.lastIndexOf("@");
+    if (at < 0) return;
+    setBody(`${body.slice(0, at)}@${h} `);
+    setMentionQuery(null);
+    box.current?.focus();
+  }
 
   const muted = mutedUntil && mutedUntil > new Date();
   if (muted) {
@@ -74,6 +90,14 @@ export function Composer({ communityId, mutedUntil, replyTo, onClearReply, onSen
           <button type="button" onClick={onClearReply} aria-label="Cancel reply" className="text-lg leading-none text-muted hover:text-ink">&times;</button>
         </div>
       )}
+      {suggestions.length > 0 && (
+        <div className="mx-auto mb-2 flex max-w-2xl flex-wrap gap-2">
+          {suggestions.map((h) => (
+            <button key={h} type="button" onClick={() => pickHandle(h)} className="rounded-full bg-card px-4 py-2 text-sm font-bold text-ink">@{h}</button>
+          ))}
+        </div>
+      )}
+
       {(file || attaching) && (
         <div className="mx-auto mb-2 flex max-w-2xl items-center gap-3 rounded-2xl bg-sunken px-3 py-2">
           {preview ? (
@@ -133,6 +157,11 @@ export function Composer({ communityId, mutedUntil, replyTo, onClearReply, onSen
             // Grow with the content up to the max height.
             e.target.style.height = "auto";
             e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
+            // Only while typing the handle itself.
+            const upto = e.target.value.slice(0, e.target.selectionStart ?? undefined);
+            const at = /@([a-z0-9_]*)$/i.exec(upto);
+            setMentionQuery(at ? at[1].toLowerCase() : null);
+
             const active = e.target.value.trim().length > 0;
             onTyping?.(active);
             if (idle.current) clearTimeout(idle.current);

@@ -54,11 +54,13 @@ export default async function CommunityPage() {
                 </span>
                 {r.joined ? (
                   <Link href={`/community/${r.id}`} className="flex shrink-0 items-center gap-2 rounded-full border-2 border-ink px-5 py-2 text-sm font-bold text-ink">
-                    {r.unread > 0 && (
+                    {r.mentions > 0 ? (
+                      <span className="rounded-full bg-volt px-2 py-0.5 font-mono text-[11px] font-bold text-ink">@ {r.mentions}</span>
+                    ) : r.unread > 0 ? (
                       <span className="rounded-full bg-alarm px-2 py-0.5 font-mono text-[11px] text-ground">
                         {r.unread > 99 ? "99+" : r.unread}
                       </span>
-                    )}
+                    ) : null}
                     Open
                   </Link>
                 ) : (

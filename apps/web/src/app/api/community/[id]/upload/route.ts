@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { checkFile, storeFile, MAX_BYTES } from "@/modules/collaboration/attachments";
+import { checkFile, storeFile } from "@/modules/collaboration/attachments";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -46,4 +46,3 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 }
 
 export const maxDuration = 30;
-export const config = { api: { bodyParser: { sizeLimit: MAX_BYTES } } };

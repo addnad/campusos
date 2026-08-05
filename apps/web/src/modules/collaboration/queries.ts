@@ -87,6 +87,24 @@ export async function roomsFor(profileId: string) {
   );
   const unreadOf = new Map(joined.map((c, i) => [c.id, unreadCounts[i]]));
 
+  // Being named is not the same as unread: in a room of thirty, most
+  // messages are not for you.
+  const mentionCounts = await Promise.all(
+    joined.map((c) =>
+      prisma.mention.count({
+        where: {
+          profileId,
+          message: {
+            communityId: c.id,
+            deletedAt: null,
+            ...(c.members[0].lastReadAt ? { createdAt: { gt: c.members[0].lastReadAt } } : {}),
+          },
+        },
+      }),
+    ),
+  );
+  const mentionOf = new Map(joined.map((c, i) => [c.id, mentionCounts[i]]));
+
   return communities.map((c) => {
     const enrolment = mine.find((e) => e.courseId === c.courseId);
     return {
@@ -101,6 +119,7 @@ export async function roomsFor(profileId: string) {
       classmates: countOf.get(`${c.courseId}|${c.level}|${c.semester}|${enrolment?.session ?? ""}`) ?? 0,
       unread: unreadOf.get(c.id) ?? 0,
       talking: talkingOf.get(c.id) ?? 0,
+      mentions: mentionOf.get(c.id) ?? 0,
     };
   });
 }

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { EnrolmentStatus } from "@/generated/prisma/client";
+import { parseHandles } from "@/modules/collaboration/mentions";
 
 /// Enrolment is what earns a place in a room. Not a link, not an invite:
 /// a room is defined by who is taking the course.
@@ -110,7 +111,9 @@ export async function postMessage(communityId: string, formData: FormData) {
   if (recent >= MAX_PER_MINUTE) return { error: "Slow down a moment." };
 
   const replyToId = String(formData.get("replyToId") ?? "") || null;
-  await prisma.message.create({
+  const handles = parseHandles(body);
+
+  const created = await prisma.message.create({
     data: {
       communityId,
       authorId: ctx.profileId,
@@ -121,7 +124,28 @@ export async function postMessage(communityId: string, formData: FormData) {
       fileSize: filePath ? Number(formData.get("fileSize")) || null : null,
       fileName: filePath ? String(formData.get("fileName") ?? "") || null : null,
     },
+    select: { id: true },
   });
+
+  // Resolved against members only: naming someone who is not in the room
+  // is just text, and there is nobody to reach.
+  if (handles.length > 0) {
+    const named = await prisma.communityMember.findMany({
+      where: {
+        communityId,
+        state: { not: "REMOVED" },
+        profile: { user: { handleLower: { in: handles } } },
+      },
+      select: { profileId: true },
+    });
+    const others = named.filter((n) => n.profileId !== ctx.profileId);
+    if (others.length > 0) {
+      await prisma.mention.createMany({
+        data: others.map((n) => ({ messageId: created.id, profileId: n.profileId })),
+        skipDuplicates: true,
+      });
+    }
+  }
   revalidatePath(`/community/${communityId}`);
   return { ok: true };
 }

@@ -6,6 +6,7 @@ import { MessageSheet, type SheetTarget } from "./message-sheet";
 import { useLongPress } from "./use-long-press";
 import { Composer } from "./composer";
 import { toggleReaction } from "../actions";
+import { splitMentions } from "@/modules/collaboration/mentions";
 
 function stamp(iso: string) {
   const d = new Date(iso);
@@ -14,7 +15,7 @@ function stamp(iso: string) {
     : d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
 }
 
-function Row({ m, me, onHold, onReact, onSwipeReply, onOpenImage }: { m: LiveMessage; me: string; onHold: (t: SheetTarget) => void; onReact: (messageId: string, emoji: string) => void; onSwipeReply: (m: { id: string; body: string }) => void; onOpenImage: (url: string) => void }) {
+function Row({ m, me, myHandle, onHold, onReact, onSwipeReply, onOpenImage }: { m: LiveMessage; me: string; myHandle: string | null; onHold: (t: SheetTarget) => void; onReact: (messageId: string, emoji: string) => void; onSwipeReply: (m: { id: string; body: string }) => void; onOpenImage: (url: string) => void }) {
   const mine = m.authorId === me;
 
   // A join is not something a person said: no bubble, no author line, no
@@ -108,7 +109,17 @@ function Row({ m, me, onHold, onReact, onSwipeReply, onOpenImage }: { m: LiveMes
 
         {m.body && (
           <p className="whitespace-pre-wrap break-words">
-            {long && !expanded ? `${m.body.slice(0, LONG).trimEnd()}...` : m.body}
+            {splitMentions(long && !expanded ? `${m.body.slice(0, LONG).trimEnd()}...` : m.body).map((part, i) =>
+              part.handle ? (
+                <span key={i} className={`rounded px-0.5 font-bold ${
+                  part.handle === myHandle
+                    ? (mine ? "bg-ground/25" : "bg-volt text-ink")
+                    : "opacity-80"
+                }`}>{part.text}</span>
+              ) : (
+                <span key={i}>{part.text}</span>
+              ),
+            )}
           </p>
         )}
         {long && (
@@ -132,8 +143,8 @@ function Row({ m, me, onHold, onReact, onSwipeReply, onOpenImage }: { m: LiveMes
   );
 }
 
-export function MessageList({ communityId, me, myHandle, initial, mutedUntil }: {
-  communityId: string; me: string; myHandle: string | null; initial: LiveMessage[]; mutedUntil: string | null;
+export function MessageList({ communityId, me, myHandle, initial, mutedUntil, handles }: {
+  communityId: string; me: string; myHandle: string | null; initial: LiveMessage[]; mutedUntil: string | null; handles: string[];
 }) {
   const { messages, setMessages, refresh, online, typing, setTypingFlag } = useLiveMessages(communityId, initial);
   const [, startReact] = useTransition();
@@ -179,7 +190,7 @@ export function MessageList({ communityId, me, myHandle, initial, mutedUntil }: 
           </p>
         )}
         {messages.map((m) => (
-          <Row key={m.id} m={m} me={me} onHold={setSheet} onReact={react} onSwipeReply={setReplyTo} onOpenImage={setLightbox} />
+          <Row key={m.id} m={m} me={me} myHandle={myHandle} onHold={setSheet} onReact={react} onSwipeReply={setReplyTo} onOpenImage={setLightbox} />
         ))}
       </ul>
       <div ref={end} />
@@ -211,6 +222,7 @@ export function MessageList({ communityId, me, myHandle, initial, mutedUntil }: 
         mutedUntil={mutedUntil ? new Date(mutedUntil) : null}
         replyTo={replyTo}
         onClearReply={() => setReplyTo(null)}
+        handles={handles}
         onTyping={setTypingFlag}
         onSent={(body, replyToId, file) => {
           // Shown immediately; the next poll replaces it with the stored
