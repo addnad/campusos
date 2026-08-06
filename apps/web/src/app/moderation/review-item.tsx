@@ -29,8 +29,8 @@ export function ReviewItem({ item, standing }: {
     <li className="rounded-2xl bg-card p-4">
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <span className="font-display text-sm uppercase text-ink">{item.room}</span>
-        <span className="font-mono text-[11px] uppercase tracking-widest text-muted">{item.level}</span>
-        <span className="font-mono text-[11px] uppercase tracking-widest text-alarm">
+        <span className="label text-muted">{item.level}</span>
+        <span className="label text-alarm">
           {item.reporters.length} {item.reporters.length === 1 ? "report" : "reports"}
         </span>
         {item.authorFlagged && (

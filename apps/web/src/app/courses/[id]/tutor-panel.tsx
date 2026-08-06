@@ -95,7 +95,7 @@ export function TutorPanel({ courseId, code, turns: initial, left: startLeft, li
       <div className="flex items-baseline justify-between gap-4 border-b-2 border-ink/10 pb-3">
         <h2 className="font-display text-lg uppercase text-ink">Tutor</h2>
         {/* The shape promises a conversation, so the ceiling stays in view. */}
-        <span className="shrink-0 font-mono text-[11px] uppercase tracking-widest text-muted">
+        <span className="shrink-0 label text-muted">
           {left} of {limit} today
         </span>
       </div>

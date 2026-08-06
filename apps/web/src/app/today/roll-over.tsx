@@ -36,7 +36,7 @@ export function RollOver({ startsAt, currentLevel, currentSemester, award, years
 
   return (
     <section className="mt-8 rounded-3xl bg-ink p-6">
-      <p className="font-mono text-xs uppercase tracking-widest text-ground/60">
+      <p className="label text-ground/60">
         {days <= 0 ? "Starting now" : days === 1 ? "Starts tomorrow" : `Starts in ${days} days`}
       </p>
       <p className="mt-2 font-display text-2xl uppercase leading-tight text-ground">
@@ -49,7 +49,7 @@ export function RollOver({ startsAt, currentLevel, currentSemester, award, years
 
       {newYear && nextLevel !== currentLevel && (
         <>
-          <p className="mt-5 font-mono text-xs uppercase tracking-widest text-ground/60">Which level?</p>
+          <p className="mt-5 label text-ground/60">Which level?</p>
           <div className="mt-2 flex flex-wrap gap-2">
             <button type="button" onClick={() => setLevel(nextLevel)} className={`${chip} ${level === nextLevel ? "bg-ground text-ink" : "bg-ground/15 text-ground"}`}>{nextLevel}</button>
             <button type="button" onClick={() => setLevel(currentLevel)} className={`${chip} ${level === currentLevel ? "bg-ground text-ink" : "bg-ground/15 text-ground"}`}>Repeating {currentLevel}</button>

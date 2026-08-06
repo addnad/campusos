@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bagel_Fat_One, Plus_Jakarta_Sans } from "next/font/google";
+import { Bagel_Fat_One, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 const display = Bagel_Fat_One({
@@ -15,6 +15,12 @@ const sans = Plus_Jakarta_Sans({
   display: "swap",
 });
 
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "CampusOS",
   description: "The academic home for students.",
@@ -26,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable}`}>
+    <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <body className="font-sans antialiased">{children}</body>
     </html>
   );

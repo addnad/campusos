@@ -63,7 +63,7 @@ function Row({ m, me, myHandle, onHold, onReact, onSwipeReply, onOpenImage }: { 
     <li className={mine ? "flex flex-col items-end" : "flex flex-col items-start"}>
       <div className="flex items-baseline gap-2">
         <span className="font-display text-sm lowercase text-ink">@{m.handle ?? "student"}</span>
-        <span className="font-mono text-[10px] uppercase tracking-widest text-muted">{stamp(m.createdAt)}</span>
+        <span className="label text-muted">{stamp(m.createdAt)}</span>
       </div>
 
       {m.deleted ? (
@@ -187,7 +187,7 @@ export function MessageList({ communityId, me, myHandle, initial, mutedUntil, ha
   return (
     <>
       {online.length > 0 && (
-        <p className="mb-4 flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted">
+        <p className="mb-4 flex items-center gap-2 label text-muted">
           <span className="h-2 w-2 rounded-full bg-mint" />
           {online.length === 1 ? `@${online[0]} is here` : `${online.length} here now`}
         </p>

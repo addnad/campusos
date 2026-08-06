@@ -88,7 +88,7 @@ export default async function Today() {
       <div className="mx-auto w-full max-w-2xl">
         <header className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <p className="truncate font-mono text-xs uppercase tracking-widest text-muted">
+            <p className="truncate label text-muted">
               {programme.institution.name}{multiCampus ? ` \u00b7 ${programme.campus.name}` : ""}
             </p>
             <p className="mt-1 truncate font-bold text-ink">{profile.level} {programme.name}</p>
@@ -96,7 +96,7 @@ export default async function Today() {
           <Link href="/me" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ink font-display text-sm text-ground">{initials}</Link>
         </header>
 
-        <p className="mt-8 font-mono text-xs uppercase tracking-widest text-muted">
+        <p className="mt-8 label text-muted">
           {now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" }).toUpperCase()}
           {" \u00b7 "}
           {profile.semester === 1 ? "First" : "Second"} Semester

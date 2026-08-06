@@ -38,7 +38,7 @@ export function NextStack({ items, nowIso }: { items: Item[]; nowIso: string }) 
           return (
             <Link key={`${item.type}-${item.id}`} href={`/courses/${item.courseId}`} className="w-full shrink-0 snap-center rounded-3xl p-6" style={{ background: `var(--color-${item.colour})` }}>
               <div className="flex items-start justify-between gap-4">
-                <span className="font-mono text-xs uppercase tracking-widest text-ink/70">
+                <span className="label text-ink/70">
                   {i === 0 ? (item.type === "class" ? "Next class" : "Next due") : item.type === "class" ? "Then" : "Then due"}
                 </span>
                 <span className="rounded-full bg-ink px-3 py-1 font-mono text-[11px] uppercase text-ground" suppressHydrationWarning>{when(item.at, now)}</span>
@@ -59,7 +59,7 @@ export function NextStack({ items, nowIso }: { items: Item[]; nowIso: string }) 
               )}
 
               {!isToday && (
-                <p className="mt-3 font-mono text-xs uppercase tracking-widest text-ink/60">
+                <p className="mt-3 label text-ink/60">
                   {item.at.toLocaleDateString("en-GB", { weekday: "long" })}
                 </p>
               )}

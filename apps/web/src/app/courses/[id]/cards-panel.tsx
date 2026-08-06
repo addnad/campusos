@@ -25,7 +25,7 @@ export function CardsPanel({ courseId, code, due, total, notes, decksLeft }: {
     <section className="mt-6">
       <div className="flex items-baseline justify-between">
         <h2 className="font-display text-lg uppercase text-ink">Cards</h2>
-        <span className="font-mono text-[11px] uppercase tracking-widest text-muted">
+        <span className="label text-muted">
           {total} in {code}
         </span>
       </div>
@@ -55,7 +55,7 @@ export function CardsPanel({ courseId, code, due, total, notes, decksLeft }: {
 
       {notes.length > 0 && (
         <div className="mt-8">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted">
+          <p className="label text-muted">
             Make cards from a note &middot; {decksLeft} left today
           </p>
           <div className="mt-2 space-y-2">
@@ -73,7 +73,7 @@ export function CardsPanel({ courseId, code, due, total, notes, decksLeft }: {
                 className="flex w-full items-center gap-3 rounded-2xl bg-card px-5 py-4 text-left disabled:opacity-40"
               >
                 <span className="min-w-0 flex-1 truncate font-bold text-ink">{n.title}</span>
-                <span className="shrink-0 font-mono text-[11px] uppercase tracking-widest text-muted">
+                <span className="shrink-0 label text-muted">
                   {pending ? "Making..." : "Make cards"}
                 </span>
               </button>

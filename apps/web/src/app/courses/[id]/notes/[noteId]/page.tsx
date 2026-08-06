@@ -25,13 +25,13 @@ export default async function NotePage({ params }: { params: Promise<{ id: strin
   return (
     <main className="min-h-screen bg-ground px-6 pb-24 pt-8">
       <article className="mx-auto w-full max-w-2xl">
-        <Link href={`/courses/${id}?tab=notes`} className="font-mono text-xs uppercase tracking-widest text-muted">
+        <Link href={`/courses/${id}?tab=notes`} className="label text-muted">
           &larr; {note.course.displayCode} notes
         </Link>
 
         <h1 className="mt-6 font-display text-3xl leading-tight text-ink">{note.title}</h1>
 
-        <p className="mt-2 flex flex-wrap items-center gap-x-3 font-mono text-[11px] uppercase tracking-widest text-muted">
+        <p className="mt-2 flex flex-wrap items-center gap-x-3 label text-muted">
           <span>{note.mine ? "You" : `@${note.profile.user.handle}`}</span>
           <span>{note.updatedAt.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</span>
           {note.topic && <span>{note.topic}</span>}
@@ -48,7 +48,7 @@ export default async function NotePage({ params }: { params: Promise<{ id: strin
               <span className="text-2xl">&#128196;</span>
               <span className="min-w-0">
                 <span className="block truncate font-bold text-ink">{note.file.name ?? "File"}</span>
-                <span className="block font-mono text-[11px] uppercase tracking-widest text-muted">Open</span>
+                <span className="block label text-muted">Open</span>
               </span>
             </a>
           )

@@ -52,11 +52,7 @@ export function BottomNav({ active, unread = 0 }: { active: string; unread?: num
               {t.key === "community" && unread > 0 && (
                 <span aria-label={`${unread} unread`} className="absolute -right-1 -top-0.5 h-2.5 w-2.5 rounded-full bg-alarm ring-2 ring-ground" />
               )}
-              <svg viewBox="0 0 24 24" aria-hidden className="h-[23px] w-[23px]" fill="none" stroke="currentColor" strokeWidth={2.75} strokeLinecap="round" strokeLinejoin="round">
-                {ICONS[t.key]}
-              </svg>
-              </span>
-              <span className={`font-mono text-[10px] uppercase tracking-widest ${on ? "font-bold" : ""}`}>{t.label}</span>
+              <svg viewBox="0 0 24 24" aria-hidden className="h-[23px] w-[23px]" fill="none" stroke="currentColor" strokeWidth={2.75} strokeLinecap="round" strokeLinejoin="round"> {ICONS[t.key]} </svg> </span> <span className={`label text-[10px] ${on ?"font-bold" : ""}`}>{t.label}</span>
             </Link>
           );
         })}

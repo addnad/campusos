@@ -31,7 +31,7 @@ export default async function Room({ params }: { params: Promise<{ id: string }>
           <Link href="/community" aria-label="Back" className="text-xl leading-none text-muted">&larr;</Link>
           <div className="min-w-0">
             <p className="truncate font-display text-lg uppercase leading-none text-ink">{community.course.displayCode}</p>
-            <p className="truncate font-mono text-[11px] uppercase tracking-widest text-muted">
+            <p className="truncate label text-muted">
               {community.level} &middot; {community._count.members} {community._count.members === 1 ? "member" : "members"}
             </p>
           </div>

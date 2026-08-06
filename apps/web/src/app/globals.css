@@ -7,6 +7,9 @@
   /* ---- type ---------------------------------------------------------- */
   --font-display: "Bagel Fat One", cursive;
   --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  /* Data only: times, unit counts, week numbers, course codes. Anything
+     that needs to line up in a column. */
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 
   /* ---- ground -------------------------------------------------------- */
   --color-ground: #FFF6E6;
@@ -142,4 +145,14 @@ body {
   padding: 1rem;
   overflow-x: auto;
   margin: 1em 0;
+}
+
+/* Small uppercase labels are not data — an institution name or a date in
+   a typewriter face reads as console output. Sans, tracked out. */
+.label {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }

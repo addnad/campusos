@@ -29,11 +29,11 @@ export function AddClass({ courseId }: { courseId: string }) {
       </div>
       <div className="mt-3 flex gap-2">
         <label className="flex-1">
-          <span className="mb-1 block font-mono text-xs uppercase tracking-widest text-muted">Starts</span>
+          <span className="mb-1 block label text-muted">Starts</span>
           <input name="startsAt" type="time" defaultValue="08:00" step={300} className={field} />
         </label>
         <label className="flex-1">
-          <span className="mb-1 block font-mono text-xs uppercase tracking-widest text-muted">Ends</span>
+          <span className="mb-1 block label text-muted">Ends</span>
           <input name="endsAt" type="time" defaultValue="10:00" step={300} className={field} />
         </label>
       </div>

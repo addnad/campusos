@@ -83,8 +83,8 @@ export default async function CoursePage({ params, searchParams }: { params: Pro
     <main className="min-h-screen bg-ground pb-24">
       <header className="px-6 pb-8 pt-8" style={{ background: colour }}>
         <div className="mx-auto w-full max-w-2xl">
-          <Link href="/today" className="font-mono text-xs uppercase tracking-widest text-ink/70">&larr; Today</Link>
-          <p className="mt-6 font-mono text-xs uppercase tracking-widest text-ink/70">
+          <Link href="/today" className="label text-ink/70">&larr; Today</Link>
+          <p className="mt-6 label text-ink/70">
             {profile.level} &middot; {profile.semester === 1 ? "1st" : "2nd"} Semester &middot; {enrolment.units} Units
           </p>
           <h1 className="mt-1 font-display text-4xl uppercase leading-none text-ink">{course.displayCode}</h1>
@@ -125,7 +125,7 @@ export default async function CoursePage({ params, searchParams }: { params: Pro
         <section className="mt-8">
           <div className="flex items-baseline justify-between">
             <h2 className="font-display text-lg uppercase text-ink">Class times</h2>
-            <span className="font-mono text-xs uppercase tracking-widest text-muted">{course.sessions.length === 0 ? "None yet" : course.sessions.length === 1 ? "Once a week" : `${course.sessions.length} a week`}</span>
+            <span className="font-mono uppercase tracking-widest text-muted">{course.sessions.length === 0 ? "None yet" : course.sessions.length === 1 ? "Once a week" : `${course.sessions.length} a week`}</span>
           </div>
 
           <ul className="mt-3 space-y-2">
@@ -153,7 +153,7 @@ export default async function CoursePage({ params, searchParams }: { params: Pro
         <section className="mt-10">
           <div className="flex items-baseline justify-between">
             <h2 className="font-display text-lg uppercase text-ink">Submissions</h2>
-            <span className="font-mono text-xs uppercase tracking-widest text-muted">{open} open</span>
+            <span className="font-mono uppercase tracking-widest text-muted">{open} open</span>
           </div>
 
           <ul className="mt-3 space-y-2">

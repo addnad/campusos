@@ -7,7 +7,7 @@ import { clock, dayName } from "@/modules/academics/format-time";
 
 function From({ count }: { count: number }) {
   return (
-    <span className="font-mono text-[11px] uppercase tracking-widest text-muted">
+    <span className="label text-muted">
       {count === 1 ? "1 coursemate" : `${count} coursemates`}
     </span>
   );

@@ -20,7 +20,7 @@ export default async function Courses() {
   return (
     <main className="min-h-screen bg-ground px-6 pb-24 pt-8">
       <div className="mx-auto w-full max-w-2xl">
-        <p className="font-mono text-xs uppercase tracking-widest text-muted">
+        <p className="label text-muted">
           {profile.level} {programme.name} &middot; {profile.semester === 1 ? "First" : "Second"} Semester
         </p>
         <h1 className="mt-2 font-display text-4xl uppercase leading-[0.95] text-ink">

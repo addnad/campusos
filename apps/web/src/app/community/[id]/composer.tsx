@@ -103,7 +103,7 @@ export function Composer({ communityId, mutedUntil, replyTo, onClearReply, onSen
       )}
       {suggestions.length > 0 && (
         <div className="mx-auto mb-2 max-w-2xl overflow-hidden rounded-2xl bg-card shadow-lg">
-          <p className="border-b border-ink/10 px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-muted">
+          <p className="border-b border-ink/10 px-4 py-2 label text-muted">
             In this room
           </p>
           <ul className="max-h-56 overflow-y-auto">

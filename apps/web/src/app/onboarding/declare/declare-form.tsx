@@ -79,7 +79,7 @@ export function DeclareForm({ programmes: seeded, institutionId, campusId, kind 
   const chip = "rounded-full px-5 py-3 text-sm font-bold transition-transform active:scale-[0.99]";
   const on = "bg-ink text-ground";
   const off = "bg-cream text-ink";
-  const label = "font-mono text-xs uppercase tracking-widest text-ink/60";
+  const label = "label text-ink/60";
 
   return (
     <div className="mt-8">

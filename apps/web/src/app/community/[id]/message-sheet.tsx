@@ -90,10 +90,10 @@ export function MessageSheet({ communityId, target, onClose, onReply, onReact, o
             Delete
           </button>
         ) : target.reported ? (
-          <p className="px-3 py-2.5 font-mono text-[11px] uppercase tracking-widest text-muted">Already reported</p>
+          <p className="px-3 py-2.5 label text-muted">Already reported</p>
         ) : reporting ? (
           <div className="px-1 pb-1">
-            <p className="px-2 pb-2 font-mono text-[11px] uppercase tracking-widest text-muted">Why are you reporting this?</p>
+            <p className="px-2 pb-2 label text-muted">Why are you reporting this?</p>
             {REPORT_REASONS.map((r) => (
               <button key={r.key} type="button" disabled={pending} onClick={() => start(async () => {
                 await reportMessage(communityId, target.id, r.key, note);

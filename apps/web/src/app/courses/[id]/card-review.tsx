@@ -30,10 +30,10 @@ export function CardReview({ cards, onDone }: { cards: Card[]; onDone: () => voi
   return (
     <div className="mt-6">
       <div className="flex items-baseline justify-between">
-        <span className="font-mono text-[11px] uppercase tracking-widest text-muted">
+        <span className="label text-muted">
           {i + 1} of {cards.length}
         </span>
-        <span className="font-mono text-[11px] uppercase tracking-widest text-muted">
+        <span className="label text-muted">
           {score.right} knew &middot; {score.wrong} missed
         </span>
       </div>
@@ -43,14 +43,14 @@ export function CardReview({ cards, onDone }: { cards: Card[]; onDone: () => voi
         onClick={() => setFlipped(!flipped)}
         className="mt-3 flex min-h-56 w-full flex-col justify-center rounded-3xl bg-card p-6 text-left"
       >
-        <span className="font-mono text-[10px] uppercase tracking-widest text-muted">
+        <span className="label text-muted">
           {flipped ? "Answer" : "Question"}
         </span>
         <span className="mt-3 text-lg leading-relaxed text-ink">
           {flipped ? card.back : card.front}
         </span>
         {!flipped && (
-          <span className="mt-4 font-mono text-[10px] uppercase tracking-widest text-muted">
+          <span className="mt-4 label text-muted">
             Tap to see the answer
           </span>
         )}

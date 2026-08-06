@@ -47,7 +47,7 @@ export default async function CommunityPage() {
                   <span className="block font-bold text-ink">{r.code}</span>
                   <span className="block truncate text-sm text-muted">{r.title}</span>
                   {r.talking > 0 && (
-                    <span className="font-mono text-[11px] uppercase tracking-widest text-muted">
+                    <span className="label text-muted">
                       {r.talking} {r.talking === 1 ? "person talking" : "people talking"}
                     </span>
                   )}
@@ -78,7 +78,7 @@ export default async function CommunityPage() {
               {pending.map((p) => (
                 <li key={p.code} className="flex items-center gap-3 rounded-2xl bg-sunken px-4 py-3">
                   <span className="font-bold text-ink">{p.code}</span>
-                  <span className="ml-auto font-mono text-xs uppercase tracking-widest text-muted">
+                  <span className="ml-auto label text-muted">
                     {p.here} of {THRESHOLD}
                   </span>
                 </li>

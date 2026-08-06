@@ -20,10 +20,21 @@ export function SuggestionDrawer({ groups, total }: { groups: Group[]; total: nu
 
   return (
     <section className="mt-8">
-      <button type="button" onClick={() => setOpen(!open)} aria-expanded={open} className="flex w-full items-center gap-2 text-left text-sm text-muted hover:text-ink">
-        <span className="font-bold text-ink">{total}</span>
-        {total === 1 ? "suggestion" : "suggestions"} from your coursemates
-        <span aria-hidden className={`ml-auto transition-transform ${open ? "rotate-180" : ""}`}>&#9662;</span>
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        className="flex w-full items-center gap-3 rounded-2xl bg-sunken px-4 py-3 text-left transition-transform active:scale-[0.99]"
+      >
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink font-mono text-xs font-bold text-ground">
+          {total}
+        </span>
+        <span className="min-w-0 flex-1 text-sm text-ink">
+          {total === 1 ? "suggestion" : "suggestions"} from your coursemates
+        </span>
+        <span aria-hidden className={`shrink-0 text-muted transition-transform ${open ? "rotate-180" : ""}`}>
+          &#9662;
+        </span>
       </button>
 
       {open && (

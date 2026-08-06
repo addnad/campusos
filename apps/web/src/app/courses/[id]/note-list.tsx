@@ -34,7 +34,7 @@ function NoteCard({ n, courseId, onHide }: { n: Card; courseId: string; onHide?:
         <span className="min-w-0 flex-1">
           <span className="flex items-baseline gap-2">
             <span className="min-w-0 flex-1 truncate font-bold text-ink">{n.title}</span>
-            <span className="shrink-0 font-mono text-[10px] uppercase tracking-widest text-muted">{when(n.updatedAt)}</span>
+            <span className="shrink-0 label text-muted">{when(n.updatedAt)}</span>
           </span>
 
           {n.topic && <span className="mt-0.5 block truncate text-sm text-muted">{n.topic}</span>}
@@ -50,7 +50,7 @@ function NoteCard({ n, courseId, onHide }: { n: Card; courseId: string; onHide?:
           )}
 
           {!n.mine && (
-            <span className="mt-1 block font-mono text-[10px] uppercase tracking-widest text-muted">@{n.handle}</span>
+            <span className="mt-1 block label text-muted">@{n.handle}</span>
           )}
           {n.mine && n.isShared && (
             <span className="mt-1 inline-block rounded-full bg-sunken px-2 py-0.5 font-mono text-[10px] uppercase text-muted">Shared</span>

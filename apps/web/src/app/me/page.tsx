@@ -31,18 +31,18 @@ export default async function Me() {
         {profile && (
           <dl className="mt-10 space-y-4">
             <div>
-              <dt className="font-mono text-xs uppercase tracking-widest text-muted">School</dt>
+              <dt className="label text-muted">School</dt>
               <dd className="mt-1 font-bold text-ink">
                 {profile.programme.institution.name}
                 {profile.programme.campus.name !== "Main Campus" ? ` \u00b7 ${profile.programme.campus.name}` : ""}
               </dd>
             </div>
             <div>
-              <dt className="font-mono text-xs uppercase tracking-widest text-muted">Programme</dt>
+              <dt className="label text-muted">Programme</dt>
               <dd className="mt-1 font-bold text-ink">{profile.level} {profile.programme.name}</dd>
             </div>
             <div>
-              <dt className="font-mono text-xs uppercase tracking-widest text-muted">Attending</dt>
+              <dt className="label text-muted">Attending</dt>
               <dd className="mt-1 font-bold text-ink">
                 {modeLabel(profile.programme.institution.kind as Kind, profile.programme.studyMode)}
                 {" \u00b7 "}
