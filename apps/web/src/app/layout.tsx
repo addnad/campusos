@@ -30,7 +30,23 @@ const mono = localFont({
   display: "swap",
 });
 
+import { RegisterSW } from "@/components/register-sw";
+
 export const metadata: Metadata = {
+  // iOS ignores the manifest for install: these tell Safari it is
+  // installable and how it should look on the home screen.
+  icons: {
+    icon: [
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/icons/apple-icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    title: "CampusOS",
+    statusBarStyle: "default",
+  },
   title: "CampusOS",
   description: "The academic home for students.",
 };
@@ -51,7 +67,8 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased">{children}
+        <RegisterSW /></body>
     </html>
   );
 }
