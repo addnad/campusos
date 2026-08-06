@@ -232,6 +232,7 @@ model User {
   /// from the whole product.
   flaggedAt     DateTime?
   pushSubs      PushSubscription[]
+  sentReminders SentReminder[]
   notifyPrefs   NotificationPrefs?
 
   accounts      Account[]
@@ -828,4 +829,22 @@ model NotificationPrefs {
   /// buzz all day.
   roomActivity  Boolean  @default(false)
   updatedAt     DateTime @updatedAt
+}
+
+/// What has already been sent. The reminder window is wider than the gap
+/// between runs, so without this every class would be announced twice.
+/// Keyed on the thing and the day, not a timestamp: one reminder per
+/// class per day is the rule.
+model SentReminder {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  /// e.g. "class:<sessionId>" or "due:<assessmentId>"
+  key       String
+  /// YYYY-MM-DD, so the same class can be announced again tomorrow.
+  day       String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, key, day])
+  @@index([createdAt])
 }

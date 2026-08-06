@@ -14,6 +14,19 @@ export async function GET(req: NextRequest) {
   }
 
   const now = new Date();
+  const day = now.toLocaleDateString("en-CA");
+
+  /// Claims a reminder, returning false if it has already gone out. The
+  /// unique constraint does the work: two runs racing cannot both win.
+  async function claim(userId: string, key: string) {
+    try {
+      await prisma.sentReminder.create({ data: { userId, key, day } });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   const weekday = now.getDay() === 0 ? 7 : now.getDay();
   const minutes = now.getHours() * 60 + now.getMinutes();
 
@@ -30,7 +43,10 @@ export async function GET(req: NextRequest) {
     },
   });
 
+  let sentClasses = 0;
   for (const s of sessions) {
+    if (!(await claim(s.profile.userId, `class:${s.id}`))) continue;
+    sentClasses += 1;
     const mins = s.startsAt - minutes;
     await notify(s.profile.userId, "classes", {
       title: `${s.course.displayCode} in ${mins} min`,
@@ -42,7 +58,9 @@ export async function GET(req: NextRequest) {
 
   // Deadlines: one nudge in the morning for anything due today.
   let deadlines = 0;
-  if (now.getHours() === 7 && now.getMinutes() < 15) {
+  // Any run after 6am will do — the claim stops it repeating, and a
+  // missed run no longer loses that day entirely.
+  if (now.getHours() >= 6) {
     const endOfDay = new Date(now);
     endOfDay.setHours(23, 59, 59, 999);
 
@@ -55,6 +73,7 @@ export async function GET(req: NextRequest) {
     });
 
     for (const a of due) {
+      if (!(await claim(a.profile.userId, `due:${a.id}`))) continue;
       await notify(a.profile.userId, "deadlines", {
         title: `${a.course.displayCode} due today`,
         body: a.title,
@@ -65,5 +84,5 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ classes: sessions.length, deadlines });
+  return NextResponse.json({ classes: sentClasses, deadlines });
 }
