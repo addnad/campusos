@@ -25,7 +25,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   const allowance = await allowanceFor(profile.id, session.user.id);
   if (allowance.left <= 0) {
-    return new Response(`That is your ${allowance.limit} questions for today.`, { status: 429 });
+    return new Response(`That is today\u2019s ${allowance.limit}. More tomorrow.`, { status: 429 });
   }
 
   const ctx = await contextFor(profile.id, courseId);

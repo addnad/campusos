@@ -5,6 +5,30 @@ import Markdown from "react-markdown";
 
 type Turn = { id: string; question: string; answer: string };
 
+// A rotating word rather than a spinner: it reads as the tutor engaging
+// with the question instead of a machine being slow.
+const THINKING = [
+  "Thinking", "Working it through", "Checking your notes",
+  "Considering", "Putting it together", "Looking at this",
+  "Reading around it", "Finding the thread", "Weighing it up",
+  "Getting to the point", "Lining it up", "Turning it over",
+  "Making sense of it", "Sorting it out", "Piecing it together",
+];
+
+function Thinking() {
+  const [i, setI] = useState(() => Math.floor(Math.random() * THINKING.length));
+  useEffect(() => {
+    const t = setInterval(() => setI((n) => (n + 1) % THINKING.length), 4000);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <span className="flex items-center gap-2 py-0.5">
+      <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-volt" />
+      <span className="text-sm italic text-muted">{THINKING[i]}...</span>
+    </span>
+  );
+}
+
 export function TutorPanel({ courseId, code, turns: initial, left: startLeft, limit }: {
   courseId: string; code: string; turns: Turn[]; left: number; limit: number;
 }) {
@@ -108,7 +132,7 @@ export function TutorPanel({ courseId, code, turns: initial, left: startLeft, li
             </div>
             <div className="flex justify-start">
               <div className="prose-tutor max-w-[92%] rounded-3xl rounded-bl-lg bg-card px-5 py-4">
-                {streaming ? <Markdown>{streaming}</Markdown> : <span className="text-muted">Reading your notes...</span>}
+                {streaming ? <Markdown>{streaming}</Markdown> : <Thinking />}
               </div>
             </div>
           </div>
@@ -130,7 +154,7 @@ export function TutorPanel({ courseId, code, turns: initial, left: startLeft, li
           }}
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
           disabled={spent || busy}
-          placeholder={spent ? "Back tomorrow" : `Ask about ${code}`}
+          placeholder={spent ? "Come back tomorrow" : `Ask about ${code}`}
           className="max-h-36 min-h-12 flex-1 resize-none rounded-2xl bg-card px-4 py-3 text-ink outline-none placeholder:text-muted disabled:opacity-50"
         />
         <button type="button" onClick={send} disabled={busy || spent || question.trim().length < 3} aria-label="Ask" className="h-12 w-12 shrink-0 rounded-full bg-ink text-lg font-bold text-ground disabled:opacity-30">
