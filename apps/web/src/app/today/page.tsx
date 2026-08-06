@@ -140,7 +140,9 @@ export default async function Today() {
         {earlier.length > 0 && (
           <section className="mt-10">
             <h2 className="font-display text-lg uppercase text-muted">Earlier today</h2>
-            <div className="mt-3 space-y-2 opacity-60">
+            {/* 60% was tuned against cream; on a dark ground it drops below
+                readable. */}
+            <div className="mt-3 space-y-2 opacity-75">
               {earlier.map((item) => <TimelineRow key={`${item.type}-${item.id}`} item={item} nowIso={now.toISOString()} />)}
             </div>
           </section>

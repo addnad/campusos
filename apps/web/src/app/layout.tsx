@@ -1,22 +1,31 @@
 import type { Metadata } from "next";
-import { Bagel_Fat_One, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const display = Bagel_Fat_One({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-bagel",
+// Self-hosted rather than fetched from Google at build time: a build
+// that depends on a network call fails when the network does, which it
+// has. Files come from Fontsource, so updating is a version bump.
+const display = localFont({
+  src: "../fonts/bagel-fat-one-latin-400-normal.woff2",
+  variable: "--font-display-face",
   display: "swap",
 });
 
-const sans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-jakarta",
+const sans = localFont({
+  src: [
+    { path: "../fonts/plus-jakarta-sans-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/plus-jakarta-sans-latin-700-normal.woff2", weight: "700", style: "normal" },
+    { path: "../fonts/plus-jakarta-sans-latin-800-normal.woff2", weight: "800", style: "normal" },
+  ],
+  variable: "--font-sans-face",
   display: "swap",
 });
 
-const mono = JetBrains_Mono({
-  subsets: ["latin"],
+const mono = localFont({
+  src: [
+    { path: "../fonts/jetbrains-mono-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/jetbrains-mono-latin-700-normal.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-jetbrains",
   display: "swap",
 });

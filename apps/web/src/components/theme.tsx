@@ -14,12 +14,13 @@ function apply(theme: Theme) {
 }
 
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>("system");
-
-  useEffect(() => {
-    const stored = localStorage.getItem(KEY) as Theme | null;
-    if (stored) setTheme(stored);
-  }, []);
+  // Read on first render, not in an effect: initialising to "system" and
+  // correcting afterwards means the stored choice is forgotten on every
+  // navigation, and the theme flips back for a moment each time.
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "system";
+    return (localStorage.getItem(KEY) as Theme | null) ?? "system";
+  });
 
   useEffect(() => {
     apply(theme);

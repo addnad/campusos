@@ -5,8 +5,8 @@
 
 @theme static {
   /* ---- type ---------------------------------------------------------- */
-  --font-display: "Bagel Fat One", cursive;
-  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-display: var(--font-display-face), cursive;
+  --font-sans: var(--font-sans-face), system-ui, sans-serif;
   /* Data only: times, unit counts, week numbers, course codes. Anything
      that needs to line up in a column. */
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
