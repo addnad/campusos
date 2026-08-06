@@ -7,6 +7,8 @@ import Link from "next/link";
 import { modeLabel, type Kind } from "@/modules/identity/awards";
 import { isStaff } from "@/modules/moderation/queries";
 import { ThemeChoice } from "@/components/theme";
+import { Notifications } from "./notifications";
+import { prisma } from "@/lib/prisma";
 
 export default async function Me() {
   const session = await auth();
@@ -17,6 +19,7 @@ export default async function Me() {
   const unread = profile ? await unreadTotal(profile.id) : 0;
   const initials = session.user.handle.slice(0, 2).toUpperCase();
   const staff = await isStaff(session.user.id);
+  const prefs = await prisma.notificationPrefs.findUnique({ where: { userId: session.user.id } });
 
   return (
     <main className="min-h-screen bg-ground px-6 pb-24 pt-8">
@@ -58,6 +61,13 @@ export default async function Me() {
             Review reports
           </Link>
         )}
+
+        <Notifications initial={{
+          classes: prefs?.classes ?? true,
+          deadlines: prefs?.deadlines ?? true,
+          mentions: prefs?.mentions ?? true,
+          roomActivity: prefs?.roomActivity ?? false,
+        }} />
 
         <section className="mt-10">
           <p className="label text-muted">Appearance</p>

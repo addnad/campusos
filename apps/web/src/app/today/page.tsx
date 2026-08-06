@@ -13,6 +13,7 @@ import { SuggestionDrawer } from "./suggestion-drawer";
 import { SemesterPrompt } from "./semester-prompt";
 import { FreeWindows } from "./free-windows";
 import { QuickActions } from "./quick-actions";
+import { InstallPrompt } from "@/components/install-prompt";
 import { windowsFor } from "@/modules/intelligence/windows";
 import { semesterPrompt, readyToRoll } from "@/modules/academics/semester";
 import { RollOver } from "./roll-over";
@@ -162,6 +163,8 @@ export default async function Today() {
         ) : (
           <SemesterPrompt prompt={prompt} />
         )}
+
+        <InstallPrompt />
 
         <QuickActions courses={enrolments.map((e) => ({
           id: e.courseId,

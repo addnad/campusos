@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { EnrolmentStatus } from "@/generated/prisma/client";
 import { parseHandles } from "@/modules/collaboration/mentions";
+import { notify } from "@/modules/notifications/push";
 
 /// Enrolment is what earns a place in a room. Not a link, not an invite:
 /// a room is defined by who is taking the course.
@@ -144,6 +145,31 @@ export async function postMessage(communityId: string, formData: FormData) {
         data: others.map((n) => ({ messageId: created.id, profileId: n.profileId })),
         skipDuplicates: true,
       });
+
+      // Being named is the one room event worth interrupting someone for.
+      const [room, me] = await Promise.all([
+        prisma.community.findUnique({
+          where: { id: communityId },
+          select: { course: { select: { displayCode: true } } },
+        }),
+        prisma.studentProfile.findUnique({ where: { id: ctx.profileId }, select: { user: { select: { handle: true } } } }),
+      ]);
+
+      const profiles = await prisma.studentProfile.findMany({
+        where: { id: { in: others.map((o) => o.profileId) } },
+        select: { userId: true },
+      });
+
+      await Promise.all(
+        profiles.map((p) =>
+          notify(p.userId, "mentions", {
+            title: `@${me?.user.handle ?? "someone"} in ${room?.course.displayCode ?? "a room"}`,
+            body: body.slice(0, 120),
+            url: `/community/${communityId}`,
+            tag: `room-${communityId}`,
+          }),
+        ),
+      );
     }
   }
   revalidatePath(`/community/${communityId}`);

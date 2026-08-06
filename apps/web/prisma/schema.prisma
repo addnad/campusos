@@ -231,6 +231,8 @@ model User {
   /// bad afternoon. Reviewed by a person; nothing automatic bans anyone
   /// from the whole product.
   flaggedAt     DateTime?
+  pushSubs      PushSubscription[]
+  notifyPrefs   NotificationPrefs?
 
   accounts      Account[]
   sessions      Session[]
@@ -789,4 +791,41 @@ model StudySession {
   endedAt    DateTime?
 
   @@index([profileId, startedAt])
+}
+
+/// A device a student has allowed notifications on. One student can have
+/// several — a phone and a laptop — and each is a separate endpoint.
+model PushSubscription {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  /// The push service URL for this device. Unique: re-subscribing on the
+  /// same device returns the same endpoint.
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  /// Cleared when the push service says the endpoint is gone, so a dead
+  /// device is not retried forever.
+  failedAt  DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+/// What a student wants to hear about. Notifications people did not ask
+/// for are how an app gets uninstalled.
+model NotificationPrefs {
+  id            String   @id @default(cuid())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String   @unique
+  /// A class starting soon.
+  classes       Boolean  @default(true)
+  /// Something due today or tomorrow.
+  deadlines     Boolean  @default(true)
+  /// Someone named them in a room.
+  mentions      Boolean  @default(true)
+  /// Everything else in their rooms. Off by default: a busy room would
+  /// buzz all day.
+  roomActivity  Boolean  @default(false)
+  updatedAt     DateTime @updatedAt
 }

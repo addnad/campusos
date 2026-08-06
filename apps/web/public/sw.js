@@ -25,3 +25,36 @@ self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET" || e.request.mode !== "navigate") return;
   e.respondWith(fetch(e.request).catch(() => caches.match("/offline")));
 });
+
+self.addEventListener("push", (e) => {
+  if (!e.data) return;
+  let n;
+  try { n = e.data.json(); } catch { return; }
+
+  e.waitUntil(
+    self.registration.showNotification(n.title, {
+      body: n.body,
+      icon: "/icons/icon-192.png",
+      badge: "/icons/icon-192.png",
+      // Collapses repeats: a second message in the same room replaces
+      // the first rather than stacking.
+      tag: n.tag,
+      data: { url: n.url },
+    }),
+  );
+});
+
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  const url = e.notification.data?.url || "/today";
+
+  // Focus an open tab rather than opening a second one.
+  e.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      for (const c of list) {
+        if ("focus" in c) { c.navigate(url); return c.focus(); }
+      }
+      return self.clients.openWindow(url);
+    }),
+  );
+});
