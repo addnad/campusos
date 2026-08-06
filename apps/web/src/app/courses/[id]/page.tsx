@@ -38,8 +38,16 @@ export default async function CoursePage({ params, searchParams }: { params: Pro
   if (!data) notFound();
 
   const { enrolment, course, assessments, profile } = data;
-  const suggested = onNotes || onTutor ? { classes: [], assessments: [] } : await suggestionsFor(profile.id, [course.id]);
-  const notes = onNotes ? await notesFor(profile.id, course.id) : { mine: [], shared: [] };
+  // Latency dominates: ten queries together cost about the same as one,
+  // ten in sequence cost ten times as much.
+  const [suggested, notes] = await Promise.all([
+    onNotes || onTutor
+      ? Promise.resolve({ classes: [], assessments: [] })
+      : suggestionsFor(profile.id, [course.id]),
+    onNotes
+      ? notesFor(profile.id, course.id)
+      : Promise.resolve({ mine: [], shared: [] }),
+  ]);
 
   // Cards live with notes: both are study material, and a deck is made
   // from a note. A fifth tab would be one too many.

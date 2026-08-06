@@ -36,7 +36,6 @@ export default async function Today() {
   if (!session.user.handle) redirect("/handle");
 
   const profile = await semesterFor(session.user.id);
-  const unread = profile ? await unreadTotal(profile.id) : 0;
   if (!profile) {
     return (
       <main className="min-h-screen bg-ground px-6 py-12">
@@ -50,10 +49,18 @@ export default async function Today() {
   }
 
   const now = new Date();
-  const t = await timelineFor(session.user.id, now);
-  const suggested = await suggestionsFor(profile.id);
+
+  // None of these depend on each other, and every query is a round trip
+  // to Frankfurt. Run sequentially the page waits for the sum; run
+  // together it waits for the slowest.
+  const [t, suggested, windows, unread] = await Promise.all([
+    timelineFor(session.user.id, now),
+    suggestionsFor(profile.id),
+    windowsFor(profile.id, now),
+    unreadTotal(profile.id),
+  ]);
+
   const prompt = semesterPrompt(profile, now);
-  const windows = await windowsFor(profile.id, now);
   const rolling = readyToRoll(profile.nextSemesterAt, now);
   const { programme, enrolments } = profile;
   const suggestions = suggested.classes.length + suggested.assessments.length;
