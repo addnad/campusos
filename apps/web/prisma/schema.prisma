@@ -165,6 +165,8 @@ model Course {
   assessments    Assessment[]
   notes          Note[]
   tutorThreads   TutorThread[]
+  flashcards     Flashcard[]
+  studySessions  StudySession[]
   communities    Community[]
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
@@ -221,6 +223,9 @@ model User {
   /// "verified" is a word that should mean identity, not payment.
   tutorDailyLimit Int            @default(5)
   tutorPaidUntil  DateTime?
+  /// Separate from questions: generating a deck should not cost a
+  /// student the answers they came for.
+  cardDailyLimit  Int            @default(2)
 
   /// Set when removals in separate rooms suggest a pattern rather than a
   /// bad afternoon. Reviewed by a person; nothing automatic bans anyone
@@ -330,6 +335,8 @@ model StudentProfile {
   hiddenNotes  HiddenNote[]
   tutorThreads TutorThread[]
   tutorUsage   TutorUsage[]
+  flashcards   Flashcard[]
+  studySessions StudySession[]
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
@@ -656,8 +663,18 @@ model Note {
   fileName   String?
   /// Which class this covers, if the student says.
   topic      String?
+
+  /// Text read out of an uploaded file. Nobody types a lecture note to
+  /// feed a machine — most notes are a photo of the board or a PDF, so
+  /// the file has to be readable or cards and the tutor cannot use it.
+  /// Extracted once and stored: re-reading on every use would cost a
+  /// call each time.
+  extracted     String?
+  extractedAt   DateTime?
+  extractFailed Boolean   @default(false)
   isShared   Boolean        @default(false)
   hiddenBy   HiddenNote[]
+  flashcards Flashcard[]
   createdAt  DateTime       @default(now())
   updatedAt  DateTime       @updatedAt
 
@@ -724,4 +741,52 @@ model TutorUsage {
 
   @@unique([profileId, day])
   @@index([profileId])
+}
+
+/// A flashcard, generated from a note or written by hand. Owned by the
+/// student: their deck is theirs, and generation from a shared note
+/// produces their own copy.
+model Flashcard {
+  id        String         @id @default(cuid())
+  course    Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId  String
+  profile   StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId String
+  /// Which note it came from, if generated. Null for hand-written.
+  note      Note?          @relation(fields: [noteId], references: [id], onDelete: SetNull)
+  noteId    String?
+  front     String
+  back      String
+
+  /// Spaced repetition. Cards without scheduling are just a list: the
+  /// value is being told which five to review today.
+  /// Days until the next review, doubling on each correct recall.
+  interval  Int            @default(0)
+  /// How well it has stuck. Drops to 0 on a miss, so a forgotten card
+  /// comes back tomorrow.
+  streak    Int            @default(0)
+  dueAt     DateTime       @default(now())
+  lastSeen  DateTime?
+
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@index([profileId, dueAt])
+  @@index([courseId, profileId])
+}
+
+/// One sitting. Kept so a student can see they did the work, which is
+/// most of why anyone keeps at it.
+model StudySession {
+  id         String         @id @default(cuid())
+  profile    StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId  String
+  course     Course?        @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  courseId   String?
+  reviewed   Int            @default(0)
+  correct    Int            @default(0)
+  startedAt  DateTime       @default(now())
+  endedAt    DateTime?
+
+  @@index([profileId, startedAt])
 }

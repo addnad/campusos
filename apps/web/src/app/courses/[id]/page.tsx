@@ -10,6 +10,8 @@ import { NoteList } from "./note-list";
 import { NoteForm } from "./note-form";
 import { notesFor } from "@/modules/learning/notes";
 import { TutorPanel } from "./tutor-panel";
+import { CardsPanel } from "./cards-panel";
+import { dueFor, deckFor, cardAllowanceFor } from "@/modules/learning/cards";
 import { allowanceFor } from "@/modules/learning/tutor";
 import { suggestionsFor } from "@/modules/academics/suggestions";
 import { Remove } from "./remove";
@@ -27,6 +29,7 @@ export default async function CoursePage({ params, searchParams }: { params: Pro
   if (!session?.user) redirect("/signup");
   if (!session.user.handle) redirect("/handle");
 
+  const userId = session.user.id;
   const { id } = await params;
   const { tab } = await searchParams;
   const onNotes = tab === "notes";
@@ -37,6 +40,23 @@ export default async function CoursePage({ params, searchParams }: { params: Pro
   const { enrolment, course, assessments, profile } = data;
   const suggested = onNotes || onTutor ? { classes: [], assessments: [] } : await suggestionsFor(profile.id, [course.id]);
   const notes = onNotes ? await notesFor(profile.id, course.id) : { mine: [], shared: [] };
+
+  // Cards live with notes: both are study material, and a deck is made
+  // from a note. A fifth tab would be one too many.
+  const cards = false
+    ? await (async () => {
+        const [due, deck, allowance] = await Promise.all([
+          dueFor(profile.id, course.id),
+          deckFor(profile.id, course.id),
+          cardAllowanceFor(profile.id, userId),
+        ]);
+        return {
+          due: due.map((c) => ({ id: c.id, front: c.front, back: c.back })),
+          total: deck.cards,
+          decksLeft: Math.max(0, allowance.limit - allowance.madeToday),
+        };
+      })()
+    : null;
 
   const tutor = onTutor
     ? await (async () => {
@@ -96,6 +116,9 @@ export default async function CoursePage({ params, searchParams }: { params: Pro
         <section className="mt-8">
           <NoteList notes={notes} courseId={course.id} />
           <NoteForm courseId={course.id} courseCode={course.displayCode} />
+          {/* Cards are built but hidden: the free vision model cannot read
+              PDFs, which is most of what students upload. Re-enable when the
+              model can. */}
         </section>
         ) : (
         <>

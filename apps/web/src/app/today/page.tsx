@@ -11,6 +11,8 @@ import { RefreshOnReturn } from "@/components/refresh-on-return";
 import { suggestionsFor } from "@/modules/academics/suggestions";
 import { SuggestionDrawer } from "./suggestion-drawer";
 import { SemesterPrompt } from "./semester-prompt";
+import { FreeWindows } from "./free-windows";
+import { windowsFor } from "@/modules/intelligence/windows";
 import { semesterPrompt, readyToRoll } from "@/modules/academics/semester";
 import { RollOver } from "./roll-over";
 
@@ -51,6 +53,7 @@ export default async function Today() {
   const t = await timelineFor(session.user.id, now);
   const suggested = await suggestionsFor(profile.id);
   const prompt = semesterPrompt(profile, now);
+  const windows = await windowsFor(profile.id, now);
   const rolling = readyToRoll(profile.nextSemesterAt, now);
   const { programme, enrolments } = profile;
   const suggestions = suggested.classes.length + suggested.assessments.length;
@@ -148,6 +151,12 @@ export default async function Today() {
         ) : (
           <SemesterPrompt prompt={prompt} />
         )}
+
+        <FreeWindows windows={windows.map((w) => ({
+          ...w,
+          startsAt: w.startsAt.toISOString(),
+          endsAt: w.endsAt.toISOString(),
+        }))} />
 
         <SuggestionDrawer groups={suggestionGroups} total={suggestions} />
 
