@@ -15,9 +15,27 @@ export async function semesterFor(userId: string) {
       },
       enrolments: {
         where: { status: EnrolmentStatus.ACTIVE },
-        include: { course: { select: { displayCode: true, title: true } } },
+        include: {
+          course: {
+            select: {
+              displayCode: true,
+              title: true,
+            },
+          },
+        },
         orderBy: { course: { normalisedCode: "asc" } },
       },
     },
   });
+}
+
+/// Which of a student's courses they have entered class times for.
+/// Their own, not the course's: sessions are owned per student, so a
+/// coursemate's entry does not mean this student has one.
+export async function coursesWithTimes(profileId: string) {
+  const rows = await prisma.classSession.groupBy({
+    by: ["courseId"],
+    where: { profileId },
+  });
+  return new Set(rows.map((r) => r.courseId));
 }

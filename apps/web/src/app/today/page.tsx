@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { semesterFor } from "@/modules/academics/queries";
+import { semesterFor, coursesWithTimes } from "@/modules/academics/queries";
 import { timelineFor } from "@/modules/academics/timeline";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { unreadTotal } from "@/modules/collaboration/queries";
@@ -12,6 +12,7 @@ import { suggestionsFor } from "@/modules/academics/suggestions";
 import { SuggestionDrawer } from "./suggestion-drawer";
 import { SemesterPrompt } from "./semester-prompt";
 import { FreeWindows } from "./free-windows";
+import { QuickActions } from "./quick-actions";
 import { windowsFor } from "@/modules/intelligence/windows";
 import { semesterPrompt, readyToRoll } from "@/modules/academics/semester";
 import { RollOver } from "./roll-over";
@@ -53,11 +54,12 @@ export default async function Today() {
   // None of these depend on each other, and every query is a round trip
   // to Frankfurt. Run sequentially the page waits for the sum; run
   // together it waits for the slowest.
-  const [t, suggested, windows, unread] = await Promise.all([
+  const [t, suggested, windows, unread, timed] = await Promise.all([
     timelineFor(session.user.id, now),
     suggestionsFor(profile.id),
     windowsFor(profile.id, now),
     unreadTotal(profile.id),
+    coursesWithTimes(profile.id),
   ]);
 
   const prompt = semesterPrompt(profile, now);
@@ -158,6 +160,13 @@ export default async function Today() {
         ) : (
           <SemesterPrompt prompt={prompt} />
         )}
+
+        <QuickActions courses={enrolments.map((e) => ({
+          id: e.courseId,
+          code: e.course.displayCode,
+          colour: e.colourToken,
+          hasTimes: timed.has(e.courseId),
+        }))} />
 
         <FreeWindows windows={windows.map((w) => ({
           ...w,

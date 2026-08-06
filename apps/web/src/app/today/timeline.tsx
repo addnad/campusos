@@ -29,8 +29,10 @@ export function TimelineRow({ item, nowIso }: { item: Item; nowIso: string }) {
         </span>
       </span>
 
+      {/* A class that has finished is over, not late: late is for a
+          deadline you missed. */}
       <span className={`shrink-0 self-center rounded-full px-3 py-1 font-mono text-[11px] uppercase ${late ? "bg-alarm text-ground" : "bg-sunken text-muted"}`} suppressHydrationWarning>
-        {relative(item.at, now)}
+        {item.type === "class" && item.endsAt < now ? "Done" : relative(item.at, now)}
       </span>
     </Link>
   );
