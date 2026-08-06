@@ -26,8 +26,8 @@ export default async function Declare({ searchParams }: { searchParams: Promise<
   const programmes = await programmesFor(campus);
 
   return (
-    <OnboardingShell step={3} total={4} ground="bg-ember" title="What are you studying?" back={multi ? `/onboarding/campus?institution=${institution}` : `/onboarding?kind=${school.kind}`}>
-      <p className="mt-3 flex flex-wrap items-center gap-3 text-ink/80">
+    <OnboardingShell step={3} total={4} ground="bg-ground" title="What are you studying?" back={multi ? `/onboarding/campus?institution=${institution}` : `/onboarding?kind=${school.kind}`}>
+      <p className="mt-3 flex flex-wrap items-center gap-3 text-muted">
         <span>{school.name}{multi ? ` \u00b7 ${site.name}` : ""}</span>
         <Link href={`/onboarding?kind=${school.kind}`} className="text-sm font-bold uppercase tracking-wide text-ink underline underline-offset-4">Change</Link>
       </p>

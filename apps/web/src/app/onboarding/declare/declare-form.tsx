@@ -78,7 +78,9 @@ export function DeclareForm({ programmes: seeded, institutionId, campusId, kind 
   const pill = "flex w-full items-center gap-3 rounded-full px-6 py-4 text-left font-bold transition-transform active:scale-[0.99]";
   const chip = "rounded-full px-5 py-3 text-sm font-bold transition-transform active:scale-[0.99]";
   const on = "bg-ink text-ground";
-  const off = "bg-cream text-ink";
+  // The card surface, not a fixed cream: cream is a light value and ink
+  // flips, so the pair collapses in dark mode.
+  const off = "bg-card text-ink";
   const label = "label text-ink/60";
 
   return (

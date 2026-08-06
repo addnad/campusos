@@ -26,13 +26,13 @@ export default async function PickCampus({ searchParams }: { searchParams: Promi
   }
 
   return (
-    <OnboardingShell step={2} total={4} ground="bg-ember" title="Which campus?" sub={school.name} back={`/onboarding?kind=${school.kind}`}>
+    <OnboardingShell step={2} total={4} ground="bg-ground" title="Which campus?" sub={school.name} back={`/onboarding?kind=${school.kind}`}>
       <div className="mt-8 space-y-3">
         {campuses.map((c) => (
-          <Link key={c.id} href={`/onboarding/declare?institution=${institution}&campus=${c.id}`} className="block rounded-full bg-cream px-6 py-4 font-bold text-ink transition-transform active:scale-[0.99]">{c.name}</Link>
+          <Link key={c.id} href={`/onboarding/declare?institution=${institution}&campus=${c.id}`} className="block rounded-full bg-card px-6 py-4 font-bold text-ink transition-transform active:scale-[0.99]">{c.name}</Link>
         ))}
       </div>
-      <p className="mt-6 text-sm text-ink/70">Your courses, timetable and coursemates all follow your campus.</p>
+      <p className="mt-6 text-sm text-muted">Your courses, timetable and coursemates all follow your campus.</p>
     </OnboardingShell>
   );
 }

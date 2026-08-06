@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { prefillFor } from "@/modules/identity/queries";
 import { OnboardingShell } from "../shell";
 import { ConfirmForm } from "./confirm-form";
+import { CountUp } from "./count-up";
 
 type Search = { institution?: string; campus?: string; programme?: string; level?: string; semester?: string; rollover?: string };
 
@@ -23,8 +24,8 @@ export default async function Confirm({ searchParams }: { searchParams: Promise<
   const term = semester === "1" ? "First Semester" : "Second Semester";
 
   return (
-    <OnboardingShell step={3} total={3} ground="bg-aqua" title={prefill.length > 0 ? `We found ${prefill.length} courses` : "Add your courses"} back={`/onboarding/declare?institution=${institution}&campus=${campus}`}>
-      <p className="mt-3 text-ink/80">{level} {p.name} &middot; {term}{prefill.length > 0 ? ` \u00b7 ${units} units` : ""}</p>
+    <OnboardingShell step={3} total={3} ground="bg-ground" title={prefill.length > 0 ? (<>We found <CountUp to={prefill.length} /> courses</>) : "Add your courses"} back={`/onboarding/declare?institution=${institution}&campus=${campus}`}>
+      <p className="mt-3 text-muted">{level} {p.name} &middot; {term}{prefill.length > 0 ? ` \u00b7 ${units} units` : ""}</p>
       <ConfirmForm initial={prefill} programmeId={programme} institutionId={institution} campusId={campus} level={level} semester={Number(semester)} rollover={rollover === "1"} />
     </OnboardingShell>
   );

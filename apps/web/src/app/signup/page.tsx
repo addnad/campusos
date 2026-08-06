@@ -8,14 +8,14 @@ export default async function SignUp() {
   if (session?.user) redirect("/today");
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-ember px-6">
+    <main className="flex min-h-screen items-center justify-center bg-ground px-6">
       <div className="w-full max-w-md">
         <Wordmark size="small" />
 
         <h1 className="mt-10 font-display text-4xl leading-[1.05] text-ink sm:text-5xl">
           Start here.
         </h1>
-        <p className="mt-4 text-lg text-ink/75">
+        <p className="mt-4 text-lg text-muted">
           Your courses, your timetable, your deadlines and the people taking
           them with you.
         </p>
@@ -35,7 +35,7 @@ export default async function SignUp() {
           </button>
         </form>
 
-        <p className="mt-8 text-sm text-ink/70">
+        <p className="mt-8 text-sm text-muted">
           Already have an account? <Link href="/login" className="font-bold text-ink underline underline-offset-4">Log in</Link>
         </p>
       </div>

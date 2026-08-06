@@ -6,6 +6,7 @@ import { unreadTotal } from "@/modules/collaboration/queries";
 import Link from "next/link";
 import { modeLabel, type Kind } from "@/modules/identity/awards";
 import { isStaff } from "@/modules/moderation/queries";
+import { ThemeChoice } from "@/components/theme";
 
 export default async function Me() {
   const session = await auth();
@@ -57,6 +58,13 @@ export default async function Me() {
             Review reports
           </Link>
         )}
+
+        <section className="mt-10">
+          <p className="label text-muted">Appearance</p>
+          <div className="mt-2">
+            <ThemeChoice />
+          </div>
+        </section>
 
         <form
           className="mt-12"

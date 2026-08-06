@@ -25,10 +25,10 @@ export default async function Onboarding({ searchParams }: { searchParams: Promi
 
   if (!kind) {
     return (
-      <OnboardingShell step={1} total={3} ground="bg-ember" title="Where do you study?">
+      <OnboardingShell step={1} total={3} ground="bg-ground" title="Where do you study?">
         <div className="mt-8 space-y-3">
           {KINDS.map((k) => (
-            <Link key={k.key} href={`/onboarding?kind=${k.key}`} className="block rounded-full bg-cream px-6 py-4 font-bold text-ink transition-transform active:scale-[0.99]">{k.label}</Link>
+            <Link key={k.key} href={`/onboarding?kind=${k.key}`} className="block rounded-full bg-card px-6 py-4 font-bold text-ink transition-transform active:scale-[0.99]">{k.label}</Link>
           ))}
         </div>
       </OnboardingShell>
@@ -38,7 +38,7 @@ export default async function Onboarding({ searchParams }: { searchParams: Promi
   const institutions = await institutionsByKind(kind as InstitutionKind);
 
   return (
-    <OnboardingShell step={1} total={3} ground="bg-ember" title="Your school." back="/onboarding">
+    <OnboardingShell step={1} total={3} ground="bg-ground" title="Your school." back="/onboarding">
       <SchoolPicker institutions={institutions} />
     </OnboardingShell>
   );

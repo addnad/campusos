@@ -5,7 +5,7 @@ import { WordmarkAnimated } from "@/components/ui/wordmark-animated";
 
 export default function Landing() {
   return (
-    <main className="min-h-screen bg-ember">
+    <main className="min-h-screen bg-ground">
       <div className="mx-auto max-w-5xl px-6 py-8 sm:px-10">
         <header className="flex items-center justify-between">
           <Wordmark size="small" />
@@ -19,7 +19,7 @@ export default function Landing() {
           </h1>
         </section>
 
-        <section className="snap mt-10 max-w-2xl border-t-2 border-ink/15 pt-8" style={{ "--from": "translateY(16px)", animationDelay: "760ms" } as React.CSSProperties}>
+        <section className="snap mt-10 max-w-2xl border-t-2 border-ink/10 pt-8" style={{ "--from": "translateY(16px)", animationDelay: "760ms" } as React.CSSProperties}>
           <p className="text-xl leading-relaxed text-ink">
             Your courses, your timetable, your deadlines and the people taking
             them with you. All in your school{"\u2019"}s own curriculum.
@@ -33,9 +33,9 @@ export default function Landing() {
           </Button>
         </section>
 
-        <footer className="mt-20 flex flex-wrap items-center gap-4 border-t-2 border-ink/15 pt-6">
+        <footer className="mt-20 flex flex-wrap items-center gap-4 border-t-2 border-ink/10 pt-6">
           <Wordmark size="small" />
-          <span className="text-sm text-ink/70">
+          <span className="text-sm text-muted">
             For Nigerian polytechnics and universities.
           </span>
         </footer>
