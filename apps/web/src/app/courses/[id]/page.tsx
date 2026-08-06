@@ -89,14 +89,20 @@ export default async function CoursePage({ params, searchParams }: { params: Pro
 
   return (
     <main className="min-h-screen bg-ground pb-24">
-      <header className="px-6 pb-8 pt-8" style={{ background: colour }}>
+      {/* The colour reads better as a marker than a wall: a full-bleed
+          header makes every course page shout, and nothing that shouts
+          all the time is heard. */}
+      <header className="border-b-2 border-ink/10 px-6 pb-8 pt-8">
         <div className="mx-auto w-full max-w-2xl">
-          <Link href="/today" className="label text-ink/70">&larr; Today</Link>
-          <p className="mt-6 label text-ink/70">
+          <Link href="/today" className="label text-muted">&larr; Today</Link>
+          <p className="mt-6 label text-muted">
             {profile.level} &middot; {profile.semester === 1 ? "1st" : "2nd"} Semester &middot; {enrolment.units} Units
           </p>
-          <h1 className="mt-1 font-display text-4xl uppercase leading-none text-ink">{course.displayCode}</h1>
-          <p className="mt-1 text-lg text-ink/80">{course.title}</p>
+          <h1 className="mt-1 flex items-center gap-3 font-display text-4xl uppercase leading-none text-ink">
+            <span className="h-9 w-2 shrink-0 rounded-full" style={{ background: colour }} />
+            {course.displayCode}
+          </h1>
+          <p className="mt-1 pl-5 text-lg text-muted">{course.title}</p>
         </div>
       </header>
 

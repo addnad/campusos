@@ -26,7 +26,7 @@ export default async function Courses() {
         <h1 className="mt-2 font-display text-4xl uppercase leading-[0.95] text-ink">
           {enrolments.length} {enrolments.length === 1 ? "course" : "courses"}
         </h1>
-        <p className="mt-2 font-mono text-sm text-muted">{units} units this semester</p>
+        <p className="mt-2 text-sm text-muted"><span className="font-mono">{units}</span> units this semester</p>
 
         <ul className="mt-8 space-y-2">
           {enrolments.map((e) => (

@@ -6,9 +6,13 @@ import { prisma } from "@/lib/prisma";
 import { Confidence } from "@/generated/prisma/client";
 import { sessionFor } from "@/modules/academics/session";
 
+/// Hue order walked with a stride, not in sequence: assigning colours in
+/// hue order gives a student four greens in a row, and colour is the
+/// recognition system. This keeps adjacent courses at least 117 degrees
+/// apart on the wheel.
 const TOKENS = [
-  "ember", "volt", "fern", "mint", "teal",
-  "aqua", "indigo", "grape", "orchid", "hibiscus",
+  "ember", "teal", "orchid", "fern", "indigo",
+  "volt", "aqua", "hibiscus", "mint", "grape",
 ];
 
 const norm = (c: string) => c.toUpperCase().replace(/[^A-Z0-9]/g, "");
