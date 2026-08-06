@@ -9,6 +9,8 @@ import { Suggestions } from "./suggestions";
 import { NoteList } from "./note-list";
 import { NoteForm } from "./note-form";
 import { notesFor } from "@/modules/learning/notes";
+import { TutorPanel } from "./tutor-panel";
+import { allowanceFor } from "@/modules/learning/tutor";
 import { suggestionsFor } from "@/modules/academics/suggestions";
 import { Remove } from "./remove";
 
@@ -28,12 +30,25 @@ export default async function CoursePage({ params, searchParams }: { params: Pro
   const { id } = await params;
   const { tab } = await searchParams;
   const onNotes = tab === "notes";
+  const onTutor = tab === "tutor";
   const data = await courseFor(session.user.id, id);
   if (!data) notFound();
 
   const { enrolment, course, assessments, profile } = data;
-  const suggested = onNotes ? { classes: [], assessments: [] } : await suggestionsFor(profile.id, [course.id]);
+  const suggested = onNotes || onTutor ? { classes: [], assessments: [] } : await suggestionsFor(profile.id, [course.id]);
   const notes = onNotes ? await notesFor(profile.id, course.id) : { mine: [], shared: [] };
+
+  const tutor = onTutor
+    ? await (async () => {
+        const thread = await prisma.tutorThread.findFirst({
+          where: { profileId: profile.id, courseId: course.id },
+          orderBy: { updatedAt: "desc" },
+          include: { turns: { orderBy: { createdAt: "asc" }, take: 30 } },
+        });
+        const allowance = await allowanceFor(profile.id, session.user.id);
+        return { turns: thread?.turns ?? [], ...allowance };
+      })()
+    : null;
 
   // A room is reachable from its course: that is where a student is
   // when they realise they want to ask.
@@ -59,8 +74,9 @@ export default async function CoursePage({ params, searchParams }: { params: Pro
 
       <div className="mx-auto w-full max-w-2xl px-6">
         <nav className="flex gap-6 border-b-2 border-ink/10 pt-6">
-          <Link href={`/courses/${course.id}`} className={`pb-3 font-display text-sm uppercase ${onNotes ? "text-muted" : "border-b-2 border-ink text-ink"}`}>Work</Link>
+          <Link href={`/courses/${course.id}`} className={`pb-3 font-display text-sm uppercase ${onNotes || onTutor ? "text-muted" : "border-b-2 border-ink text-ink"}`}>Work</Link>
           <Link href={`/courses/${course.id}?tab=notes`} className={`pb-3 font-display text-sm uppercase ${onNotes ? "border-b-2 border-ink text-ink" : "text-muted"}`}>Notes</Link>
+          <Link href={`/courses/${course.id}?tab=tutor`} className={`pb-3 font-display text-sm uppercase ${onTutor ? "border-b-2 border-ink text-ink" : "text-muted"}`}>Tutor</Link>
           {room ? (
             <Link href={`/community/${room.id}`} className="pb-3 font-display text-sm uppercase text-muted">Community</Link>
           ) : (
@@ -68,7 +84,15 @@ export default async function CoursePage({ params, searchParams }: { params: Pro
           )}
         </nav>
 
-        {onNotes ? (
+        {onTutor && tutor ? (
+        <TutorPanel
+          courseId={course.id}
+          code={course.displayCode}
+          turns={tutor.turns.map((t) => ({ id: t.id, question: t.question, answer: t.answer }))}
+          left={tutor.left}
+          limit={tutor.limit}
+        />
+        ) : onNotes ? (
         <section className="mt-8">
           <NoteList notes={notes} courseId={course.id} />
           <NoteForm courseId={course.id} courseCode={course.displayCode} />

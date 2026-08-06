@@ -111,3 +111,35 @@ body {
     animation: none;
   }
 }
+
+/* The tutor's answers are read, not scanned: reading-sized type, real
+   spacing, and markdown structure rather than a wall of text. */
+.prose-tutor {
+  color: var(--color-ink);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
+.prose-tutor p { margin-bottom: 0.9em; }
+.prose-tutor p:last-child { margin-bottom: 0; }
+.prose-tutor strong { font-weight: 800; }
+.prose-tutor ul, .prose-tutor ol { margin: 0.9em 0; padding-left: 1.3em; }
+.prose-tutor ul { list-style: disc; }
+.prose-tutor ol { list-style: decimal; }
+.prose-tutor li { margin-bottom: 0.4em; }
+.prose-tutor h1, .prose-tutor h2, .prose-tutor h3 {
+  font-weight: 800;
+  margin: 1.2em 0 0.5em;
+}
+.prose-tutor code {
+  background: var(--color-sunken);
+  border-radius: 0.35em;
+  padding: 0.15em 0.4em;
+  font-size: 0.9em;
+}
+.prose-tutor pre {
+  background: var(--color-sunken);
+  border-radius: 1rem;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1em 0;
+}

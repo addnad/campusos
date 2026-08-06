@@ -164,6 +164,7 @@ model Course {
   sessions       ClassSession[]
   assessments    Assessment[]
   notes          Note[]
+  tutorThreads   TutorThread[]
   communities    Community[]
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
@@ -214,6 +215,12 @@ model User {
   /// UI that grants it: moderation decisions come from a person, not
   /// from a threshold.
   isStaff       Boolean          @default(false)
+
+  /// Daily tutor questions. The free allowance is small; paying raises
+  /// it. No badge: a paying student is not more credible in a room, and
+  /// "verified" is a word that should mean identity, not payment.
+  tutorDailyLimit Int            @default(5)
+  tutorPaidUntil  DateTime?
 
   /// Set when removals in separate rooms suggest a pattern rather than a
   /// bad afternoon. Reviewed by a person; nothing automatic bans anyone
@@ -321,6 +328,8 @@ model StudentProfile {
   mentions     Mention[]
   notes        Note[]
   hiddenNotes  HiddenNote[]
+  tutorThreads TutorThread[]
+  tutorUsage   TutorUsage[]
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
@@ -667,5 +676,52 @@ model HiddenNote {
   createdAt DateTime       @default(now())
 
   @@unique([noteId, profileId])
+  @@index([profileId])
+}
+
+/// A tutor conversation, scoped to one curriculum course (ADR-003): the
+/// tutor reads academic context and owns none of it.
+model TutorThread {
+  id        String         @id @default(cuid())
+  course    Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId  String
+  profile   StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId String
+  title     String?
+  turns     TutorTurn[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@index([profileId, updatedAt])
+}
+
+/// One exchange. Kept so a student can return to an explanation, and so
+/// usage can be counted without a separate ledger.
+model TutorTurn {
+  id       String      @id @default(cuid())
+  thread   TutorThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  threadId String
+  question String
+  answer   String
+  /// What the answer was grounded in, so a student can see the tutor is
+  /// reading their course rather than inventing.
+  sources  String?
+  createdAt DateTime   @default(now())
+
+  @@index([threadId, createdAt])
+}
+
+/// How many tutor questions a student has left today. The free pillars
+/// stay free; the tutor is the only part with a marginal cost, so it is
+/// the only part that is metered.
+model TutorUsage {
+  id        String         @id @default(cuid())
+  profile   StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId String
+  /// Date only, as YYYY-MM-DD in the student's day.
+  day       String
+  count     Int            @default(0)
+
+  @@unique([profileId, day])
   @@index([profileId])
 }
