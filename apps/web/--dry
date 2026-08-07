@@ -1,0 +1,1522 @@
+[
+  {
+    "name": "Computer Science",
+    "award": "BSc",
+    "levels": [
+      {
+        "level": "100 Level",
+        "courses": [
+          {
+            "code": "GST 111",
+            "title": "Communication in English",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "GST 112",
+            "title": "Nigerian Peoples and Culture",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 101",
+            "title": "Elementary Mathematics I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 102",
+            "title": "Elementary Mathematics II",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 101",
+            "title": "General Physics I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 102",
+            "title": "General Physics II",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 107",
+            "title": "General Practical Physics I",
+            "units": 1,
+            "required": true
+          },
+          {
+            "code": "PHY 108",
+            "title": "General Practical Physics II",
+            "units": 1,
+            "required": true
+          },
+          {
+            "code": "STA 111",
+            "title": "Descriptive Statistics",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 101",
+            "title": "Introduction to Computing Sciences",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 102",
+            "title": "Problem Solving",
+            "units": 2,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "200 Level",
+        "courses": [
+          {
+            "code": "GST 212",
+            "title": "Philosophy, Logic and Human Existence",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "ENT 211",
+            "title": "Entrepreneurship and Innovation",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 201",
+            "title": "Mathematical Methods I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 202",
+            "title": "Elementary Differential Equations",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "COS 201",
+            "title": "Computer Programming I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 202",
+            "title": "Computer Programming II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "CSC 203",
+            "title": "Discrete Structures",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "CSC 299",
+            "title": "SIWES I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "IFT 211",
+            "title": "Digital Logic Design",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "IFT 212",
+            "title": "Computer Architecture and Organisation",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "SEN 201",
+            "title": "Introduction to Software Engineering",
+            "units": 2,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "300 Level",
+        "courses": [
+          {
+            "code": "GST 312",
+            "title": "Peace and Conflict Resolution",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "ENT 312",
+            "title": "Venture Creation",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "CSC 301",
+            "title": "Data Structures",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "CSC 308",
+            "title": "Operating Systems",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "CSC 309",
+            "title": "Artificial Intelligence",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "CSC 399",
+            "title": "SIWES II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "DTS 304",
+            "title": "Data Management I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "ICT 305",
+            "title": "Data Communication System & Network",
+            "units": 3,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "400 Level",
+        "courses": [
+          {
+            "code": "CSC 401",
+            "title": "Algorithms and Complexity Analysis",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "CSC 497",
+            "title": "Final Year Project I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "CSC 498",
+            "title": "Final Year Project II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "INS 401",
+            "title": "Project Management",
+            "units": 2,
+            "required": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Cybersecurity",
+    "award": "BSc",
+    "levels": [
+      {
+        "level": "100 Level",
+        "courses": [
+          {
+            "code": "GST 111",
+            "title": "Communication in English",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "GST 112",
+            "title": "Nigerian Peoples and Culture",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 101",
+            "title": "Elementary Mathematics I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 102",
+            "title": "Elementary Mathematics II",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 101",
+            "title": "General Physics I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 102",
+            "title": "General Physics II",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 107",
+            "title": "General Practical Physics I",
+            "units": 1,
+            "required": true
+          },
+          {
+            "code": "PHY 108",
+            "title": "General Practical Physics II",
+            "units": 1,
+            "required": true
+          },
+          {
+            "code": "STA 111",
+            "title": "Descriptive Statistics",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 101",
+            "title": "Introduction to Computing Sciences",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 102",
+            "title": "Problem Solving",
+            "units": 2,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "200 Level",
+        "courses": [
+          {
+            "code": "GST 212",
+            "title": "Philosophy, Logic and Human Existence",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "ENT 211",
+            "title": "Entrepreneurship and Innovation",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "COS 201",
+            "title": "Computer Programming I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 202",
+            "title": "Computer Programming II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "CYB 203",
+            "title": "Cybercrime, Law and Countermeasures",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "CYB 299",
+            "title": "SIWES I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "INS 204",
+            "title": "Systems Analysis and Design",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "SEN 201",
+            "title": "Introduction to Software Engineering",
+            "units": 2,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "300 Level",
+        "courses": [
+          {
+            "code": "GST 312",
+            "title": "Peace and Conflict Resolution",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "ENT 312",
+            "title": "Venture Creation",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "CYB 302",
+            "title": "Biometrics Security",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "CYB 304",
+            "title": "Information and Big Data Security",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "CYB 399",
+            "title": "SIWES II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "CSC 309",
+            "title": "Artificial Intelligence",
+            "units": 2,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "400 Level",
+        "courses": [
+          {
+            "code": "CYB 404",
+            "title": "Cloud Computing Security",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "CYB 405",
+            "title": "Ethical Hacking and Reverse Engineering",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "CYB 406",
+            "title": "Deep and Dark Web Security",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "CYB 497",
+            "title": "Final Year Project I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "CYB 498",
+            "title": "Final Year Project II",
+            "units": 3,
+            "required": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Data Science",
+    "award": "BSc",
+    "levels": [
+      {
+        "level": "100 Level",
+        "courses": [
+          {
+            "code": "GST 111",
+            "title": "Communication in English",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "GST 112",
+            "title": "Nigerian Peoples and Culture",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 101",
+            "title": "Elementary Mathematics I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 102",
+            "title": "Elementary Mathematics II",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 101",
+            "title": "General Physics I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 102",
+            "title": "General Physics II",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 107",
+            "title": "General Practical Physics I",
+            "units": 1,
+            "required": true
+          },
+          {
+            "code": "PHY 108",
+            "title": "General Practical Physics II",
+            "units": 1,
+            "required": true
+          },
+          {
+            "code": "STA 111",
+            "title": "Descriptive Statistics",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 101",
+            "title": "Introduction to Computing Sciences",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 102",
+            "title": "Problem Solving",
+            "units": 2,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "200 Level",
+        "courses": [
+          {
+            "code": "GST 212",
+            "title": "Philosophy, Logic and Human Existence",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "ENT 211",
+            "title": "Entrepreneurship and Innovation",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 201",
+            "title": "Mathematical Methods I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 203",
+            "title": "Sets, Logic and Algebra I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 209",
+            "title": "Introduction to Numerical Analysis",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "COS 201",
+            "title": "Computer Programming I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 202",
+            "title": "Computer Programming II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "DTS 201",
+            "title": "Introduction to Data Science",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "DTS 211",
+            "title": "Introduction to R Programming",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "DTS 299",
+            "title": "SIWES I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "CSC 203",
+            "title": "Discrete Structures",
+            "units": 2,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "300 Level",
+        "courses": [
+          {
+            "code": "GST 312",
+            "title": "Peace and Conflict Resolution",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "ENT 312",
+            "title": "Venture Creation",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "DTS 302",
+            "title": "Big Data Computing",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "DTS 304",
+            "title": "Data Management I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "DTS 308",
+            "title": "Ethics and Legal Issues in Data Science",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "DTS 316",
+            "title": "Probability for Data Science",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "DTS 399",
+            "title": "SIWES II",
+            "units": 3,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "400 Level",
+        "courses": [
+          {
+            "code": "DTS 497",
+            "title": "Final Year Project I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "DTS 498",
+            "title": "Final Year Project II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "INS 401",
+            "title": "Project Management",
+            "units": 2,
+            "required": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Information and Communication",
+    "award": "BSc",
+    "levels": [
+      {
+        "level": "100 Level",
+        "courses": [
+          {
+            "code": "GST 111",
+            "title": "Communication in English",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "GST 112",
+            "title": "Nigerian Peoples and Culture",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 101",
+            "title": "Elementary Mathematics I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 102",
+            "title": "Elementary Mathematics II",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 101",
+            "title": "General Physics I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 102",
+            "title": "General Physics II",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 107",
+            "title": "General Practical Physics I",
+            "units": 1,
+            "required": true
+          },
+          {
+            "code": "PHY 108",
+            "title": "General Practical Physics II",
+            "units": 1,
+            "required": true
+          },
+          {
+            "code": "STA 111",
+            "title": "Descriptive Statistics",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 102",
+            "title": "Problem Solving",
+            "units": 2,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "200 Level",
+        "courses": [
+          {
+            "code": "ENT 211",
+            "title": "Entrepreneurship and Innovation",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 201",
+            "title": "Mathematical Methods",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 202",
+            "title": "Elementary Differential Equations",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "COS 201",
+            "title": "Computer Programming I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 202",
+            "title": "Computer Programming II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "ICT 298",
+            "title": "SIWES 1",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "CSC 203",
+            "title": "Discrete Structures",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "INS 202",
+            "title": "Human-Computer Interface",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "IFT 203",
+            "title": "Introduction to Web Technologies",
+            "units": 2,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "300 Level",
+        "courses": [
+          {
+            "code": "GST 312",
+            "title": "Peace and Conflict Resolution",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "ENT 312",
+            "title": "Venture Creation",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "ICT 301",
+            "title": "Satellite Communication",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "ICT 305",
+            "title": "Data Communication System &",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "ICT 398",
+            "title": "SIWES II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "CSC 308",
+            "title": "Operating Systems",
+            "units": 3,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "400 Level",
+        "courses": [
+          {
+            "code": "CSC 432",
+            "title": "Distributed Computing Systems",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "ICT 497",
+            "title": "Final Project I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "ICT 498",
+            "title": "Final Project II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "INS 401",
+            "title": "Project Management",
+            "units": 2,
+            "required": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Information Systems",
+    "award": "BSc",
+    "levels": [
+      {
+        "level": "100 Level",
+        "courses": [
+          {
+            "code": "GST 111",
+            "title": "Communication in English",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "GST 112",
+            "title": "Nigerian Peoples and Culture",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 101",
+            "title": "Elementary Mathematics I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 102",
+            "title": "Elementary Mathematics II",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 101",
+            "title": "General Physics I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 102",
+            "title": "General Physics II",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 107",
+            "title": "General Practical Physics I",
+            "units": 1,
+            "required": true
+          },
+          {
+            "code": "PHY 108",
+            "title": "General Practical Physics II",
+            "units": 1,
+            "required": true
+          },
+          {
+            "code": "STA 111",
+            "title": "Descriptive Statistics",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 102",
+            "title": "Problem Solving",
+            "units": 2,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "200 Level",
+        "courses": [
+          {
+            "code": "ENT 211",
+            "title": "Entrepreneurship and Innovation",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "STA 121",
+            "title": "Statistical Inference 1",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "BUA 102",
+            "title": "Introduction to Business II",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "COS 201",
+            "title": "Computer Programming I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 202",
+            "title": "Computer Programming II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "INS 202",
+            "title": "Human-Computer Interaction",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "INS 204",
+            "title": "Systems Analysis and Design",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "INS 299",
+            "title": "SIWES I",
+            "units": 3,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "300 Level",
+        "courses": [
+          {
+            "code": "GST 312",
+            "title": "Peace and Conflict Resolution",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "ENT 312",
+            "title": "Venture Creation",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "DTS 304",
+            "title": "Data Management I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "INS 301",
+            "title": "Business Process Management",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "INS 305",
+            "title": "Management Theory",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "INS 311",
+            "title": "E-Business Systems Development",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "INS 399",
+            "title": "SIWES II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "CSC 308",
+            "title": "Operating Systems",
+            "units": 3,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "400 Level",
+        "courses": [
+          {
+            "code": "DTS 404",
+            "title": "Data Management II",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "INS 401",
+            "title": "Project Management",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "INS 403",
+            "title": "Business Process Re-engineering",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "INS 497",
+            "title": "Final Year Project I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "INS 498",
+            "title": "Final Year Project II",
+            "units": 3,
+            "required": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Information Technology",
+    "award": "BSc",
+    "levels": [
+      {
+        "level": "100 Level",
+        "courses": [
+          {
+            "code": "GST 111",
+            "title": "Communication in English",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "GST 112",
+            "title": "Nigerian Peoples and Culture",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 101",
+            "title": "Elementary Mathematics I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 102",
+            "title": "Elementary Mathematics II",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 101",
+            "title": "General Physics I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 102",
+            "title": "General Physics II",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 107",
+            "title": "General Practical Physics I",
+            "units": 1,
+            "required": true
+          },
+          {
+            "code": "PHY 108",
+            "title": "General Practical Physics II",
+            "units": 1,
+            "required": true
+          },
+          {
+            "code": "STA 111",
+            "title": "Descriptive Statistics",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 101",
+            "title": "Introduction to Computing Sciences",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 102",
+            "title": "Problem Solving",
+            "units": 2,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "200 Level",
+        "courses": [
+          {
+            "code": "ENT 211",
+            "title": "Entrepreneurship and Innovation",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "COS 201",
+            "title": "Computer ProgrammingI",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 202",
+            "title": "Computer Programming II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "IFT 203",
+            "title": "Introduction to Web Technologies",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "IFT 211",
+            "title": "Digital Logic Design",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "IFT 299",
+            "title": "SIWES I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "INS 202",
+            "title": "Human-Computer Interface",
+            "units": 2,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "300 Level",
+        "courses": [
+          {
+            "code": "GST 312",
+            "title": "Peace and Conflict Resolution",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "ENT 312",
+            "title": "Venture Creation",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "IFT 302",
+            "title": "Web Application Development",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "IFT 308",
+            "title": "Ethics and Legal Issues in IT",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "IFT 310",
+            "title": "Mobile Application Development",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "IFT 322",
+            "title": "IT Innovation and Entrepreneurship",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "IFT 342",
+            "title": "Network Servers and Infrastructures",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "IFT 399",
+            "title": "SIWES II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "CSC 308",
+            "title": "Operating Systems",
+            "units": 3,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "400 Level",
+        "courses": [
+          {
+            "code": "IFT 403",
+            "title": "Mobile and Pervasive Computing",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "IFT 410",
+            "title": "System Integration and Architecture",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "IFT 497",
+            "title": "Final Year Student’s Project I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "IFT 498",
+            "title": "Final Year Student’s Project II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "INS 401",
+            "title": "Project Management",
+            "units": 2,
+            "required": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Software Engineering",
+    "award": "BSc",
+    "levels": [
+      {
+        "level": "100 Level",
+        "courses": [
+          {
+            "code": "GST 111",
+            "title": "Communication in English",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "GST 112",
+            "title": "Nigerian Peoples & Culture",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 101",
+            "title": "Elementary Mathematics I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 102",
+            "title": "Elementary Mathematics II",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 101",
+            "title": "General Physics I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 102",
+            "title": "General Physics II",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "PHY 107",
+            "title": "General Practical Physics I",
+            "units": 1,
+            "required": true
+          },
+          {
+            "code": "PHY 108",
+            "title": "General Practical Physics II",
+            "units": 1,
+            "required": true
+          },
+          {
+            "code": "STA 111",
+            "title": "Descriptive Statistics",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 101",
+            "title": "Introduction to Computing Sciences",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 102",
+            "title": "Introduction to Problem Solving",
+            "units": 3,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "200 Level",
+        "courses": [
+          {
+            "code": "GST 212",
+            "title": "Philosophy, Logic And Human Existence",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "ENT 212",
+            "title": "Entrepreneurship and Innovation",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 201",
+            "title": "Mathematical Methods I",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "MTH 202",
+            "title": "Mathematical Methods II",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "COS 201",
+            "title": "Computer Programming I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "COS 202",
+            "title": "Computer Programming II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "SEN 201",
+            "title": "Introduction to Software Engineering",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "SEN 299",
+            "title": "SIWES I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "CSC 203",
+            "title": "Discrete Structures",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "INS 204",
+            "title": "System Analysis and Design",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "IFT 211",
+            "title": "Digital Logic Design",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "IFT 212",
+            "title": "Computer Architecture and Organisation",
+            "units": 2,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "300 Level",
+        "courses": [
+          {
+            "code": "GST 312",
+            "title": "Peace and Conflict Resolution",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "ENT 312",
+            "title": "Venture Creation",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "SEN 301",
+            "title": "Object-Oriented Analysis and Design",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "SEN 304",
+            "title": "Software Testing and Quality Assurance",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "SEN 306",
+            "title": "Software Construction",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "SEN 399",
+            "title": "SIWES II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "CSC 301",
+            "title": "Data Structures",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "CSC 308",
+            "title": "Operating Systems",
+            "units": 3,
+            "required": true
+          }
+        ]
+      },
+      {
+        "level": "400 Level",
+        "courses": [
+          {
+            "code": "SEN 410",
+            "title": "Software Architecture and Design",
+            "units": 2,
+            "required": true
+          },
+          {
+            "code": "SEN 497",
+            "title": "Final Year Student’s Project I",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "SEN 498",
+            "title": "Final Year Student’s Project II",
+            "units": 3,
+            "required": true
+          },
+          {
+            "code": "INS 401",
+            "title": "Project Management",
+            "units": 2,
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+]
