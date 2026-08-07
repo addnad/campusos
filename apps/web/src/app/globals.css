@@ -156,3 +156,36 @@ body {
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
+
+/* Legal text is read start to finish, unlike anything else in the app. */
+.prose-legal { color: var(--color-ink); line-height: 1.7; }
+.prose-legal h1 { font-family: var(--font-display); font-size: 2.25rem; text-transform: uppercase; line-height: 1; margin-bottom: 0.5em; }
+.prose-legal h2 { font-weight: 800; font-size: 1.25rem; margin: 1.8em 0 0.5em; }
+.prose-legal h3 { font-weight: 800; margin: 1.4em 0 0.4em; }
+.prose-legal p { margin-bottom: 1em; }
+.prose-legal ul { list-style: disc; padding-left: 1.3em; margin: 1em 0; }
+.prose-legal li { margin-bottom: 0.4em; }
+.prose-legal strong { font-weight: 800; }
+.prose-legal hr { border: 0; border-top: 2px solid var(--color-ink); opacity: 0.1; margin: 2em 0; }
+.prose-legal table { width: 100%; margin: 1em 0; font-size: 0.9375rem; }
+.prose-legal th { text-align: left; font-weight: 800; padding: 0.5em 0.75em 0.5em 0; border-bottom: 2px solid var(--color-ink); }
+.prose-legal td { padding: 0.5em 0.75em 0.5em 0; border-bottom: 1px solid var(--color-ink); vertical-align: top; }
+.prose-legal td, .prose-legal th { border-color: color-mix(in srgb, var(--color-ink) 15%, transparent); }
+
+/* The eyes scale on the y axis rather than fading: a blink is a lid
+   coming down, not a dot disappearing. */
+@keyframes markBlink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95%, 97% { transform: scaleY(0.08); }
+}
+@keyframes markThink {
+  0%, 100% { transform: scaleY(1); }
+  45%, 55% { transform: scaleY(0.12); }
+}
+.mark-eye-idle { animation: markBlink 6s ease-in-out infinite; }
+.mark-eye-thinking { animation: markThink 1.6s ease-in-out infinite; }
+.mark-eye-shut { transform: scaleY(0.08); }
+
+@media (prefers-reduced-motion: reduce) {
+  .mark-eye-idle, .mark-eye-thinking { animation: none; }
+}

@@ -25,9 +25,9 @@ export function WordmarkAnimated() {
           <span key={`${l}-${i}`} className="snap inline-block" style={{ "--from": FROM[i], animationDelay: `${i * 55}ms` } as CSSProperties}>{l}</span>
         ))}
       </span>
-      <div className="mt-3 flex gap-2" aria-hidden>
+      <div className="mt-6 flex w-full gap-2" aria-hidden>
         {BARS.map((c, i) => (
-          <span key={c} className="snap h-1.5 w-14 rounded-full" style={{ background: `var(${c})`, "--from": "translateY(14px) scaleX(0.3)", animationDelay: `${250 + i * 60}ms` } as CSSProperties} />
+          <span key={c} className="snap h-1.5 flex-1 rounded-full" style={{ background: `var(${c})`, "--from": "translateY(14px) scaleX(0.3)", animationDelay: `${250 + i * 60}ms` } as CSSProperties} />
         ))}
       </div>
     </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { GoogleMark } from "@/components/ui/google-mark";
 import { redirect } from "next/navigation";
 import { signIn, auth } from "@/auth";
 import { Wordmark } from "@/components/ui/wordmark";
@@ -23,7 +24,8 @@ export default async function LogIn() {
             await signIn("google", { redirectTo: "/today" });
           }}
         >
-          <button type="submit" className="w-full rounded-full bg-ink px-8 py-4 text-lg font-bold text-ground transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
+          <button type="submit" className="flex w-full items-center justify-center gap-3 rounded-full bg-ink px-8 py-4 text-lg font-bold text-ground transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
+            <GoogleMark size={22} />
             Continue with Google
           </button>
         </form>

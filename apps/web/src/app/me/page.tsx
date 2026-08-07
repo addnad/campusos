@@ -8,6 +8,7 @@ import { modeLabel, type Kind } from "@/modules/identity/awards";
 import { isStaff } from "@/modules/moderation/queries";
 import { ThemeChoice } from "@/components/theme";
 import { Notifications } from "./notifications";
+import { DeleteAccount } from "./delete-account";
 import { prisma } from "@/lib/prisma";
 
 export default async function Me() {
@@ -85,6 +86,8 @@ export default async function Me() {
         >
           <button type="submit" className="rounded-full border-2 border-ink/20 px-6 py-3 font-bold text-ink hover:border-ink">Sign out</button>
         </form>
+
+        <DeleteAccount handle={session.user.handle} />
       </div>
       <BottomNav active="/me" unread={unread} />
     </main>

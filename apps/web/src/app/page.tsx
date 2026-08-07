@@ -33,11 +33,17 @@ export default function Landing() {
           </Button>
         </section>
 
-        <footer className="mt-20 flex flex-wrap items-center gap-4 border-t-2 border-ink/10 pt-6">
-          <Wordmark size="small" />
-          <span className="text-sm text-muted">
-            For Nigerian polytechnics and universities.
-          </span>
+        <footer className="mt-20 border-t-2 border-ink/10 pt-6">
+          <div className="flex flex-wrap items-center gap-4">
+            <Wordmark size="small" />
+            <span className="text-sm text-muted">
+              For Nigerian polytechnics and universities
+            </span>
+          </div>
+
+          <div className="mt-4 text-sm text-muted">
+            <span>&copy; {new Date().getFullYear()} CampusOS</span>
+          </div>
         </footer>
       </div>
     </main>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Markdown from "react-markdown";
+import { Mark } from "@/components/ui/mark";
 
 type Turn = { id: string; question: string; answer: string };
 
@@ -23,7 +24,7 @@ function Thinking() {
   }, []);
   return (
     <span className="flex items-center gap-2 py-0.5">
-      <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-volt" />
+      <Mark size={20} blink="thinking" className="shrink-0" />
       <span className="text-sm italic text-muted">{THINKING[i]}...</span>
     </span>
   );
