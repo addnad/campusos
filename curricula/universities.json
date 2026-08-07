@@ -1,0 +1,1304 @@
+[
+  {
+    "name": "Abubakar Tafawa Balewa University",
+    "abbr": "ATBU",
+    "state": "Bauchi.",
+    "location": "Bauchi",
+    "funding": "Federal"
+  },
+  {
+    "name": "Adeyemi Federal University of Education",
+    "abbr": "AFUED",
+    "state": "Ondo",
+    "location": "Ondo",
+    "funding": "Federal"
+  },
+  {
+    "name": "Admiralty University Ibusa",
+    "abbr": "ADUN",
+    "state": "Delta",
+    "location": "Ibusa",
+    "funding": "Federal"
+  },
+  {
+    "name": "Ahmadu Bello University",
+    "abbr": "ABU",
+    "state": "Kaduna.",
+    "location": "Zaria",
+    "funding": "Federal"
+  },
+  {
+    "name": "Alex Ekwueme Federal University Ndufu Alike Ikwo",
+    "abbr": "AE-FUNAI",
+    "state": "Ebonyi",
+    "location": "Ikwo",
+    "funding": "Federal"
+  },
+  {
+    "name": "Alvan Ikoku Federal University of Education",
+    "abbr": "AIFUE",
+    "state": "Imo",
+    "location": "Owerri",
+    "funding": "Federal"
+  },
+  {
+    "name": "Bayero University",
+    "abbr": "BUK",
+    "state": "Kano",
+    "location": "Kano",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University Birnin Kebbi",
+    "abbr": "FUBK",
+    "state": "Kebbi",
+    "location": "Birnin Kebbi",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University Dutse",
+    "abbr": "FUD",
+    "state": "Jigawa",
+    "location": "Dutse",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University Dutsin-Ma",
+    "abbr": "FUDM",
+    "state": "Katsina",
+    "location": "Dutsin-Ma",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University Gashua",
+    "abbr": "FUGASHUA",
+    "state": "Yobe",
+    "location": "Gashua",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University Gusau",
+    "abbr": "FUGUS",
+    "state": "Zamfara",
+    "location": "Gusau",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University Kashere",
+    "abbr": "FUK",
+    "state": "Gombe",
+    "location": "Kashere",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University Lokoja",
+    "abbr": "FUL",
+    "state": "Kogi",
+    "location": "Lokoja",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University Lafia",
+    "abbr": "FULAFIA",
+    "state": "Nasarawa",
+    "location": "Lafia",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University of Agriculture, Abeokuta",
+    "abbr": "FUNAAB",
+    "state": "Ogun",
+    "location": "Abeokuta",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University of Agriculture and Technology, Obio Akpa",
+    "abbr": "FUATECH",
+    "state": "Akwa Ibom",
+    "location": "Obio Akpa",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University of Agriculture, Mubi",
+    "abbr": "FUAMB",
+    "state": "Adamawa",
+    "location": "Mubi",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University of Agriculture, Zuru",
+    "abbr": "FUAZ",
+    "state": "Kebbi",
+    "location": "Zuru",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University of Applied Sciences Kachia",
+    "abbr": "FUASK",
+    "state": "Kaduna",
+    "location": "Kachia",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University of Education, Pankshi",
+    "abbr": "FUEP",
+    "state": "Plateau",
+    "location": "Pankshin",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University of Education, Zaria",
+    "abbr": "FUEZ",
+    "state": "Kaduna",
+    "location": "Zaria",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University of Health Sciences, Azare",
+    "abbr": "FUHSA",
+    "state": "Bauchi",
+    "location": "Azare",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University of Petroleum Resources Effurun",
+    "abbr": "FUPRE",
+    "state": "Delta",
+    "location": "Effurun",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University of Technology Akure",
+    "abbr": "FUTA",
+    "state": "Ondo",
+    "location": "Akure",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University of Technology Ikot Abasi",
+    "abbr": "FUTIA",
+    "state": "Akwa Ibom",
+    "location": "Ikot Abasi",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University of Technology Minna",
+    "abbr": "FUTMIN",
+    "state": "Niger",
+    "location": "Minna",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University of Technology Owerri",
+    "abbr": "FUTO",
+    "state": "Imo",
+    "location": "Owerri",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University of Transportation, Daura",
+    "abbr": "FUTD",
+    "state": "Katsina",
+    "location": "Daura",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University Otuoke",
+    "abbr": "FUO",
+    "state": "Bayelsa",
+    "location": "Otuoke",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University Oye-Ekiti",
+    "abbr": "FUOYE",
+    "state": "Ekiti",
+    "location": "Oye-Ekiti",
+    "funding": "Federal"
+  },
+  {
+    "name": "Federal University Wukari",
+    "abbr": "FUW",
+    "state": "Taraba",
+    "location": "Wukari",
+    "funding": "Federal"
+  },
+  {
+    "name": "Joseph Sarwuan Tarka University",
+    "abbr": "JOSTUM",
+    "state": "Benue",
+    "location": "Makurdi",
+    "funding": "Federal"
+  },
+  {
+    "name": "Michael Okpara University of Agriculture, Umudike",
+    "abbr": "MOUAU",
+    "state": "Abia",
+    "location": "Umudike",
+    "funding": "Federal"
+  },
+  {
+    "name": "Modibbo Adama University, Yola",
+    "abbr": "MAU",
+    "state": "Adamawa",
+    "location": "Yola",
+    "funding": "Federal"
+  },
+  {
+    "name": "National Open University of Nigeria",
+    "abbr": "NOUN",
+    "state": "Lagos",
+    "location": "Victoria Island",
+    "funding": "Federal"
+  },
+  {
+    "name": "Nigerian Army University, Biu",
+    "abbr": "NAUB",
+    "state": "Borno",
+    "location": "Biu",
+    "funding": "Federal"
+  },
+  {
+    "name": "Nigerian Maritime University",
+    "abbr": "NMU",
+    "state": "Delta",
+    "location": "Okerenkoko",
+    "funding": "Federal"
+  },
+  {
+    "name": "Nnamdi Azikiwe University",
+    "abbr": "UNIZIK",
+    "state": "Anambra",
+    "location": "Awka",
+    "funding": "Federal"
+  },
+  {
+    "name": "Obafemi Awolowo University",
+    "abbr": "OAU",
+    "state": "Osun",
+    "location": "Ile Ife",
+    "funding": "Federal"
+  },
+  {
+    "name": "Tai Solarin Federal University of Education",
+    "abbr": "TASFUED",
+    "state": "Ogun",
+    "location": "Ijebu-Ode",
+    "funding": "Federal"
+  },
+  {
+    "name": "University of Abuja",
+    "abbr": "UNIABUJA",
+    "state": "Federal Capital Territory",
+    "location": "Gwagwalada",
+    "funding": "Federal"
+  },
+  {
+    "name": "University of Benin",
+    "abbr": "UNIBEN",
+    "state": "Edo",
+    "location": "Benin City",
+    "funding": "Federal"
+  },
+  {
+    "name": "University of Calabar",
+    "abbr": "UNICAL",
+    "state": "Cross River",
+    "location": "Calabar",
+    "funding": "Federal"
+  },
+  {
+    "name": "University of Ibadan",
+    "abbr": "UI",
+    "state": "Oyo",
+    "location": "Ibadan",
+    "funding": "Federal"
+  },
+  {
+    "name": "University of Ilorin",
+    "abbr": "UNILORIN",
+    "state": "Kwara",
+    "location": "Ilorin",
+    "funding": "Federal"
+  },
+  {
+    "name": "University of Jos",
+    "abbr": "UNIJOS",
+    "state": "Plateau",
+    "location": "Jos",
+    "funding": "Federal"
+  },
+  {
+    "name": "University of Lagos",
+    "abbr": "UNILAG",
+    "state": "Lagos",
+    "location": "Akoka",
+    "funding": "Federal"
+  },
+  {
+    "name": "University of Maiduguri",
+    "abbr": "UNIMAID",
+    "state": "Borno",
+    "location": "Maiduguri",
+    "funding": "Federal"
+  },
+  {
+    "name": "University of Nigeria, Nsukka",
+    "abbr": "UNN",
+    "state": "Enugu",
+    "location": "Nsukka",
+    "funding": "Federal"
+  },
+  {
+    "name": "University of Port Harcourt",
+    "abbr": "UNIPORT",
+    "state": "Rivers",
+    "location": "Port Harcourt",
+    "funding": "Federal"
+  },
+  {
+    "name": "University of Uyo",
+    "abbr": "UNIUYO",
+    "state": "Akwa Ibom",
+    "location": "Uyo",
+    "funding": "Federal"
+  },
+  {
+    "name": "Usmanu Danfodiyo University",
+    "abbr": "UDUS",
+    "state": "Sokoto",
+    "location": "Sokoto",
+    "funding": "Federal"
+  },
+  {
+    "name": "Yusuf Maitama Sule Federal University of Education, Kano",
+    "abbr": "YMSFUEK",
+    "state": "Kano",
+    "location": "Kano",
+    "funding": "Federal"
+  },
+  {
+    "name": "Abdulkadir Kure University",
+    "abbr": "AKUM",
+    "state": "Niger",
+    "location": "Minna",
+    "funding": "State"
+  },
+  {
+    "name": "Abia State University",
+    "abbr": "ABSU",
+    "state": "Abia",
+    "location": "Uturu",
+    "funding": "State"
+  },
+  {
+    "name": "Abiola Ajimobi Technical University",
+    "abbr": "TECH-U",
+    "state": "Oyo",
+    "location": "Ibadan",
+    "funding": "State"
+  },
+  {
+    "name": "Adamawa State University",
+    "abbr": "ADSU",
+    "state": "Adamawa",
+    "location": "Mubi",
+    "funding": "State"
+  },
+  {
+    "name": "Adekunle Ajasin University",
+    "abbr": "AAUA",
+    "state": "Ondo",
+    "location": "Akungba-Akoko",
+    "funding": "State"
+  },
+  {
+    "name": "Akwa Ibom State University (formerly Akwa Ibom State University of Science and Technology)",
+    "abbr": "AKSU",
+    "state": "Akwa Ibom",
+    "location": "Uyo",
+    "funding": "State"
+  },
+  {
+    "name": "Aliko Dangote University of Science and Technology",
+    "abbr": "ADUSTECH",
+    "state": "Kano",
+    "location": "Wudil",
+    "funding": "State"
+  },
+  {
+    "name": "Ambrose Alli University",
+    "abbr": "AAU",
+    "state": "Edo",
+    "location": "Ekpoma",
+    "funding": "State"
+  },
+  {
+    "name": "Bauchi State University",
+    "abbr": "BASUG",
+    "state": "Bauchi",
+    "location": "Gadau",
+    "funding": "State"
+  },
+  {
+    "name": "Bayelsa Medical University",
+    "abbr": "BMU",
+    "state": "Bayelsa",
+    "location": "Yenagoa",
+    "funding": "State"
+  },
+  {
+    "name": "Benue State University",
+    "abbr": "BSU",
+    "state": "Benue",
+    "location": "Makurdi",
+    "funding": "State"
+  },
+  {
+    "name": "Borno State University",
+    "abbr": "BOSU",
+    "state": "Borno",
+    "location": "Maiduguri",
+    "funding": "State"
+  },
+  {
+    "name": "Chukwuemeka Odumegwu Ojukwu University (formerly Anambra State University)",
+    "abbr": "ANSU",
+    "state": "Anambra",
+    "location": "Uli",
+    "funding": "State"
+  },
+  {
+    "name": "Delta State University, Abraka",
+    "abbr": "DELSU",
+    "state": "Delta",
+    "location": "Abraka",
+    "funding": "State"
+  },
+  {
+    "name": "Delta State University of Science and Technology",
+    "abbr": "DSPZ",
+    "state": "Delta",
+    "location": "Ozoro",
+    "funding": "State"
+  },
+  {
+    "name": "Dennis Osadebay University",
+    "abbr": "DOU",
+    "state": "Delta",
+    "location": "Asaba",
+    "funding": "State"
+  },
+  {
+    "name": "Ebonyi State University",
+    "abbr": "EBSU",
+    "state": "Ebonyi",
+    "location": "Abakaliki",
+    "funding": "State"
+  },
+  {
+    "name": "Edo State University, Uzairue",
+    "abbr": "EDSU",
+    "state": "Edo",
+    "location": "Iyamho",
+    "funding": "State"
+  },
+  {
+    "name": "Ekiti State University",
+    "abbr": "EKSU",
+    "state": "Ekiti",
+    "location": "Ado Ekiti",
+    "funding": "State"
+  },
+  {
+    "name": "Emmanuel Ayande University of Education",
+    "abbr": "EAUEDOYO",
+    "state": "Oyo",
+    "location": "Oyo",
+    "funding": "State"
+  },
+  {
+    "name": "Enugu State University of Science and Technology (formerly Anambra State University of Technology)",
+    "abbr": "ESUT",
+    "state": "Enugu",
+    "location": "Enugu",
+    "funding": "State"
+  },
+  {
+    "name": "Gombe State University",
+    "abbr": "GSU",
+    "state": "Gombe",
+    "location": "Gombe",
+    "funding": "State"
+  },
+  {
+    "name": "Gombe State University of Science and Technology",
+    "abbr": "GSUST",
+    "state": "Gombe",
+    "location": "Kumo",
+    "funding": "State"
+  },
+  {
+    "name": "Ibrahim Badamasi Babangida University",
+    "abbr": "IBBUL",
+    "state": "Niger",
+    "location": "Lapai",
+    "funding": "State"
+  },
+  {
+    "name": "Ignatius Ajuru University of Education",
+    "abbr": "IAUE",
+    "state": "Rivers",
+    "location": "Port Harcourt",
+    "funding": "State"
+  },
+  {
+    "name": "Imo State University",
+    "abbr": "IMSU",
+    "state": "Imo",
+    "location": "Owerri",
+    "funding": "State"
+  },
+  {
+    "name": "Kaduna State University",
+    "abbr": "KASU",
+    "state": "Kaduna",
+    "location": "Kaduna",
+    "funding": "State"
+  },
+  {
+    "name": "Kebbi State University of Science and Technology",
+    "abbr": "KSUSTA",
+    "state": "Kebbi",
+    "location": "Aliero",
+    "funding": "State"
+  },
+  {
+    "name": "Kingsley Ozumba Mbadiwe University",
+    "abbr": "KOMU",
+    "state": "Imo",
+    "location": "Ideato South",
+    "funding": "State"
+  },
+  {
+    "name": "Kwara State University",
+    "abbr": "KWASU",
+    "state": "Kwara",
+    "location": "Malete",
+    "funding": "State"
+  },
+  {
+    "name": "Prince Abubakar Audu University",
+    "abbr": "PAAU",
+    "state": "Kogi",
+    "location": "Anyigba",
+    "funding": "State"
+  },
+  {
+    "name": "Ladoke Akintola University of Technology",
+    "abbr": "LAUTECH",
+    "state": "Oyo",
+    "location": "Ogbomoso",
+    "funding": "State"
+  },
+  {
+    "name": "Lagos State University",
+    "abbr": "LASU",
+    "state": "Lagos",
+    "location": "Ojo",
+    "funding": "State"
+  },
+  {
+    "name": "Lagos State University of Education",
+    "abbr": "LASUED",
+    "state": "Lagos",
+    "location": "Ijanikin",
+    "funding": "State"
+  },
+  {
+    "name": "Lagos State University of Science and Technology",
+    "abbr": "LASUST",
+    "state": "Lagos",
+    "location": "Ikorodu",
+    "funding": "State"
+  },
+  {
+    "name": "Nasarawa State University",
+    "abbr": "NSUK",
+    "state": "Nasarawa",
+    "location": "Keffi",
+    "funding": "State"
+  },
+  {
+    "name": "Niger Delta University",
+    "abbr": "NDU",
+    "state": "Bayelsa",
+    "location": "Amassoma",
+    "funding": "State"
+  },
+  {
+    "name": "Olabisi Onabanjo University",
+    "abbr": "OOU",
+    "state": "Ogun",
+    "location": "Ago-Iwoye",
+    "funding": "State"
+  },
+  {
+    "name": "Olusegun Agagu University of Science and Technology",
+    "abbr": "OAUST",
+    "state": "Ondo",
+    "location": "Okitipupa",
+    "funding": "State"
+  },
+  {
+    "name": "Osun State University",
+    "abbr": "UNIOSUN",
+    "state": "Osun",
+    "location": "Osogbo",
+    "funding": "State"
+  },
+  {
+    "name": "Plateau State University",
+    "abbr": "PLASU",
+    "state": "Plateau",
+    "location": "Bokkos",
+    "funding": "State"
+  },
+  {
+    "name": "Rivers State University",
+    "abbr": "RIVSU",
+    "state": "Rivers",
+    "location": "Port Harcourt",
+    "funding": "State"
+  },
+  {
+    "name": "Sule Lamido University",
+    "abbr": "SLU",
+    "state": "Jigawa",
+    "location": "Kafin-Hausa",
+    "funding": "State"
+  },
+  {
+    "name": "Taraba State University",
+    "abbr": "TSU",
+    "state": "Taraba",
+    "location": "Jalingo",
+    "funding": "State"
+  },
+  {
+    "name": "Umaru Musa Yar'adua University",
+    "abbr": "UMYU",
+    "state": "Katsina",
+    "location": "Katsina",
+    "funding": "State"
+  },
+  {
+    "name": "University of Cross River State (formerly Cross River University of Technology)",
+    "abbr": "UNICROSS",
+    "state": "Cross River",
+    "location": "Ekpo-Abasi, Calabar",
+    "funding": "State"
+  },
+  {
+    "name": "Sokoto State University",
+    "abbr": "SSU",
+    "state": "Sokoto",
+    "location": "Sokoto",
+    "funding": "State"
+  },
+  {
+    "name": "University of Delta",
+    "abbr": "UNIDEL",
+    "state": "Delta",
+    "location": "Agbor",
+    "funding": "State"
+  },
+  {
+    "name": "Yobe State University",
+    "abbr": "YSU",
+    "state": "Yobe",
+    "location": "Damaturu",
+    "funding": "State"
+  },
+  {
+    "name": "Yusuf Maitama Sule University Kano",
+    "abbr": "YUMSUK",
+    "state": "Kano",
+    "location": "Kano",
+    "funding": "State"
+  },
+  {
+    "name": "Zamfara State University",
+    "abbr": "ZSU",
+    "state": "Zamfara",
+    "location": "Talata Mafara",
+    "funding": "State"
+  },
+  {
+    "name": "Achievers University",
+    "abbr": "AC",
+    "state": "Ondo",
+    "location": "Owo",
+    "funding": "Private"
+  },
+  {
+    "name": "Adeleke University",
+    "abbr": "AUE",
+    "state": "Osun",
+    "location": "Ede",
+    "funding": "Private"
+  },
+  {
+    "name": "Afe Babalola University",
+    "abbr": "ABUAD",
+    "state": "Ekiti",
+    "location": "Ado-Ekiti",
+    "funding": "Private"
+  },
+  {
+    "name": "African University of Science and Technology",
+    "abbr": "AUST",
+    "state": "Federal Capital Territory",
+    "location": "Abuja",
+    "funding": "Private"
+  },
+  {
+    "name": "Ahman Pategi University",
+    "abbr": "APU",
+    "state": "Kwara",
+    "location": "Pategi",
+    "funding": "Private"
+  },
+  {
+    "name": "Ajayi Crowther University",
+    "abbr": "ACU",
+    "state": "Oyo",
+    "location": "Oyo",
+    "funding": "Private"
+  },
+  {
+    "name": "Al-Ansar University Maiduguri",
+    "abbr": "AUM",
+    "state": "Borno",
+    "location": "Maiduguri",
+    "funding": "Private"
+  },
+  {
+    "name": "Al-Hikmah University",
+    "abbr": "AHU",
+    "state": "Kwara",
+    "location": "Ilorin",
+    "funding": "Private"
+  },
+  {
+    "name": "Al-Qalam University",
+    "abbr": "AUK",
+    "state": "Katsina",
+    "location": "Katsina",
+    "funding": "Private"
+  },
+  {
+    "name": "American University of Nigeria",
+    "abbr": "AUN",
+    "state": "Adamawa",
+    "location": "Yola",
+    "funding": "Private"
+  },
+  {
+    "name": "Anchor University",
+    "abbr": "-",
+    "state": "Lagos",
+    "location": "Ayobo",
+    "funding": "Private"
+  },
+  {
+    "name": "Arthur Jarvis University",
+    "abbr": "AJU",
+    "state": "Cross River",
+    "location": "Akpabuyo",
+    "funding": "Private"
+  },
+  {
+    "name": "Ave Maria University",
+    "abbr": "AMU",
+    "state": "Nasarawa",
+    "location": "Piyanko",
+    "funding": "Private"
+  },
+  {
+    "name": "Babcock University",
+    "abbr": "BU",
+    "state": "Ogun",
+    "location": "Ilishan-Remo",
+    "funding": "Private"
+  },
+  {
+    "name": "Baze University",
+    "abbr": "BAZE",
+    "state": "Federal Capital Territory",
+    "location": "Abuja",
+    "funding": "Private"
+  },
+  {
+    "name": "Bells University of Technology",
+    "abbr": "BUT",
+    "state": "Ogun",
+    "location": "Ota",
+    "funding": "Private"
+  },
+  {
+    "name": "Benson Idahosa University",
+    "abbr": "BIU",
+    "state": "Edo",
+    "location": "Benin City",
+    "funding": "Private"
+  },
+  {
+    "name": "Bowen University",
+    "abbr": "BU",
+    "state": "Osun",
+    "location": "Iwo",
+    "funding": "Private"
+  },
+  {
+    "name": "Bingham University",
+    "abbr": "BHU",
+    "state": "Nasarawa",
+    "location": "Karu",
+    "funding": "Private"
+  },
+  {
+    "name": "Caleb University",
+    "abbr": "CUl",
+    "state": "Lagos",
+    "location": "Ikorodu",
+    "funding": "Private"
+  },
+  {
+    "name": "Caritas University",
+    "abbr": "",
+    "state": "Enugu",
+    "location": "Enugu",
+    "funding": "Private"
+  },
+  {
+    "name": "CETEP City University",
+    "abbr": "-",
+    "state": "Lagos",
+    "location": "Yaba",
+    "funding": "Private"
+  },
+  {
+    "name": "Claretian University",
+    "abbr": "CUN",
+    "state": "Imo",
+    "location": "Nekede",
+    "funding": "Private"
+  },
+  {
+    "name": "Chrisland University",
+    "abbr": "CLU",
+    "state": "Ogun",
+    "location": "Abeokuta",
+    "funding": "Private"
+  },
+  {
+    "name": "Christopher University",
+    "abbr": "-",
+    "state": "Ogun",
+    "location": "Mowe",
+    "funding": "Private"
+  },
+  {
+    "name": "Clifford University",
+    "abbr": "CLU",
+    "state": "Abia",
+    "location": "Owerrinta",
+    "funding": "Private"
+  },
+  {
+    "name": "Coal City University",
+    "abbr": "CCU",
+    "state": "Enugu",
+    "location": "Enugu",
+    "funding": "Private"
+  },
+  {
+    "name": "Covenant University",
+    "abbr": "CU",
+    "state": "Ogun",
+    "location": "Ota",
+    "funding": "Private"
+  },
+  {
+    "name": "Crawford University",
+    "abbr": "-",
+    "state": "Ogun",
+    "location": "Igbesa",
+    "funding": "Private"
+  },
+  {
+    "name": "Crescent University",
+    "abbr": "-",
+    "state": "Ogun",
+    "location": "Abeokuta",
+    "funding": "Private"
+  },
+  {
+    "name": "Dominican University Ibadan",
+    "abbr": "DUI",
+    "state": "Oyo",
+    "location": "Ibadan",
+    "funding": "Private"
+  },
+  {
+    "name": "Edwin Clark University",
+    "abbr": "ECU",
+    "state": "Delta",
+    "location": "Kiagbodo",
+    "funding": "Private"
+  },
+  {
+    "name": "Elizade University",
+    "abbr": "EU",
+    "state": "Ondo",
+    "location": "Ilara-Mokin",
+    "funding": "Private"
+  },
+  {
+    "name": "Evangel University, Akaeze",
+    "abbr": "EUA",
+    "state": "Ebonyi",
+    "location": "Akaeze",
+    "funding": "Private"
+  },
+  {
+    "name": "Fountain University",
+    "abbr": "FUO",
+    "state": "Osun",
+    "location": "Osogbo",
+    "funding": "Private"
+  },
+  {
+    "name": "Godfrey Okoye University",
+    "abbr": "GOU",
+    "state": "Enugu",
+    "location": "Enugu",
+    "funding": "Private"
+  },
+  {
+    "name": "Greenfield University",
+    "abbr": "GFU",
+    "state": "Kaduna",
+    "location": "Kaduna",
+    "funding": "Private"
+  },
+  {
+    "name": "Gregory University",
+    "abbr": "GUU",
+    "state": "Abia",
+    "location": "Uturu",
+    "funding": "Private"
+  },
+  {
+    "name": "Hallmark University",
+    "abbr": "-",
+    "state": "Ogun",
+    "location": "Ijebu-Itele",
+    "funding": "Private"
+  },
+  {
+    "name": "Hezekiah University",
+    "abbr": "-",
+    "state": "Imo",
+    "location": "Umudi",
+    "funding": "Private"
+  },
+  {
+    "name": "Igbinedion University",
+    "abbr": "IUO",
+    "state": "Edo",
+    "location": "Okada",
+    "funding": "Private"
+  },
+  {
+    "name": "Joseph Ayo Babalola University",
+    "abbr": "JABU",
+    "state": "Osun",
+    "location": "Ikeji-Arakeji",
+    "funding": "Private"
+  },
+  {
+    "name": "Khadija University",
+    "abbr": "KUM",
+    "state": "Jigawa",
+    "location": "Majia",
+    "funding": "Private"
+  },
+  {
+    "name": "Kings University",
+    "abbr": "KU",
+    "state": "Osun",
+    "location": "Odeomu",
+    "funding": "Private"
+  },
+  {
+    "name": "Koladaisi University",
+    "abbr": "KU",
+    "state": "Oyo",
+    "location": "Ibadan",
+    "funding": "Private"
+  },
+  {
+    "name": "Kwararafa University",
+    "abbr": "-",
+    "state": "Taraba",
+    "location": "Wukari",
+    "funding": "Private"
+  },
+  {
+    "name": "Landmark University",
+    "abbr": "LU",
+    "state": "Kwara",
+    "location": "Omu-Aran",
+    "funding": "Private"
+  },
+  {
+    "name": "Lead City University",
+    "abbr": "LCU",
+    "state": "Oyo",
+    "location": "Ibadan",
+    "funding": "Private"
+  },
+  {
+    "name": "Madonna University",
+    "abbr": "-",
+    "state": "Rivers",
+    "location": "Elele",
+    "funding": "Private"
+  },
+  {
+    "name": "McPherson University",
+    "abbr": "MCU",
+    "state": "Ogun",
+    "location": "Seriki-Setayo",
+    "funding": "Private"
+  },
+  {
+    "name": "Mewar University",
+    "abbr": "-",
+    "state": "Nasarawa",
+    "location": "Masaka",
+    "funding": "Private"
+  },
+  {
+    "name": "Michael and Cecilia Ibru University",
+    "abbr": "MCIU",
+    "state": "Delta",
+    "location": "Agbara-Otor",
+    "funding": "Private"
+  },
+  {
+    "name": "Mountain Top University",
+    "abbr": "MTU",
+    "state": "Ogun",
+    "location": "Makogi Oba",
+    "funding": "Private"
+  },
+  {
+    "name": "Mudiame University",
+    "abbr": "-",
+    "state": "Edo",
+    "location": "Irrua",
+    "funding": "Private"
+  },
+  {
+    "name": "Nigerian University of Technology and Management",
+    "abbr": "NUTM",
+    "state": "Lagos",
+    "location": "Apapa",
+    "funding": "Private"
+  },
+  {
+    "name": "Nile University of Nigeria",
+    "abbr": "NUN",
+    "state": "Federal Capital Territory",
+    "location": "Abuja",
+    "funding": "Private"
+  },
+  {
+    "name": "Nok University Kachia",
+    "abbr": "NUK",
+    "state": "Kaduna",
+    "location": "Kachia",
+    "funding": "Private (now Federal)"
+  },
+  {
+    "name": "Novena University",
+    "abbr": "-",
+    "state": "Delta",
+    "location": "Ogume",
+    "funding": "Private"
+  },
+  {
+    "name": "Obong University",
+    "abbr": "-",
+    "state": "Akwa Ibom",
+    "location": "Obong Ntak",
+    "funding": "Private"
+  },
+  {
+    "name": "Oduduwa University",
+    "abbr": "OUI",
+    "state": "Osun",
+    "location": "Ipetumodu",
+    "funding": "Private"
+  },
+  {
+    "name": "PAMO University of Medical Sciences",
+    "abbr": "-",
+    "state": "Rivers",
+    "location": "Port Harcourt",
+    "funding": "Private"
+  },
+  {
+    "name": "Pan-Atlantic University",
+    "abbr": "PAU",
+    "state": "Lagos",
+    "location": "Lekki",
+    "funding": "Private"
+  },
+  {
+    "name": "Paul University",
+    "abbr": "-",
+    "state": "Anambra",
+    "location": "Awka",
+    "funding": "Private"
+  },
+  {
+    "name": "Peaceland University",
+    "abbr": "PUE",
+    "state": "Enugu",
+    "location": "Enugu",
+    "funding": "Private"
+  },
+  {
+    "name": "Precious Cornerstone University",
+    "abbr": "PCU",
+    "state": "Oyo",
+    "location": "Ibadan",
+    "funding": "Private"
+  },
+  {
+    "name": "Redeemer's University Nigeria",
+    "abbr": "RUN",
+    "state": "Osun",
+    "location": "Ede",
+    "funding": "Private"
+  },
+  {
+    "name": "Renaissance University",
+    "abbr": "-",
+    "state": "Enugu",
+    "location": "Ugbawka",
+    "funding": "Private"
+  },
+  {
+    "name": "Rhema University",
+    "abbr": "-",
+    "state": "Abia",
+    "location": "Aba",
+    "funding": "Private"
+  },
+  {
+    "name": "Ritman University",
+    "abbr": "-",
+    "state": "Akwa Ibom",
+    "location": "Ikot Ekpene",
+    "funding": "Private"
+  },
+  {
+    "name": "Salem University",
+    "abbr": "-",
+    "state": "Kogi",
+    "location": "Lokoja",
+    "funding": "Private"
+  },
+  {
+    "name": "Sam Maris University",
+    "abbr": "SMU",
+    "state": "Ondo",
+    "location": "Supare",
+    "funding": "Private"
+  },
+  {
+    "name": "Samuel Adegboyega University",
+    "abbr": "SAU",
+    "state": "Edo",
+    "location": "Ogwa",
+    "funding": "Private"
+  },
+  {
+    "name": "Skyline University",
+    "abbr": "SUN",
+    "state": "Kano",
+    "location": "Kano",
+    "funding": "Private"
+  },
+  {
+    "name": "Summit University",
+    "abbr": "-",
+    "state": "Kwara",
+    "location": "Offa",
+    "funding": "Private"
+  },
+  {
+    "name": "Veritas University (Catholic University of Nigeria) Abuja",
+    "abbr": "VUNA",
+    "state": "Federal Capital Territory",
+    "location": "Bwari",
+    "funding": "Private"
+  },
+  {
+    "name": "Wesley University",
+    "abbr": "WUO",
+    "state": "Ondo",
+    "location": "Ondo",
+    "funding": "Private"
+  },
+  {
+    "name": "Western Delta University",
+    "abbr": "WDU",
+    "state": "Delta",
+    "location": "Oghara",
+    "funding": "Private"
+  },
+  {
+    "name": "Westland University",
+    "abbr": "WUI",
+    "state": "Osun",
+    "location": "Iwo",
+    "funding": "Private"
+  },
+  {
+    "name": "University of Mkar (formerly called Hilltop University)",
+    "abbr": "-",
+    "state": "Benue",
+    "location": "Mkar",
+    "funding": "Private"
+  },
+  {
+    "name": "James Hope University, Lagos",
+    "abbr": "JHU",
+    "state": "Lagos",
+    "location": "Lekki",
+    "funding": "Private"
+  },
+  {
+    "name": "Legacy University Okija",
+    "abbr": "-",
+    "state": "Anambra",
+    "location": "Okija",
+    "funding": "Private"
+  }
+]

@@ -5,14 +5,27 @@ import { useRouter } from "next/navigation";
 
 type Inst = { id: string; name: string; shortName: string; state: string | null };
 
+/// The biggest schools by enrolment, so most students find theirs
+/// without typing. Hardcoded for now; once enough students have joined,
+/// this becomes a count of who is actually here.
+const COMMON = [
+  "UNILAG", "ABU", "UI", "UNN", "OAU", "LASU", "UNIBEN", "UNIPORT",
+  "BUK", "FUTA",
+];
+
 export function SchoolPicker({ institutions }: { institutions: Inst[] }) {
   const router = useRouter();
   const [q, setQ] = useState("");
 
   const term = q.trim().toLowerCase();
+
+  // 167 schools is not a list anyone scrolls. Show the ones most
+  // students are at; the search covers the rest.
   const shown = term
     ? institutions.filter((i) => i.name.toLowerCase().includes(term) || i.shortName.toLowerCase().includes(term))
-    : institutions;
+    : institutions
+        .filter((i) => COMMON.includes(i.shortName))
+        .sort((a, b) => COMMON.indexOf(a.shortName) - COMMON.indexOf(b.shortName));
 
   return (
     <div className="mt-8">
