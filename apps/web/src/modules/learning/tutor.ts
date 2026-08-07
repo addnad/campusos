@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-const FREE_DAILY = 5;
+const FREE_DAILY = 3;
 
 /// The student's own day, not UTC: "five a day" should end at their
 /// midnight.
