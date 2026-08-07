@@ -13,14 +13,18 @@ type Course = { code: string; title: string; units: number; required: boolean };
 type Level = { level: string; courses: Course[] };
 type Programme = { name: string; award: string; levels: Level[] };
 
-const PROGRAMME = /^(B\.?Sc\.?)\s+([A-Za-z][A-Za-z ,&/-]+?)\s*$/;
+// Not every discipline awards a BSc: Law gives LLB, Medicine MBBS,
+// Pharmacy PharmD, Veterinary DVM. Some headings are the award
+// alone, with the programme name only in the document title.
+const PROGRAMME =
+  /^(B\.?Sc\.?|B\.?A\.?|B\.?Eng\.?|B\.?Tech\.?|B\.?Ed\.?|LL\.?B\.?|MBBS|BDS|B\.?Pharm\.?|Pharm\.?D\.?|DVM|B\.?Agric\.?|B\.?N\.?Sc\.?)\s*([A-Za-z][A-Za-z ,&/()'-]*?)\s*$/;
 const LEVEL = /^([1-9]00)\s*Level\s*$/i;
 // "COS 101 <tab> Introduction to Computing Sciences <tab> 3 <tab> C <tab> 30 45"
 const COURSE = /^([A-Z]{2,4})\s?(\d{3})[\s\t]+(.+?)[\s\t]+(\d+)[\s\t]+([CER])\b/;
 // Page furniture that interrupts a table mid-list.
 const NOISE = /^(--\s*\d+ of \d+\s*--|Computing\s|TOTAL|NOTE:|Course\s*$|Code Course Title|Course Code Course Title)/i;
 
-export function parse(text: string) {
+export function parse(text: string, fallbackName = "") {
   const lines = text.split("\n");
   const programmes: Programme[] = [];
 
@@ -37,7 +41,11 @@ export function parse(text: string) {
 
     const p = PROGRAMME.exec(line);
     if (p) {
-      programme = { name: p[2].trim(), award: "BSc", levels: [] };
+      // Some documents head the section with the award alone — Law is
+      // just "LL.B". The discipline is then the programme name, passed
+      // in by the caller.
+      const award = p[1].replace(/\./g, "").toUpperCase();
+      programme = { name: p[2].trim() || fallbackName, award, levels: [] };
       programmes.push(programme);
       level = null;
       inStructure = false;

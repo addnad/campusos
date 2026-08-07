@@ -40,7 +40,12 @@ async function main() {
     // national curriculum would send students to rooms for courses their
     // school does not teach.
     const existing = await prisma.programme.findMany({
-      where: { normalisedName: normName(p.name), award: p.award },
+      // The document writes B.Sc., the database holds BSc. Match on the
+      // letters rather than the punctuation and case.
+      where: {
+        normalisedName: normName(p.name),
+        award: { equals: p.award, mode: "insensitive" },
+      },
       include: { institution: { select: { shortName: true } } },
     });
 
