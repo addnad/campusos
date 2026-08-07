@@ -11,6 +11,11 @@ const SCHOOLS: { shortName: string; url: string }[] = [
   { shortName: "UNN", url: "https://myschoolgist.com/news/unn-courses/" },
   { shortName: "OAU", url: "https://myschoolgist.com/news/oau-courses/" },
   { shortName: "LASU", url: "https://myschoolgist.com/news/lasu-courses/" },
+  { shortName: "UNIBEN", url: "https://myschoolgist.com/news/uniben-courses/" },
+  { shortName: "UNIPORT", url: "https://myschoolgist.com/news/uniport-courses/" },
+  { shortName: "FUTA", url: "https://myschoolgist.com/news/futa-courses/" },
+  { shortName: "BUK", url: "https://myschoolgist.com/news/buk-courses/" },
+  { shortName: "UNILORIN", url: "https://myschoolgist.com/news/unilorin-courses/" },
 ];
 
 /// A programme name: title case, no stray punctuation, not a heading or
