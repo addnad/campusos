@@ -2,8 +2,7 @@
 
 **Last updated: 7 August 2026**
 
-CampusOS is operated by Nwite Samuel, an individual based in Lagos,
-Nigeria. This policy explains what CampusOS collects, why, and who else
+CampusOS is based in Lagos, Nigeria. This policy explains what CampusOS collects, why, and who else
 sees it. It describes what the app actually does, not what it might do
 one day.
 

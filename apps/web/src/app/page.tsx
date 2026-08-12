@@ -41,8 +41,10 @@ export default function Landing() {
             </span>
           </div>
 
-          <div className="mt-4 text-sm text-muted">
+          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
             <span>&copy; {new Date().getFullYear()} CampusOS</span>
+            <Link href="/privacy" className="underline underline-offset-4 hover:text-ink">Privacy</Link>
+            <Link href="/terms" className="underline underline-offset-4 hover:text-ink">Terms</Link>
           </div>
         </footer>
       </div>

@@ -112,6 +112,13 @@ export function DeclareForm({ programmes: seeded, institutionId, campusId, kind 
           <p className={`${label} mt-8`}>Programme</p>
           <input value={programme ? programme.name : q} onChange={(e) => { setQ(e.target.value); setProgramme(null); setLevel(null); setSemester(null); }} placeholder="Start typing your programme" autoComplete="off" className="mt-2 w-full rounded-full border-2 border-ink/30 bg-transparent px-6 py-4 font-bold text-ink outline-none placeholder:font-normal placeholder:text-ink/40 focus:border-ink" />
 
+          {programmes.length === 0 && !term && (
+            <p className="mt-2 text-sm text-muted">
+              Yours will be the first from this school. Type it in and it will
+              be here for whoever comes next.
+            </p>
+          )}
+
           {!programme && (
             <div className="mt-2 space-y-2">
               {matches.map((p) => (

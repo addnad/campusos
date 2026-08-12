@@ -9,8 +9,8 @@ type Inst = { id: string; name: string; shortName: string; state: string | null 
 /// without typing. Hardcoded for now; once enough students have joined,
 /// this becomes a count of who is actually here.
 const COMMON = [
-  "UNILAG", "ABU", "UI", "UNN", "OAU", "LASU", "UNIBEN", "UNIPORT",
-  "BUK", "FUTA",
+  "UNILAG", "ABU", "UI", "UNN", "OAU", "LASU",
+  "UNIBEN", "UNIPORT", "BUK", "UNILORIN", "FUTA",
 ];
 
 export function SchoolPicker({ institutions }: { institutions: Inst[] }) {
