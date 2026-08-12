@@ -112,7 +112,7 @@ export default async function CoursePage({ params, searchParams }: { params: Pro
           <Link href={`/courses/${course.id}?tab=notes`} className={`pb-3 font-display text-sm uppercase ${onNotes ? "border-b-2 border-ink text-ink" : "text-muted"}`}>Notes</Link>
           <Link href={`/courses/${course.id}?tab=tutor`} className={`pb-3 font-display text-sm uppercase ${onTutor ? "border-b-2 border-ink text-ink" : "text-muted"}`}>Tutor</Link>
           {room ? (
-            <Link href={`/community/${room.id}`} className="pb-3 font-display text-sm uppercase text-muted">Community</Link>
+            <Link href="/community" className="pb-3 font-display text-sm uppercase text-muted">Community</Link>
           ) : (
             <span className="pb-3 font-display text-sm uppercase text-muted/50">Community</span>
           )}

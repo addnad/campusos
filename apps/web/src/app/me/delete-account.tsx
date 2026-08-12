@@ -55,7 +55,7 @@ export function DeleteAccount({ handle }: { handle: string }) {
             if (res && "error" in res && res.error) { setError(res.error); return; }
             await signOutAfterDelete();
           })}
-          className="rounded-full bg-alarm px-6 py-3 font-bold text-ground disabled:opacity-30"
+          className="rounded-full bg-alarm px-6 py-3 font-bold text-ground disabled:opacity-50"
         >
           {pending ? "Deleting..." : "Delete permanently"}
         </button>

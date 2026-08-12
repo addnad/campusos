@@ -99,7 +99,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           }
         }
       } finally {
-        controller.close();
 
         // Saved and counted only once an answer exists: a dropped stream
         // should not cost a student one of their five.
@@ -120,6 +119,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
             });
           });
         }
+
+        // Closed last: work started after the stream closes may never
+        // finish, which is why the usage row was never written and the
+        // daily limit reset on every refresh.
+        controller.close();
       }
     },
   });
