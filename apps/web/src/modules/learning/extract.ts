@@ -27,27 +27,32 @@ export async function extractNote(noteId: string) {
       { type: "image_url", image_url: { url } },
     ];
   } else {
-    // A PDF has to be sent inline: the signed URL is private and
-    // time-limited, so it cannot be fetched from outside.
+    // Read it here rather than sending it: the model was receiving a
+    // placeholder rather than the document, and a typed PDF has its text
+    // already — no call needed, nothing to pay for, and faster.
     const file = await fetch(url);
     if (!file.ok) {
       await prisma.note.update({ where: { id: noteId }, data: { extractFailed: true } });
       return { error: "Could not open that file." };
     }
-    const bytes = Buffer.from(await file.arrayBuffer());
-    if (bytes.length > 8 * 1024 * 1024) {
-      return { error: "That file is too large to read." };
+
+    const { PDFParse } = await import("pdf-parse");
+    const parser = new PDFParse({ data: Buffer.from(await file.arrayBuffer()) });
+    const { text } = await parser.getText();
+    await parser.destroy();
+
+    const cleaned = text.replace(/\n{3,}/g, "\n\n").trim();
+    if (cleaned.length < 40) {
+      // A scanned PDF is images in a wrapper and has no text to read.
+      await prisma.note.update({ where: { id: noteId }, data: { extractFailed: true } });
+      return { error: "That PDF has no readable text — try a photo of the page instead." };
     }
-    content = [
-      { type: "text", text: "Transcribe the text of this document. Return only the text, no commentary. Keep headings and list structure." },
-      {
-        type: "file",
-        file: {
-          filename: "note.pdf",
-          file_data: `data:application/pdf;base64,${bytes.toString("base64")}`,
-        },
-      },
-    ];
+
+    await prisma.note.update({
+      where: { id: noteId },
+      data: { extracted: cleaned.slice(0, 20000), extractedAt: new Date(), extractFailed: false },
+    });
+    return { ok: true, text: cleaned };
   }
 
   try {

@@ -51,7 +51,7 @@ export default async function CoursePage({ params, searchParams }: { params: Pro
 
   // Cards live with notes: both are study material, and a deck is made
   // from a note. A fifth tab would be one too many.
-  const cards = false
+  const cards = onNotes
     ? await (async () => {
         const [due, deck, allowance] = await Promise.all([
           dueFor(profile.id, course.id),
@@ -130,6 +130,18 @@ export default async function CoursePage({ params, searchParams }: { params: Pro
         <section className="mt-8">
           <NoteList notes={notes} courseId={course.id} />
           <NoteForm courseId={course.id} courseCode={course.displayCode} />
+          {cards && (
+            <CardsPanel
+              courseId={course.id}
+              code={course.displayCode}
+              due={cards.due}
+              total={cards.total}
+              decksLeft={cards.decksLeft}
+              notes={notes.mine
+                .filter((n) => n.preview || n.isFile)
+                .map((n) => ({ id: n.id, title: n.title }))}
+            />
+          )}
           {/* Cards are built but hidden: the free vision model cannot read
               PDFs, which is most of what students upload. Re-enable when the
               model can. */}
