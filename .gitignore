@@ -34,3 +34,6 @@ coverage/
 
 # prisma generated client
 **/src/generated/
+
+# Source PDFs, not code — 300MB of NUC and NBTE documents
+curricula/

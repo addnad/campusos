@@ -8,12 +8,13 @@ const OUT = "../../curricula/nbte";
 async function main() {
   const html = await (await fetch(INDEX)).text();
 
-  // Links to the curriculum PDFs, with whatever text labels them.
+  // The programme name sits in the same table row as the link, so the
+  // whole row is what to match — the link text is just "Download".
   const links = [...html.matchAll(
-    /<a[^>]+href="([^"]*DownloadCurriculum\/[^"]+\.pdf)"[^>]*>([\s\S]*?)<\/a>/gi,
+    /<tr>\s*<td>\d+<\/td>\s*<td>([^<]+)<\/td>[\s\S]*?href="([^"]+\.pdf)"/g,
   )].map((m) => ({
-    url: m[1].startsWith("http") ? m[1] : `https://www.digitalnbte.nbte.gov.ng${m[1]}`,
-    label: m[2].replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim(),
+    label: m[1].replace(/\s+/g, " ").trim(),
+    url: m[2],
   }));
 
   console.log(`found ${links.length} curriculum links`);
@@ -23,7 +24,7 @@ async function main() {
     return;
   }
 
-  for (const l of links.slice(0, 10)) console.log(`  ${l.label || "(no label)"}`);
+  for (const l of links.slice(0, 15)) console.log(`  ${l.label}`);
 
   mkdirSync(OUT, { recursive: true });
   writeFileSync(`${OUT}/index.json`, JSON.stringify(links, null, 2));
