@@ -161,7 +161,7 @@ async function seedRoom() {
   for (const [i, [handle, body]] of TALK.entries()) {
     const profileId = profiles.get(handle);
     if (!profileId) continue;
-    const m = await prisma.message.create({
+    const m: { id: string } = await prisma.message.create({
       data: {
         communityId: room.id,
         authorId: profileId,
