@@ -9,7 +9,7 @@ import { declareProgramme } from "./declare-actions";
 
 type Programme = { id: string; name: string; award: string; studyMode: string; years: number };
 
-export function DeclareForm({ programmes: seeded, elsewhere = [], institutionId, campusId, kind }: { programmes: Programme[]; elsewhere?: { name: string; award: string; schools: number }[]; institutionId: string; campusId: string; kind: Kind }) {
+export function DeclareForm({ edit = false, programmes: seeded, elsewhere = [], institutionId, campusId, kind }: { edit?: boolean; programmes: Programme[]; elsewhere?: { name: string; award: string; schools: number }[]; institutionId: string; campusId: string; kind: Kind }) {
   const router = useRouter();
   const [added, setAdded] = useState<Programme[]>([]);
   const programmes = [...seeded, ...added];
@@ -71,7 +71,7 @@ export function DeclareForm({ programmes: seeded, elsewhere = [], institutionId,
 
   function go() {
     if (!programme || !level || !semester) return;
-    const p = new URLSearchParams({ institution: institutionId, campus: campusId, programme: programme.id, level, semester: String(semester) });
+    const p = new URLSearchParams({ institution: institutionId, campus: campusId, programme: programme.id, level, semester: String(semester), ...(edit ? { rollover: "1", edit: "1" } : {}) });
     router.push(`/onboarding/confirm?${p.toString()}`);
   }
 

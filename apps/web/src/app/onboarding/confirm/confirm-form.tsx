@@ -7,7 +7,7 @@ type Course = { courseId?: string; code: string; title: string; units: number };
 
 const TOKENS = ["ember", "volt", "fern", "mint", "teal", "aqua", "indigo", "grape", "orchid", "hibiscus"];
 
-export function ConfirmForm({ initial, programmeId, institutionId, campusId, level, semester, rollover }: { initial: Course[]; programmeId: string; institutionId: string; campusId: string; level: string; semester: number; rollover?: boolean }) {
+export function ConfirmForm({ initial, programmeId, institutionId, campusId, level, semester, rollover, edit }: { initial: Course[]; programmeId: string; institutionId: string; campusId: string; level: string; semester: number; rollover?: boolean; edit?: boolean }) {
   const [state, action, pending] = useActionState(completeOnboarding, null);
   const [courses, setCourses] = useState<Course[]>(initial);
   const [editing, setEditing] = useState(initial.length === 0);
@@ -32,6 +32,7 @@ export function ConfirmForm({ initial, programmeId, institutionId, campusId, lev
       <input type="hidden" name="institutionId" value={institutionId} />
       <input type="hidden" name="campusId" value={campusId} />
       {rollover && <input type="hidden" name="rollover" value="1" />}
+      {edit && <input type="hidden" name="edit" value="1" />}
       <input type="hidden" name="level" value={level} />
       <input type="hidden" name="semester" value={semester} />
       <input type="hidden" name="courses" value={JSON.stringify(courses)} />
@@ -66,7 +67,7 @@ export function ConfirmForm({ initial, programmeId, institutionId, campusId, lev
 
       <div className="rise mt-8 space-y-3" style={{ animationDelay: `${600 + courses.length * 60 + 120}ms` }}>
         <button type="submit" disabled={pending || courses.length === 0} className="w-full rounded-full bg-card px-8 py-5 text-lg font-bold text-ink transition-opacity disabled:opacity-40">
-          {pending ? "Setting up..." : rollover ? "Start this semester" : "Looks right"}
+          {pending ? "Setting up..." : edit ? "Save" : rollover ? "Start this semester" : "Looks right"}
         </button>
         {!editing && (
           <button type="button" onClick={() => setEditing(true)} className="w-full rounded-full border-2 border-cream/60 px-8 py-5 text-lg font-bold text-cream">One of these is wrong</button>

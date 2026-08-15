@@ -6,14 +6,14 @@ import { programmesFor, campusesFor, programmesElsewhere } from "@/modules/ident
 import { OnboardingShell } from "../shell";
 import { DeclareForm } from "./declare-form";
 
-type Search = { institution?: string; campus?: string };
+type Search = { institution?: string; campus?: string; edit?: string };
 
 export default async function Declare({ searchParams }: { searchParams: Promise<Search> }) {
   const session = await auth();
   if (!session?.user) redirect("/signup");
   if (!session.user.handle) redirect("/handle");
 
-  const { institution, campus } = await searchParams;
+  const { institution, campus, edit } = await searchParams;
   if (!institution || !campus) redirect("/onboarding");
 
   const [school, site] = await Promise.all([
@@ -40,7 +40,7 @@ export default async function Declare({ searchParams }: { searchParams: Promise<
         <span>{school.name}{multi ? ` \u00b7 ${site.name}` : ""}</span>
         <Link href={`/onboarding?kind=${school.kind}`} className="text-sm font-bold uppercase tracking-wide text-ink underline underline-offset-4">Change</Link>
       </p>
-      <DeclareForm programmes={programmes} elsewhere={elsewhere} institutionId={institution} campusId={campus} kind={school.kind as never} />
+      <DeclareForm edit={edit === "1"} programmes={programmes} elsewhere={elsewhere} institutionId={institution} campusId={campus} kind={school.kind as never} />
     </OnboardingShell>
   );
 }

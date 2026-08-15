@@ -39,6 +39,7 @@ export default async function Me() {
         </div>
 
         {profile && (
+          <>
           <dl className="mt-10 space-y-4">
             <div>
               <dt className="label text-muted">School</dt>
@@ -60,6 +61,15 @@ export default async function Me() {
               </dd>
             </div>
           </dl>
+
+          {/* Onboarding says this can be changed later; this is later. */}
+          <Link
+            href={`/onboarding/declare?institution=${profile.programme.institutionId}&campus=${profile.programme.campusId}&edit=1`}
+            className="mt-4 inline-flex text-sm font-bold text-muted underline underline-offset-4 hover:text-ink"
+          >
+            Change my programme or level
+          </Link>
+          </>
         )}
 
         {staff && (

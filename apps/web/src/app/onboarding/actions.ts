@@ -39,6 +39,7 @@ export async function completeOnboarding(_prev: unknown, formData: FormData) {
   if (courses.length === 0) return { error: "Add at least one course." };
 
   const rolling = formData.get("rollover") === "1";
+  const editing = formData.get("edit") === "1";
   const session_ = sessionFor();
 
   // One transaction: a failure part-way through would otherwise leave a
@@ -55,10 +56,16 @@ export async function completeOnboarding(_prev: unknown, formData: FormData) {
       : null;
 
     if (existing) {
-      await tx.enrolment.updateMany({
-        where: { profileId: existing.id, status: "ACTIVE" },
-        data: { status: "COMPLETED" },
-      });
+      // A correction removes what was never right; a rollover keeps it as
+      // history, because those courses were actually taken.
+      if (editing) {
+        await tx.enrolment.deleteMany({ where: { profileId: existing.id, status: "ACTIVE" } });
+      } else {
+        await tx.enrolment.updateMany({
+          where: { profileId: existing.id, status: "ACTIVE" },
+          data: { status: "COMPLETED" },
+        });
+      }
     }
 
     const profile = existing
