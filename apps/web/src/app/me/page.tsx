@@ -10,6 +10,7 @@ import { ThemeChoice } from "@/components/theme";
 import { Notifications } from "./notifications";
 import { DeleteAccount } from "./delete-account";
 import { Billing } from "./billing";
+import { ChangeHandle } from "./change-handle";
 import { prisma } from "@/lib/prisma";
 
 export default async function Me() {
@@ -24,7 +25,7 @@ export default async function Me() {
   const prefs = await prisma.notificationPrefs.findUnique({ where: { userId: session.user.id } });
   const account = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { tutorPaidUntil: true },
+    select: { tutorPaidUntil: true, handleSetAt: true },
   });
 
   return (
@@ -35,6 +36,7 @@ export default async function Me() {
           <div className="min-w-0">
             <h1 className="truncate font-display text-3xl lowercase text-ink">@{session.user.handle}</h1>
             <p className="truncate text-sm text-muted">{session.user.email}</p>
+            <ChangeHandle handle={session.user.handle} lastChanged={account?.handleSetAt ? account.handleSetAt.toISOString() : null} />
           </div>
         </div>
 

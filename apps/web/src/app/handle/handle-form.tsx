@@ -93,7 +93,7 @@ export function HandleForm({ suggestions }: { suggestions: string[] }) {
       </button>
 
       <p className="mt-4 text-sm text-muted">
-        You can change this once a year.
+        You can change this every three months.
       </p>
     </form>
   );
