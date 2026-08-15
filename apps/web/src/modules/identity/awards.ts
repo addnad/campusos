@@ -44,7 +44,7 @@ export function modesFor(kind: Kind): [string, string][] {
     default:
       return [
         ["FULL_TIME", "Full time"],
-        ["PART_TIME_WEEKDAY", "Part time (weekday)"],
+        ["PART_TIME_WEEKDAY", "Part time"],
         ["PART_TIME_WEEKEND", "Part time (weekend)"],
       ];
   }
@@ -52,7 +52,7 @@ export function modesFor(kind: Kind): [string, string][] {
 
 const LABELS: Record<string, string> = {
   FULL_TIME: "Full time",
-  PART_TIME_WEEKDAY: "Part time (weekday)",
+  PART_TIME_WEEKDAY: "Part time",
   PART_TIME_WEEKEND: "Part time (weekend)",
   SANDWICH: "Sandwich",
   DISTANCE: "Distance learning",

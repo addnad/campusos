@@ -9,7 +9,7 @@ import { declareProgramme } from "./declare-actions";
 
 type Programme = { id: string; name: string; award: string; studyMode: string; years: number };
 
-export function DeclareForm({ programmes: seeded, institutionId, campusId, kind }: { programmes: Programme[]; institutionId: string; campusId: string; kind: Kind }) {
+export function DeclareForm({ programmes: seeded, elsewhere = [], institutionId, campusId, kind }: { programmes: Programme[]; elsewhere?: { name: string; award: string; schools: number }[]; institutionId: string; campusId: string; kind: Kind }) {
   const router = useRouter();
   const [added, setAdded] = useState<Programme[]>([]);
   const programmes = [...seeded, ...added];
@@ -112,7 +112,7 @@ export function DeclareForm({ programmes: seeded, institutionId, campusId, kind 
           <p className={`${label} mt-8`}>Programme</p>
           <input value={programme ? programme.name : q} onChange={(e) => { setQ(e.target.value); setProgramme(null); setLevel(null); setSemester(null); }} placeholder="Start typing your programme" autoComplete="off" className="mt-2 w-full rounded-full border-2 border-ink/30 bg-transparent px-6 py-4 font-bold text-ink outline-none placeholder:font-normal placeholder:text-ink/40 focus:border-ink" />
 
-          {programmes.length === 0 && !term && (
+          {programmes.length === 0 && elsewhere.length === 0 && !term && (
             <p className="mt-2 text-sm text-muted">
               Yours will be the first from this school. Type it in and it will
               be here for whoever comes next.
@@ -126,6 +126,26 @@ export function DeclareForm({ programmes: seeded, institutionId, campusId, kind 
                   <span>{p.name}</span>
                 </button>
               ))}
+
+              {elsewhere.length > 0 && (
+                <>
+                  <p className={`${label} mt-4`}>Common at other schools</p>
+                  {elsewhere
+                    .filter((e) => e.award === effectiveAward)
+                    .filter((e) => term.length < 2 || e.name.toLowerCase().includes(term.toLowerCase()))
+                    .slice(0, 8)
+                    .map((e) => (
+                      <button
+                        key={`${e.name}-${e.award}`}
+                        type="button"
+                        onClick={() => setQ(e.name)}
+                        className={`${pill} ${off} mt-2`}
+                      >
+                        <span>{e.name}</span>
+                      </button>
+                    ))}
+                </>
+              )}
 
               {canAdd && (
                 <button type="button" onClick={addProgramme} disabled={saving} className="w-full rounded-full border-2 border-dashed border-ink/40 px-6 py-4 text-left text-ink/80 disabled:opacity-50">

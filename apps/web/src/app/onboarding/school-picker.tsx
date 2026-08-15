@@ -11,6 +11,10 @@ type Inst = { id: string; name: string; shortName: string; state: string | null 
 const COMMON = [
   "UNILAG", "ABU", "UI", "UNN", "OAU", "LASU",
   "UNIBEN", "UNIPORT", "BUK", "UNILORIN", "FUTA",
+  // Polytechnics keep their own default list — a student picking
+  // POLYTECHNIC should not see one school and think that is all there is.
+  "YABATECH", "KADPOLY", "AUCHIPOLY", "LASPOTECH", "FEDPOLYNEK",
+  "MOSHOOD", "POLYTECHNI", "KWARA", "FEDERAL18", "AKANU",
 ];
 
 export function SchoolPicker({ institutions }: { institutions: Inst[] }) {
@@ -21,11 +25,18 @@ export function SchoolPicker({ institutions }: { institutions: Inst[] }) {
 
   // 167 schools is not a list anyone scrolls. Show the ones most
   // students are at; the search covers the rest.
+  const common = institutions
+    .filter((i) => COMMON.includes(i.shortName))
+    .sort((a, b) => COMMON.indexOf(a.shortName) - COMMON.indexOf(b.shortName));
+
+  // The curated list is universities. Polytechnics and colleges have no
+  // meaningful "biggest", and showing nothing reads as having no schools
+  // at all — so they fall back to the first ten alphabetically.
   const shown = term
     ? institutions.filter((i) => i.name.toLowerCase().includes(term) || i.shortName.toLowerCase().includes(term))
-    : institutions
-        .filter((i) => COMMON.includes(i.shortName))
-        .sort((a, b) => COMMON.indexOf(a.shortName) - COMMON.indexOf(b.shortName));
+    : common.length > 0
+      ? common
+      : [...institutions].sort((a, b) => a.name.localeCompare(b.name)).slice(0, 10);
 
   return (
     <div className="mt-8">
