@@ -14,6 +14,10 @@ const MONTHS = 5;
 
 const BASE = "https://api.paystack.co";
 
+/// Off until there are credits behind it. Selling access to a
+/// rate-limited free model would be worse than not selling.
+export const PAYMENTS_LIVE = process.env.NEXT_PUBLIC_PAYMENTS_LIVE === "1";
+
 function headers() {
   return {
     Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,

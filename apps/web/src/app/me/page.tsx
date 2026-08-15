@@ -68,7 +68,9 @@ export default async function Me() {
           </Link>
         )}
 
-        <Billing paidUntil={account?.tutorPaidUntil ? account.tutorPaidUntil.toISOString() : null} />
+        {process.env.NEXT_PUBLIC_PAYMENTS_LIVE === "1" && (
+          <Billing paidUntil={account?.tutorPaidUntil ? account.tutorPaidUntil.toISOString() : null} />
+        )}
 
         <Notifications initial={{
           classes: prefs?.classes ?? true,

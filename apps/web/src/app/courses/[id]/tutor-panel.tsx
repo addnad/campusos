@@ -145,7 +145,7 @@ export function TutorPanel({ courseId, code, turns: initial, left: startLeft, li
         {/* A student out of questions is at the moment of wanting more.
             Only shown on the free tier — a paid student who has used
             their 25 should not be offered what they already have. */}
-        {spent && limit <= 3 && (
+        {spent && limit <= 3 && process.env.NEXT_PUBLIC_PAYMENTS_LIVE === "1" && (
           <div className="mt-4 rounded-2xl bg-sunken p-4">
             <p className="text-sm text-ink">
               Out of questions for today. &#8358;2,000 gets you 25 a day for the
