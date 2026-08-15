@@ -9,6 +9,7 @@ import { isStaff } from "@/modules/moderation/queries";
 import { ThemeChoice } from "@/components/theme";
 import { Notifications } from "./notifications";
 import { DeleteAccount } from "./delete-account";
+import { Billing } from "./billing";
 import { prisma } from "@/lib/prisma";
 
 export default async function Me() {
@@ -21,6 +22,10 @@ export default async function Me() {
   const initials = session.user.handle.slice(0, 2).toUpperCase();
   const staff = await isStaff(session.user.id);
   const prefs = await prisma.notificationPrefs.findUnique({ where: { userId: session.user.id } });
+  const account = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { tutorPaidUntil: true },
+  });
 
   return (
     <main className="min-h-screen bg-ground px-6 pb-24 pt-8">
@@ -62,6 +67,8 @@ export default async function Me() {
             Review reports
           </Link>
         )}
+
+        <Billing paidUntil={account?.tutorPaidUntil ? account.tutorPaidUntil.toISOString() : null} />
 
         <Notifications initial={{
           classes: prefs?.classes ?? true,

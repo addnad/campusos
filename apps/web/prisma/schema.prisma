@@ -223,6 +223,7 @@ model User {
   /// "verified" is a word that should mean identity, not payment.
   tutorDailyLimit Int            @default(5)
   tutorPaidUntil  DateTime?
+  payments        Payment[]
   /// Separate from questions: generating a deck should not cost a
   /// student the answers they came for.
   cardDailyLimit  Int            @default(2)
@@ -847,4 +848,29 @@ model SentReminder {
 
   @@unique([userId, key, day])
   @@index([createdAt])
+}
+
+enum PaymentState {
+  PENDING
+  PAID
+  FAILED
+}
+
+/// One attempt to buy a semester of tutor access. Kept whatever the
+/// outcome: a student who says they paid and did not is a support
+/// conversation that needs a record.
+model Payment {
+  id        String       @id @default(cuid())
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  /// Paystack's reference for this transaction. Unique so a webhook and
+  /// a callback verifying the same payment cannot grant it twice.
+  reference String       @unique
+  /// Kobo, as Paystack counts it.
+  amount    Int
+  state     PaymentState @default(PENDING)
+  paidAt    DateTime?
+  createdAt DateTime     @default(now())
+
+  @@index([userId])
 }

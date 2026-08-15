@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import Markdown from "react-markdown";
 import { Mark } from "@/components/ui/mark";
 
@@ -140,6 +141,21 @@ export function TutorPanel({ courseId, code, turns: initial, left: startLeft, li
         )}
 
         {error && <p className="text-sm font-bold text-alarm">{error}</p>}
+
+        {/* A student out of questions is at the moment of wanting more.
+            Only shown on the free tier — a paid student who has used
+            their 25 should not be offered what they already have. */}
+        {spent && limit <= 3 && (
+          <div className="mt-4 rounded-2xl bg-sunken p-4">
+            <p className="text-sm text-ink">
+              Out of questions for today. &#8358;2,000 gets you 25 a day for the
+              rest of the semester.
+            </p>
+            <Link href="/me" className="mt-3 inline-flex rounded-full bg-ink px-5 py-2.5 text-sm font-bold text-ground">
+              Get more questions
+            </Link>
+          </div>
+        )}
         <div ref={end} />
       </div>
 
