@@ -117,17 +117,26 @@ async function main() {
 /// A room reads as coursemates or it reads as filler. This is people
 /// asking about the work, not about the app.
 const TALK: [string, string][] = [
+  ["ninth", "did anyone get the slides from wednesday?"],
+  ["bernice", "he said he'd upload them but nothing yet"],
+  ["mamunat_21", "i took pictures. will put them in notes"],
+  ["ninth", "you're a lifesaver"],
   ["bernice", "has anyone started the problem set?"],
   ["johnny", "started it last night. question 3 is the annoying one"],
   ["mamunat_21", "wait is it due tonight or tomorrow"],
   ["johnny", "tonight. 11:59"],
   ["mamunat_21", "ah. ok thanks"],
+  ["bernice", "for q3 do we use the recursive form or iterative?"],
+  ["johnny", "either. he only marks the output"],
   ["ninth", "the lab moved to ICT lab by the way, not LT 4"],
   ["bernice", "since when?"],
   ["ninth", "dr ogunleye said it in class on wednesday"],
   ["johnny", "good to know. was going to walk to the wrong building"],
-  ["bernice", "for q3 do we use the recursive form or iterative?"],
-  ["johnny", "either. he only marks the output"],
+  ["mamunat_21", "same. thank you"],
+  ["bernice", "is the CA test still next week or has it moved?"],
+  ["johnny", "still next week as far as i know"],
+  ["ninth", "monday. he mentioned it twice"],
+  ["bernice", "ok. time to actually read then"],
 ];
 
 async function seedRoom() {
@@ -168,10 +177,10 @@ async function seedRoom() {
         body,
         createdAt: new Date(start + i * 12 * 60000),
         // one reply, so threading is visible
-        replyToId: i === 9 ? previous : null,
+        replyToId: i === 10 ? previous : null,
       },
     });
-    if (i === 8) previous = m.id;
+    if (i === 9) previous = m.id;
   }
 
   const all = await prisma.message.findMany({ where: { communityId: room.id }, orderBy: { createdAt: "asc" }, select: { id: true } });
