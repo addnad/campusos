@@ -16,21 +16,23 @@ const MAIN = "johnny";
 const PEERS = ["bernice", "mamunat_21", "ninth"];
 
 const CLASSES = [
+  // Sunday — an evening tutorial, which is common enough
+  { code: "COS 101", weekday: 7, startsAt: 18 * 60 + 30, endsAt: 20 * 60, venue: "ICT Lab", lecturer: "Dr. A. Ogunleye" },
   // Monday
-  { code: "COS 101", weekday: 1, startsAt: 8 * 60, endsAt: 10 * 60, venue: "LT 4", lecturer: "Dr. A. Ogunleye" },
-  { code: "MTH 101", weekday: 1, startsAt: 12 * 60, endsAt: 13 * 60 + 30, venue: "Maths Block 2", lecturer: "Mr. Bello" },
+  { code: "MTH 101", weekday: 1, startsAt: 8 * 60, endsAt: 10 * 60, venue: "Maths Block 2", lecturer: "Mr. Bello" },
+  { code: "PHY 101", weekday: 1, startsAt: 12 * 60, endsAt: 14 * 60, venue: "Physics LT", lecturer: "Prof. Adeyemi" },
   // Tuesday
-  { code: "PHY 101", weekday: 2, startsAt: 9 * 60, endsAt: 11 * 60, venue: "Physics LT", lecturer: "Prof. Adeyemi" },
-  { code: "GST 111", weekday: 2, startsAt: 14 * 60, endsAt: 16 * 60, venue: "Main Auditorium", lecturer: "Mrs. Nwankwo" },
+  { code: "GST 111", weekday: 2, startsAt: 9 * 60, endsAt: 11 * 60, venue: "Main Auditorium", lecturer: "Mrs. Nwankwo" },
+  { code: "STA 111", weekday: 2, startsAt: 14 * 60, endsAt: 16 * 60, venue: "LT 1", lecturer: "Dr. Okonkwo" },
   // Wednesday
-  { code: "STA 111", weekday: 3, startsAt: 8 * 60, endsAt: 10 * 60, venue: "LT 1", lecturer: "Dr. Okonkwo" },
-  { code: "COS 101", weekday: 3, startsAt: 13 * 60, endsAt: 15 * 60, venue: "ICT Lab", lecturer: "Dr. A. Ogunleye" },
+  { code: "COS 101", weekday: 3, startsAt: 8 * 60, endsAt: 10 * 60, venue: "LT 4", lecturer: "Dr. A. Ogunleye" },
+  { code: "MTH 103", weekday: 3, startsAt: 13 * 60, endsAt: 14 * 60 + 30, venue: "Maths Block 1", lecturer: "Mrs. Eze" },
   // Thursday
   { code: "PHY 107", weekday: 4, startsAt: 9 * 60, endsAt: 12 * 60, venue: "Physics Lab", lecturer: "Mr. Salami" },
-  { code: "MTH 103", weekday: 4, startsAt: 14 * 60, endsAt: 15 * 60 + 30, venue: "Maths Block 1", lecturer: "Mrs. Eze" },
+  { code: "GST 111", weekday: 4, startsAt: 15 * 60, endsAt: 17 * 60, venue: "Main Auditorium", lecturer: "Mrs. Nwankwo" },
   // Friday
-  { code: "GST 111", weekday: 5, startsAt: 10 * 60, endsAt: 12 * 60, venue: "Main Auditorium", lecturer: "Mrs. Nwankwo" },
-  { code: "STA 111", weekday: 5, startsAt: 15 * 60, endsAt: 17 * 60, venue: "LT 1", lecturer: "Dr. Okonkwo" },
+  { code: "STA 111", weekday: 5, startsAt: 10 * 60, endsAt: 12 * 60, venue: "LT 1", lecturer: "Dr. Okonkwo" },
+  { code: "MTH 101", weekday: 5, startsAt: 14 * 60, endsAt: 16 * 60, venue: "Maths Block 2", lecturer: "Mr. Bello" },
 ];
 
 const DAY = 86400000;
@@ -139,6 +141,75 @@ const TALK: [string, string][] = [
   ["bernice", "ok. time to actually read then"],
 ];
 
+/// Short exchanges in the other rooms. A Rooms list with one busy room
+/// and six silent ones reads as a demo; a few messages each reads as a
+/// term underway.
+const OTHER_TALK: Record<string, [string, string][]> = {
+  "MTH 103": [
+    ["bernice", "vectors assignment — is it question 4 or 5 he asked for?"],
+    ["johnny", "4. the one with the dot product"],
+    ["bernice", "thank you"],
+  ],
+  "PHY 101": [
+    ["ninth", "does anyone have last year's past questions?"],
+    ["mamunat_21", "i have 2023. will upload to notes"],
+    ["ninth", "that works, thanks"],
+  ],
+  "GST 111": [
+    ["mamunat_21", "the group presentation — are we still doing tuesday?"],
+    ["bernice", "yes. we're meeting at the library at 4 to plan"],
+    ["johnny", "count me in"],
+  ],
+  "STA 111": [
+    ["johnny", "worksheet is due next week not this week"],
+    ["ninth", "oh good. i had it down for friday"],
+  ],
+};
+
+async function seedOtherRooms() {
+  let seeded = 0;
+
+  for (const [code, talk] of Object.entries(OTHER_TALK)) {
+    const room = await prisma.community.findFirst({
+      where: { course: { displayCode: code }, level: "100 Level", semester: 1 },
+      select: { id: true },
+    });
+    if (!room) continue;
+
+    await prisma.message.deleteMany({ where: { communityId: room.id } });
+
+    const start = Date.now() - 26 * 3600000;
+    let i = 0;
+
+    for (const [handle, body] of talk) {
+      const u = await prisma.user.findFirst({ where: { handle }, select: { id: true } });
+      if (!u) continue;
+      const p = await prisma.studentProfile.findFirst({ where: { userId: u.id, isActive: true }, select: { id: true } });
+      if (!p) continue;
+
+      await prisma.communityMember.upsert({
+        where: { communityId_profileId: { communityId: room.id, profileId: p.id } },
+        update: {},
+        create: { communityId: room.id, profileId: p.id },
+      });
+
+      await prisma.message.create({
+        data: {
+          communityId: room.id,
+          authorId: p.id,
+          body,
+          createdAt: new Date(start + i * 40 * 60000),
+        },
+      });
+      i += 1;
+    }
+
+    seeded += 1;
+  }
+
+  console.log(`${seeded} other rooms given a short exchange`);
+}
+
 async function seedRoom() {
   const room = await prisma.community.findFirst({
     where: { course: { displayCode: "COS 101" }, level: "100 Level", semester: 1 },
@@ -196,4 +267,4 @@ async function seedRoom() {
   console.log(`COS 101 room: ${TALK.length} messages, ${profiles.size} members`);
 }
 
-main().then(seedRoom).finally(() => prisma.$disconnect());
+main().then(seedRoom).then(seedOtherRooms).finally(() => prisma.$disconnect());
