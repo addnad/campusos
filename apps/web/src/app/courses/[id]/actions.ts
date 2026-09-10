@@ -6,9 +6,12 @@ import { prisma } from "@/lib/prisma";
 import { parseClock } from "@/modules/academics/course";
 import { formatVenue, formatPerson, formatTitle } from "@/modules/academics/format";
 import { AssessmentKind, TaskState, EnrolmentStatus } from "@/generated/prisma/client";
+import { track } from "@/lib/analytics";
 
 /// Only a student enrolled in the course may add to it. Everything here
-/// is shared with coursemates, so enrolment is the permission.
+/// is shared with coursemates, so enrolment is the permission. userId
+/// rides along so events line up with the same person the rest of the
+/// app records against.
 async function guard(courseId: string) {
   const session = await auth();
   if (!session?.user) return null;
@@ -21,7 +24,7 @@ async function guard(courseId: string) {
     where: { profileId: profile.id, courseId, status: EnrolmentStatus.ACTIVE },
     select: { id: true },
   });
-  return enrolled ? profile : null;
+  return enrolled ? { id: profile.id, userId: session.user.id } : null;
 }
 
 export async function addClassSession(_prev: unknown, formData: FormData) {
@@ -43,6 +46,7 @@ export async function addClassSession(_prev: unknown, formData: FormData) {
     data: { courseId, profileId: profile.id, weekday, startsAt, endsAt, venue, lecturer },
   });
   revalidatePath(`/courses/${courseId}`);
+  track(profile.userId, "class_added", { source: "manual", weekday });
   return { ok: true };
 }
 
@@ -67,6 +71,7 @@ export async function addAssessment(_prev: unknown, formData: FormData) {
   });
   revalidatePath(`/courses/${courseId}`);
   revalidatePath("/today");
+  track(profile.userId, "assessment_added", { source: "manual", kind });
   return { ok: true };
 }
 
@@ -81,6 +86,7 @@ export async function setTaskState(assessmentId: string, courseId: string, state
   });
   revalidatePath(`/courses/${courseId}`);
   revalidatePath("/today");
+  track(profile.userId, "task_updated", { state });
   return { ok: true };
 }
 
@@ -93,6 +99,7 @@ export async function removeClassSession(sessionId: string, courseId: string) {
   await prisma.classSession.deleteMany({ where: { id: sessionId, profileId: profile.id } });
   revalidatePath(`/courses/${courseId}`);
   revalidatePath("/today");
+  track(profile.userId, "class_removed");
   return { ok: true };
 }
 
@@ -104,6 +111,7 @@ export async function removeAssessment(assessmentId: string, courseId: string) {
   await prisma.assessment.deleteMany({ where: { id: assessmentId, profileId: profile.id } });
   revalidatePath(`/courses/${courseId}`);
   revalidatePath("/today");
+  track(profile.userId, "assessment_removed");
   return { ok: true };
 }
 
@@ -114,11 +122,12 @@ export async function acceptClassSuggestion(courseId: string, formData: FormData
   const profile = await guard(courseId);
   if (!profile) return { error: "You are not taking this course." };
 
+  const weekday = Number(formData.get("weekday"));
   await prisma.classSession.create({
     data: {
       courseId,
       profileId: profile.id,
-      weekday: Number(formData.get("weekday")),
+      weekday,
       startsAt: Number(formData.get("startsAt")),
       endsAt: Number(formData.get("endsAt")),
       venue: (String(formData.get("venue") ?? "") || null),
@@ -127,6 +136,7 @@ export async function acceptClassSuggestion(courseId: string, formData: FormData
   });
   revalidatePath(`/courses/${courseId}`);
   revalidatePath("/today");
+  track(profile.userId, "class_added", { source: "suggestion", weekday });
   return { ok: true };
 }
 
@@ -134,17 +144,19 @@ export async function acceptAssessmentSuggestion(courseId: string, formData: For
   const profile = await guard(courseId);
   if (!profile) return { error: "You are not taking this course." };
 
+  const kind = String(formData.get("kind"));
   await prisma.assessment.create({
     data: {
       courseId,
       profileId: profile.id,
-      kind: String(formData.get("kind")) as AssessmentKind,
+      kind: kind as AssessmentKind,
       title: String(formData.get("title") ?? ""),
       dueAt: new Date(String(formData.get("dueAt") ?? "")),
     },
   });
   revalidatePath(`/courses/${courseId}`);
   revalidatePath("/today");
+  track(profile.userId, "assessment_added", { source: "suggestion", kind });
   return { ok: true };
 }
 
@@ -162,5 +174,8 @@ export async function dismissSuggestion(courseId: string, key: string) {
   });
   revalidatePath(`/courses/${courseId}`);
   revalidatePath("/today");
+  // No key here: it can carry a course code or title, which stays out of
+  // analytics.
+  track(profile.userId, "suggestion_dismissed");
   return { ok: true };
 }

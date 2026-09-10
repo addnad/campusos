@@ -1,9 +1,10 @@
+import { cache } from "react";
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+const nextAuth = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     Google({
@@ -40,3 +41,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
 });
+
+export const { handlers, signIn, signOut } = nextAuth;
+
+// A page and the root layout both read the session in one request, and
+// the jwt callback above queries the database each time. cache() collapses
+// the calls within a request to a single lookup.
+export const auth = cache(nextAuth.auth);

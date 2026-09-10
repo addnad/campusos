@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { Confidence } from "@/generated/prisma/client";
 import { sessionFor } from "@/modules/academics/session";
+import { track } from "@/lib/analytics";
 
 /// Hue order walked with a stride, not in sequence: assigning colours in
 /// hue order gives a student four greens in a row, and colour is the
@@ -28,15 +29,22 @@ export async function completeOnboarding(_prev: unknown, formData: FormData) {
   const campusId = String(formData.get("campusId") ?? "");
   const payload = String(formData.get("courses") ?? "[]");
 
-  if (!programmeId || !level || !semester || !campusId) return { error: "Missing details." };
+  if (!programmeId || !level || !semester || !campusId) {
+    track(session.user.id, "onboarding_failed", { reason: "missing_details" });
+    return { error: "Missing details." };
+  }
 
   let courses: { courseId?: string; code: string; title: string; units: number }[];
   try {
     courses = JSON.parse(payload);
   } catch {
+    track(session.user.id, "onboarding_failed", { reason: "invalid_course_list" });
     return { error: "Could not read your course list." };
   }
-  if (courses.length === 0) return { error: "Add at least one course." };
+  if (courses.length === 0) {
+    track(session.user.id, "onboarding_failed", { reason: "no_courses" });
+    return { error: "Add at least one course." };
+  }
 
   const rolling = formData.get("rollover") === "1";
   const editing = formData.get("edit") === "1";
@@ -133,6 +141,16 @@ export async function completeOnboarding(_prev: unknown, formData: FormData) {
         },
       });
     }
+  });
+
+  // Setup finished: the profile and its courses are written. Capture
+  // before the redirect, which throws to hand off to /today.
+  track(session.user.id, "onboarding_completed", {
+    course_count: courses.length,
+    level,
+    semester,
+    is_rollover: rolling,
+    is_edit: editing,
   });
 
   redirect("/today");

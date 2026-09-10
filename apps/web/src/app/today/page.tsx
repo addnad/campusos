@@ -17,6 +17,7 @@ import { InstallPrompt } from "@/components/install-prompt";
 import { windowsFor } from "@/modules/intelligence/windows";
 import { semesterPrompt, readyToRoll } from "@/modules/academics/semester";
 import { RollOver } from "./roll-over";
+import { track } from "@/lib/analytics";
 
 /// The line a student would use to describe their day.
 function headline(classesLeft: number, dueToday: number, overdue: number) {
@@ -35,10 +36,16 @@ export const dynamic = "force-dynamic";
 export default async function Today() {
   const session = await auth();
   if (!session?.user) redirect("/signup");
-  if (!session.user.handle) redirect("/handle");
+  if (!session.user.handle) {
+    track(session.user.id, "today_viewed", { plan_state: "no_handle" });
+    redirect("/handle");
+  }
 
   const profile = await semesterFor(session.user.id);
   if (!profile) {
+    // Reached Today with no profile: bounced to the setup call-to-action
+    // rather than a plan.
+    track(session.user.id, "today_viewed", { plan_state: "no_profile" });
     return (
       <main className="min-h-screen bg-ground px-6 py-12">
         <div className="mx-auto w-full max-w-2xl">
@@ -82,6 +89,14 @@ export default async function Today() {
   const multiCampus = programme.campus.name !== "Main Campus";
   const lines = headline(t?.classesLeft ?? 0, t?.dueToday ?? 0, t?.overdue ?? 0);
   const nothingSetUp = enrolments.length > 0 && (t?.spine.length ?? 0) === 0 && !t?.next;
+
+  // A student with a profile reached their plan. plan_state says whether
+  // the plan has anything in it yet, so the funnel can separate "set up"
+  // from "set up and using it".
+  track(session.user.id, "today_viewed", {
+    plan_state: nothingSetUp ? "empty_timetable" : "ready",
+    course_count: enrolments.length,
+  });
 
   // What is next, ahead of now. The stack shows up to three; the list
   // below starts after them so nothing appears twice on one screen.

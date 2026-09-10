@@ -6,6 +6,7 @@ import { institutionsByKind } from "@/modules/identity/queries";
 import type { InstitutionKind } from "@/generated/prisma/client";
 import { SchoolPicker } from "./school-picker";
 import { OnboardingShell } from "./shell";
+import { track } from "@/lib/analytics";
 
 const KINDS = [
   { key: "UNIVERSITY", label: "University" },
@@ -24,6 +25,8 @@ export default async function Onboarding({ searchParams }: { searchParams: Promi
   const { kind } = await searchParams;
 
   if (!kind) {
+    // The first setup screen: the top of the setup-to-planning funnel.
+    track(session.user.id, "onboarding_started");
     return (
       <OnboardingShell step={1} total={3} ground="bg-ground" title="Where do you study?">
         <div className="mt-8 space-y-3">

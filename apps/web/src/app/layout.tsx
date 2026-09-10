@@ -31,6 +31,8 @@ const mono = localFont({
 });
 
 import { RegisterSW } from "@/components/register-sw";
+import { Analytics } from "@/components/analytics";
+import { auth } from "@/auth";
 
 export const metadata: Metadata = {
   // iOS ignores the manifest for install: these tell Safari it is
@@ -51,11 +53,13 @@ export const metadata: Metadata = {
   description: "The academic home for students.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Feeds the user id to Analytics; null when signed out.
+  const session = await auth();
   return (
     <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
@@ -68,7 +72,8 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased">{children}
-        <RegisterSW /></body>
+        <RegisterSW />
+        <Analytics userId={session?.user?.id ?? null} /></body>
     </html>
   );
 }
