@@ -1,13 +1,13 @@
-import { Mark } from "@/components/ui/mark";
+import { LoadingMark } from "@/components/loading-mark";
 
 /// The mark says it is CampusOS working; the blocks say where things
 /// will land. A centred logo alone loses the shape of the page.
 export default function Loading() {
   return (
     <main className="min-h-screen bg-ground px-6 pb-24 pt-8">
+      <LoadingMark />
       <div className="mx-auto w-full max-w-2xl">
         <div className="flex items-center gap-3">
-          <Mark size={26} blink="thinking" />
           <div className="h-3 w-40 rounded-full bg-ink/10" />
         </div>
 

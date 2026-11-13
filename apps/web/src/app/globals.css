@@ -189,3 +189,10 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .mark-eye-idle, .mark-eye-thinking { animation: none; }
 }
+
+/* A quick load should not flash the logo. */
+@keyframes loadingMarkIn { from { opacity: 0; } to { opacity: 1; } }
+.loading-mark { opacity: 0; animation: loadingMarkIn 0.25s ease-out 0.15s forwards; }
+@media (prefers-reduced-motion: reduce) {
+  .loading-mark { animation: none; opacity: 1; }
+}
