@@ -6,7 +6,7 @@ CampusOS is based in Lagos, Nigeria. This policy explains what CampusOS collects
 sees it. It describes what the app actually does, not what it might do
 one day.
 
-Questions, corrections or requests: **sammy2nuel@gmail.com**
+Questions, corrections or requests: **campusos.help@gmail.com**
 
 ---
 
@@ -110,7 +110,7 @@ cannot be undone.
 
 Under the Nigeria Data Protection Act 2023 you can ask us to show you
 what we hold about you, correct it, delete it, or send it to you in a
-usable form. Email **sammy2nuel@gmail.com** and we will respond within 30
+usable form. Email **campusos.help@gmail.com** and we will respond within 30
 days.
 
 If you are not satisfied, you can complain to the Nigeria Data Protection

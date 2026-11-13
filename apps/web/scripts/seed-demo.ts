@@ -17,13 +17,13 @@ const PEERS = ["bernice", "mamunat_21", "ninth"];
 
 const CLASSES = [
   // Sunday — an evening tutorial, which is common enough
-  { code: "COS 101", weekday: 7, startsAt: 18 * 60 + 30, endsAt: 20 * 60, venue: "ICT Lab", lecturer: "Dr. A. Ogunleye" },
+  { code: "COS 101", weekday: 1, startsAt: 18 * 60 + 30, endsAt: 20 * 60, venue: "ICT Lab", lecturer: "Dr. A. Ogunleye" },
   // Monday
-  { code: "MTH 101", weekday: 1, startsAt: 8 * 60, endsAt: 10 * 60, venue: "Maths Block 2", lecturer: "Mr. Bello" },
-  { code: "PHY 101", weekday: 1, startsAt: 12 * 60, endsAt: 14 * 60, venue: "Physics LT", lecturer: "Prof. Adeyemi" },
+  { code: "MTH 101", weekday: 2, startsAt: 8 * 60, endsAt: 10 * 60, venue: "Maths Block 2", lecturer: "Mr. Bello" },
+  { code: "PHY 101", weekday: 2, startsAt: 12 * 60, endsAt: 14 * 60, venue: "Physics LT", lecturer: "Prof. Adeyemi" },
   // Tuesday
-  { code: "GST 111", weekday: 2, startsAt: 9 * 60, endsAt: 11 * 60, venue: "Main Auditorium", lecturer: "Mrs. Nwankwo" },
-  { code: "STA 111", weekday: 2, startsAt: 14 * 60, endsAt: 16 * 60, venue: "LT 1", lecturer: "Dr. Okonkwo" },
+  { code: "GST 111", weekday: 3, startsAt: 9 * 60, endsAt: 11 * 60, venue: "Main Auditorium", lecturer: "Mrs. Nwankwo" },
+  { code: "STA 111", weekday: 3, startsAt: 14 * 60, endsAt: 16 * 60, venue: "LT 1", lecturer: "Dr. Okonkwo" },
   // Wednesday
   { code: "COS 101", weekday: 3, startsAt: 8 * 60, endsAt: 10 * 60, venue: "LT 4", lecturer: "Dr. A. Ogunleye" },
   { code: "MTH 103", weekday: 3, startsAt: 13 * 60, endsAt: 14 * 60 + 30, venue: "Maths Block 1", lecturer: "Mrs. Eze" },

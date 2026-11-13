@@ -4,7 +4,7 @@
 
 CampusOS is based in Lagos, Nigeria. By using CampusOS you agree to these terms.
 
-Contact: **sammy2nuel@gmail.com**
+Contact: **campusos.help@gmail.com**
 
 ---
 
