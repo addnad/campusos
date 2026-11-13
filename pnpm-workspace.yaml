@@ -12,3 +12,4 @@ allowBuilds:
   prisma: true
   "@prisma/engines": true
   esbuild: true
+  core-js: false

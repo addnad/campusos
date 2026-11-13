@@ -53,8 +53,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  modal,
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
   return (
     <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`} suppressHydrationWarning>
@@ -68,6 +70,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased">{children}
+        {modal}
         <RegisterSW /></body>
     </html>
   );
